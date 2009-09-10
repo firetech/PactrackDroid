@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ * Copyright (C) 2009 Joakim Andersson
+ * 
+ * This file is part of PactrackDroid, an Android application to keep
+ * track of parcels sent with the Swedish mail service (Posten).
+ * 
+ * PactrackDroid is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * PactrackDroid is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+-->
+<LinearLayout
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:orientation="vertical">
+		
+	<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal">
+		<LinearLayout
+				android:layout_width="wrap_content"
+				android:layout_weight="1"
+				android:layout_gravity="left"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal">
+			<TextView android:text="@string/sent"
+				    android:layout_margin="5sp"
+			        android:textStyle="bold"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"/>	
+			<TextView android:id="@+id/sent"
+			        android:text="@string/loading"
+				    android:layout_margin="5sp"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"/>
+		</LinearLayout>
+				
+		<LinearLayout
+				android:layout_width="wrap_content"
+				android:layout_weight="1"
+				android:layout_gravity="right"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal">
+			<TextView android:text="@string/customer"
+				    android:layout_margin="5sp"
+			        android:textStyle="bold"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"/>	
+			<TextView android:id="@+id/customer"
+			        android:text="@string/loading"
+				    android:layout_margin="5sp"
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"/>
+		</LinearLayout>
+	</LinearLayout>
+				
+	<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal">
+		<TextView android:text="@string/status"
+			    android:layout_margin="5sp"
+		        android:textStyle="bold"
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"/>o
+		<ImageView android:id="@+id/status_icon"
+				android:layout_width="15sp"
+		        android:layout_height="15sp"
+		        android:layout_gravity="center"
+			    android:layout_marginTop="5sp"
+			    android:layout_marginBottom="5sp"
+			    android:layout_marginLeft="5sp"/>
+		<TextView android:id="@+id/status"
+		        android:text="@string/loading"
+			    android:layout_marginTop="5sp"
+			    android:layout_marginRight="5sp"
+			    android:layout_marginBottom="5sp"
+			    android:layout_marginLeft="2sp"
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"/>
+	</LinearLayout>
+	
+	<LinearLayout android:id="@+id/extended"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			android:visibility="gone">
+		<LinearLayout
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal">
+			<LinearLayout
+					android:layout_width="wrap_content"
+					android:layout_weight="10"
+					android:layout_gravity="left"
+					android:layout_height="wrap_content"
+					android:orientation="horizontal">
+				<TextView android:text="@string/update_info"
+					    android:layout_margin="5sp"
+				        android:textStyle="bold"
+					    android:layout_width="wrap_content"
+					    android:layout_height="wrap_content"/>	
+				<TextView android:id="@+id/update_info"
+				        android:text="@string/loading"
+					    android:layout_margin="5sp"
+					    android:layout_width="wrap_content"
+					    android:layout_height="wrap_content"/>
+			</LinearLayout>
+			<LinearLayout
+					android:layout_width="wrap_content"
+					android:layout_weight="9"
+					android:layout_gravity="right"
+					android:layout_height="wrap_content"
+					android:orientation="horizontal">
+				<TextView android:text="@string/weight"
+					    android:layout_margin="5sp"
+				        android:textStyle="bold"
+					    android:layout_width="wrap_content"
+					    android:layout_height="wrap_content"/>	
+				<TextView android:id="@+id/weight"
+				        android:text="@string/loading"
+					    android:layout_margin="5sp"
+					    android:layout_width="wrap_content"
+					    android:layout_height="wrap_content"/>
+			</LinearLayout>
+		</LinearLayout>
+		
+		<LinearLayout
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal">
+			
+			<LinearLayout
+					android:layout_width="wrap_content"
+					android:layout_weight="1"
+					android:layout_gravity="left"
+					android:layout_height="wrap_content"
+					android:orientation="horizontal">
+				<TextView android:text="@string/service"
+					    android:layout_margin="5sp"
+				        android:textStyle="bold"
+					    android:layout_width="wrap_content"
+					    android:layout_height="wrap_content"/>	
+				<TextView android:id="@+id/service"
+				        android:text="@string/loading"
+					    android:layout_margin="5sp"
+					    android:layout_width="wrap_content"
+					    android:layout_height="wrap_content"/>
+			</LinearLayout>
+		
+			<LinearLayout
+					android:layout_width="wrap_content"
+					android:layout_weight="1"
+					android:layout_gravity="right"
+					android:layout_height="wrap_content"
+					android:orientation="horizontal">
+				<TextView android:text="@string/postal"
+					    android:layout_margin="5sp"
+				        android:textStyle="bold"
+					    android:layout_width="wrap_content"
+					    android:layout_height="wrap_content"/>	
+				<TextView android:id="@+id/postal"
+				        android:text="@string/loading"
+					    android:layout_margin="5sp"
+					    android:layout_width="wrap_content"
+					    android:layout_height="wrap_content"/>
+			</LinearLayout>
+		</LinearLayout>
+	</LinearLayout>
+	
+	<Button android:text="@string/show_extended"
+			android:id="@+id/extended_toggle"
+			style="?android:attr/buttonStyleSmall"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"/>
+	
+	<TextView android:text="@string/events"
+	        android:textStyle="bold"
+	        android:textSize="17.5sp"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+	        android:layout_gravity="center_horizontal"/>
+	
+	<ImageView android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_gravity="center_horizontal"
+	        android:background="@android:drawable/divider_horizontal_dark"/>
+
+	
+	<ListView android:id="@android:id/list"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"/>
+
+</LinearLayout>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ * Copyright (C) 2009 Joakim Andersson
+ * 
+ * This file is part of PactrackDroid, an Android application to keep
+ * track of parcels sent with the Swedish mail service (Posten).
+ * 
+ * PactrackDroid is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * PactrackDroid is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+-->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orderingFromXml="true" android:title="@string/menu_settings">
+	<ListPreference android:title="@string/check_interval_title"
+		android:summary="@string/check_interval_summary" android:entryValues="@array/check_interval_values"
+		android:dialogTitle="@string/check_interval_title" android:key="@string/key_check_interval"
+		android:entries="@array/check_intervals" android:negativeButtonText="@string/cancel"
+		android:defaultValue="0" />
+	<CheckBoxPreference android:summary="@string/notify_on_summary"
+		android:title="@string/notify_on_title" android:key="@string/key_notify_on"
+		android:disableDependentsState="false" android:defaultValue="true" />
+	<PreferenceScreen android:summary="@string/notify_settings_summary"
+		android:dependency="@string/key_notify_on" android:title="@string/notify_settings_title">
+		<RingtonePreference android:dependency="@string/key_notify_on"
+			android:showDefault="true" android:key="@string/key_notify_sound"
+			android:showSilent="true" android:title="@string/notify_sound_title"
+			android:ringtoneType="notification" />
+		<CheckBoxPreference android:key="@string/key_notify_vibrate"
+			android:title="@string/notify_vibrate_title" android:summary="@string/notify_vibrate_summary"
+			android:dependency="@string/key_notify_on" android:defaultValue="true" />
+		<CheckBoxPreference android:key="@string/key_notify_light"
+			android:dependency="@string/key_notify_on" android:defaultValue="true"
+			android:title="@string/notify_light_title" android:summary="@string/notify_light_summary" />
+		<PreferenceScreen android:summary="@string/notify_light_advanced_summary"
+			android:dependency="@string/key_notify_light" android:title="@string/notify_light_advanced_title">
+			<EditTextPreference android:dependency="@string/key_notify_light"
+				android:summary="@string/notify_light_color_summary" android:title="@string/notify_light_color_title"
+				android:negativeButtonText="@string/cancel"
+				android:positiveButtonText="@string/ok" android:key="@string/key_notify_light_color"
+				android:defaultValue="00ffff" />
+			<EditTextPreference android:negativeButtonText="@string/cancel"
+				android:positiveButtonText="@string/ok" android:dependency="@string/key_notify_light"
+				android:key="@string/key_notify_light_ontime" android:summary="@string/notify_light_ontime_summary"
+				android:title="@string/notify_light_ontime_title"
+				android:defaultValue="1000" />
+			<EditTextPreference android:negativeButtonText="@string/cancel"
+				android:positiveButtonText="@string/ok" android:dependency="@string/key_notify_light"
+				android:key="@string/key_notify_light_offtime" android:summary="@string/notify_light_offtime_summary"
+				android:title="@string/notify_light_offtime_title"
+				android:defaultValue="1000" />
+
+		</PreferenceScreen>
+	</PreferenceScreen>
+
+
+
+
+
+</PreferenceScreen>

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ * Copyright (C) 2009 Joakim Andersson
+ * 
+ * This file is part of PactrackDroid, an Android application to keep
+ * track of parcels sent with the Swedish mail service (Posten).
+ * 
+ * PactrackDroid is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * PactrackDroid is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+-->
+<resources>
+	<string name="add_parcel">Lägg till kolli</string>
+	<string name="menu_refresh">Uppdatera</string>
+	<string name="menu_refresh_all">Uppdatera alla</string>
+	<string name="menu_about">Om</string>
+	<string name="menu_settings">Inställningar</string>
+	<string name="menu_delete">Ta bort</string>
+	<string name="menu_rename">Redigera kolli-ID</string>
+
+	<string name="parcelid">Kolli-ID</string>
+	<string name="empty">Inga kollin inlagda</string>
+	<string name="parcel_problem">Problem med kolli-ID:t</string>
+
+	<string name="ok">OK</string>
+	<string name="cancel">Avbryt</string>
+
+	<string name="yes">Ja</string>
+	<string name="no">Nej</string>
+
+	<string name="go_homepage">Hemsida</string>
+
+	<string name="loading">Laddar...</string>
+	<string name="refreshing">Uppdaterar...</string>
+
+	<string name="id_error_title">Felaktigt Kolli-ID</string>
+	<string name="id_error_message">Kolli-ID måste vara minst 9 tecken!</string>
+	<string name="db_error_title">Databasfel</string>
+	<string name="db_error_message">Fel vid hämtning från databasen!</string>
+
+	<string name="remove_confirm_title">Ta bort</string>
+	<string name="remove_confirm_message">Kollit och dess händelser kommer att tas bort från programmet.</string>
+
+	<string name="parcel_error_unknown">Okänt fel (%d)</string>
+	<string name="parcel_error_server">Lyckades inte hämta/läsa data från Postens server</string>
+	<string name="parcel_error_not_found">Kolli-ID:t hittades inte</string>
+	<string name="parcel_error_multi_parcel">Fler än ett kolli matchade kolli-ID:t</string>
+
+	<string name="parcel_error_message">Ett fel uppstod vid senaste	uppdateringen:\n\n%s\n\nVisa tillgänglig information ändå?</string>
+
+	<string name="customer">Kund</string>
+	<string name="sent">Skickat</string>
+	<string name="update_info">Senaste uppd.\n(Lyckad)</string>
+	<string name="weight">Vikt (kg)</string>
+	<string name="postal">Postadress</string>
+	<string name="service">Tjänst</string>
+	<string name="status">Status</string>
+
+	<string name="show_extended">Fler detaljer</string>
+	<string name="hide_extended">Färre detaljer</string>
+
+	<string name="events">Händelser</string>
+
+	<string name="parcel_title">Kolli %s</string>
+
+	<string name="update_info_syntax">%1$s\n(%2$s)</string>
+	<string name="never">Aldrig</string>
+	<string name="same_time">Samma tid</string>
+
+	<string name="notification_ticker_one">Ny händelse för kolli %s</string>
+	<string name="notification_ticker">Nya händelser för kolli %s</string>
+	<string name="notification_message_one">%d ny händelse</string>
+	<string name="notification_message">%d nya händelser</string>
+
+	<string name="notify_on_title">Aviseringar</string>
+	<string name="notify_on_summary">Meddela om nya händelser</string>
+	<string name="notify_settings_title">Aviseringsinställningar</string>
+	<string name="notify_settings_summary">Konfigurera aviseringar</string>
+	<string name="notify_vibrate_title">Vibrera</string>
+	<string name="notify_vibrate_summary">Vibrera vid nya händelser</string>
+	<string name="notify_light_title">Använd lysdioden</string>
+	<string name="notify_light_summary">Blinka med lysdioden vid nya händelser</string>
+	<string name="notify_light_advanced_title">Lysdiodinställningar</string>
+	<string name="notify_light_advanced_summary">Konfigurera beteende för lysdioden (Avancerat)</string>
+	<string name="notify_sound_title">Välj ringsignal</string>
+
+	<string name="notify_light_color_title">Färg</string>
+	<string name="notify_light_color_summary">Färg för lysdioden (HEX-format)</string>
+	<string name="notify_light_ontime_title">Lysande tid</string>
+	<string name="notify_light_ontime_summary">Hur länge lysdioden lyser i varje cykel (i millisekunder)</string>
+	<string name="notify_light_offtime_title">Släckt tid</string>
+	<string name="notify_light_offtime_summary">Hur länge lysdioden är släckt i varje cykel (i millisekunder)</string>
+
+	<string name="check_interval_title">Uppdateringsintervall</string>
+	<string name="check_interval_summary">Välj hur ofta automatiska uppdateringar ska göras
+	</string>
+</resources>
