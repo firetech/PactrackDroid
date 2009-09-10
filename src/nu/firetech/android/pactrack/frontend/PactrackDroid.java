@@ -246,10 +246,8 @@ public class PactrackDroid extends ListActivityWithRefreshDialog {
 			return R.drawable.ic_parcel_collectable;
 		} else if (statusCode == ParcelXMLParser.STATUS_DELIVERED) {
 			return R.drawable.ic_parcel_delivered;
-		} else if (statusCode < 0)  {
-			return R.drawable.ic_parcel_enroute; //This has multiple codes (3 and 5 are confirmed)
 		} else {
-			return 0;
+			return R.drawable.ic_parcel_enroute; //This has multiple codes (3 and 5 are confirmed)
 		}
 	}
 	
