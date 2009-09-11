@@ -15,8 +15,6 @@ public class ParcelService extends Service implements RefreshContext {
 	private StatusHandler mHandler;
 	private int mMaxStatus;
 
-	
-
 	@Override
 	public void onCreate() {
 		mHandler = new StatusHandler();
@@ -30,7 +28,7 @@ public class ParcelService extends Service implements RefreshContext {
 		super.onStart(intent, startId);
 
 		Log.d(TAG, "Automatic update initiated");
-		ParcelUpdater.updateAll(this, mDbAdapter);   
+		ParcelUpdater.updateAll(this, mDbAdapter);
 	}
 
 	@Override

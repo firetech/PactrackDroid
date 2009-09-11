@@ -36,27 +36,31 @@ public class ServiceStarter extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context ctx, Intent intent) {
 		// The only received intents here are BOOT_COMPLETED or BACKGROUND_DATA_SETTING_CHANGED 
-		startService(ctx);
+		startService(ctx, null);
 	}
 	
-	public static void startService(Context ctx) {
+	public static void startService(Context ctx, ParcelDbAdapter dbAdapter) {
 		Preferences pref = Preferences.getPreferences(ctx);
 		long interval = pref.getCheckInterval();
 		
-		startService(ctx, interval);
+		startService(ctx, dbAdapter, interval);
 	}
 	
-	public static void startService(Context ctx, long interval) {
+	public static void startService(Context ctx, ParcelDbAdapter dbAdapter, long interval) {
 		PendingIntent pi = PendingIntent.getService(ctx, 0, new Intent(ctx, ParcelService.class), 0);
 		AlarmManager am = (AlarmManager) ctx.getSystemService(Context.ALARM_SERVICE);
 		
 		ConnectivityManager cm = (ConnectivityManager)ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
+		
+		if (dbAdapter != null && dbAdapter.getNumParcels() < 1) {
+			interval = 0;
+		}
 
 		if ((cm.getBackgroundDataSetting() ? interval : 0) > 0) {
-			Log.d(TAG, "Scheduling service to be run every " + interval + " milliseconds (inexact)...");
+			Log.d(TAG, "Scheduling service to be run every " + interval + " milliseconds (inexact)");
 			am.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (interval / 2), interval, pi);
 		} else {
-			Log.d(TAG, "Removing any existing service alarms...");
+			Log.d(TAG, "Removing any existing service alarms");
 			am.cancel(pi);
 		}
 		

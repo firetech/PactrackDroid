@@ -42,7 +42,7 @@ public class ParcelIdDialog extends Dialog {
 
 	private EditText mParcelText;
 	private Long mRowId;
-	private ParcelDbAdapter mDbHelper;
+	private ParcelDbAdapter mDbAdapter;
 
 	private AlertDialog mErrorDialog;
 
@@ -57,7 +57,7 @@ public class ParcelIdDialog extends Dialog {
 	public ParcelIdDialog(Context context, Long rowId, ParcelDbAdapter dbHelper) {
 		super(context);
 		mRowId = rowId;
-		mDbHelper = dbHelper;
+		mDbAdapter = dbHelper;
 
 		mErrorDialog = new AlertDialog.Builder(context)
 		.setTitle(R.string.id_error_title)
@@ -125,7 +125,7 @@ public class ParcelIdDialog extends Dialog {
 			if (savedInstanceState != null && savedInstanceState.containsKey(ParcelDbAdapter.KEY_PARCEL)) {
 				text = savedInstanceState.getString(ParcelDbAdapter.KEY_PARCEL);
 			} else {
-				Cursor parcel = mDbHelper.fetchParcel(mRowId);
+				Cursor parcel = mDbAdapter.fetchParcel(mRowId);
 				text = parcel.getString(parcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_PARCEL));
 				parcel.close();
 			}
@@ -160,16 +160,16 @@ public class ParcelIdDialog extends Dialog {
 
 			boolean changed = true;
 			if (mRowId == null) {
-				mRowId = mDbHelper.addParcel(parcel);
+				mRowId = mDbAdapter.addParcel(parcel);
 			} else {
-				Cursor dbParcel = mDbHelper.fetchParcel(mRowId);
+				Cursor dbParcel = mDbAdapter.fetchParcel(mRowId);
 				String oldParcel = dbParcel.getString(dbParcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_PARCEL));
 				dbParcel.close();
 
 				if (oldParcel.equals(parcel)) {
 					changed = false;
 				} else {
-					mDbHelper.changeParcelId(mRowId, parcel);
+					mDbAdapter.changeParcelId(mRowId, parcel);
 				}
 			}
 

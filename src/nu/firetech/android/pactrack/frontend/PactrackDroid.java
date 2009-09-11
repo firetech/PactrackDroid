@@ -54,7 +54,7 @@ public class PactrackDroid extends ListActivityWithRefreshDialog {
 	
 	private static String sAboutMessage = null;
 
-	private ParcelDbAdapter mDbHelper;
+	private ParcelDbAdapter mDbAdapter;
 	private AlertDialog mAboutDialog;
 
 	/** Called when the activity is first created. */
@@ -63,19 +63,19 @@ public class PactrackDroid extends ListActivityWithRefreshDialog {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_window);
 
-		mDbHelper = new ParcelDbAdapter(this);
-		mDbHelper.open();
+		mDbAdapter = new ParcelDbAdapter(this);
+		mDbAdapter.open();
 
 		Button addButton = (Button)findViewById(R.id.add_parcel);
 		addButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View view) {
-				new ParcelIdDialog(PactrackDroid.this, null, mDbHelper).show();
+				new ParcelIdDialog(PactrackDroid.this, null, mDbAdapter).show();
 			}
 		});
 
 		// Start service if it isn't running (not entirely fool-proof, but works)
 		if (ServiceStarter.getCurrentInterval() == -1) {
-			ServiceStarter.startService(this);
+			ServiceStarter.startService(this, mDbAdapter);
 		}
 		
 		if (sAboutMessage == null) {
@@ -117,12 +117,12 @@ public class PactrackDroid extends ListActivityWithRefreshDialog {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		mDbHelper.close();
+		mDbAdapter.close();
 	}
 
 	@Override
 	public void refreshDone() {
-		Cursor parcelCursor = mDbHelper.fetchAllParcels();
+		Cursor parcelCursor = mDbAdapter.fetchAllParcels();
 		startManagingCursor(parcelCursor);
 
 		String[] from = new String[]{ParcelDbAdapter.KEY_PARCEL, ParcelDbAdapter.KEY_CUSTOMER, ParcelDbAdapter.KEY_STATUSCODE};
@@ -164,9 +164,9 @@ public class PactrackDroid extends ListActivityWithRefreshDialog {
 		case REFRESH_ID:
 			//Defer automatic update at least another half interval
 			if (ServiceStarter.getCurrentInterval() > 0) {
-				ServiceStarter.startService(this);
+				ServiceStarter.startService(this, mDbAdapter);
 			}
-			ParcelUpdater.updateAll(this, mDbHelper);
+			ParcelUpdater.updateAll(this, mDbAdapter);
 			return true;
 		case SETTINGS_ID:
 			startActivity(new Intent(this, ConfigView.class));
@@ -190,7 +190,7 @@ public class PactrackDroid extends ListActivityWithRefreshDialog {
 		switch(item.getItemId()) {
 		case DELETE_ID:
 			info = (AdapterContextMenuInfo) item.getMenuInfo();
-			deleteParcel(info.id, this, mDbHelper, new Runnable() {
+			deleteParcel(info.id, this, mDbAdapter, new Runnable() {
 				@Override
 				public void run() {
 					refreshDone();					
@@ -199,7 +199,7 @@ public class PactrackDroid extends ListActivityWithRefreshDialog {
 			return true;
 		case RENAME_ID:
 			info = (AdapterContextMenuInfo) item.getMenuInfo();
-			ParcelIdDialog.show(this, info.id, mDbHelper);
+			ParcelIdDialog.show(this, info.id, mDbAdapter);
 			return true;
 		}
 		return super.onContextItemSelected(item);

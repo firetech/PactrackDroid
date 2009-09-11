@@ -146,12 +146,30 @@ public class ParcelDbAdapter {
 	public boolean isOpen() {
 		return (mDbHelper != null);
 	}
+	
+	public long getNumParcels() {
+		Cursor data = mDb.query(PARCEL_TABLE,
+				new String[] { "COUNT("+KEY_ROWID+") AS "+KEY_CUSTOM },
+				null, null, null, null, null);
+		data.moveToFirst();
+		long count = data.getLong(data.getColumnIndexOrThrow(KEY_CUSTOM));
+		data.close();
+		
+		return count;
+	}
 
 	public long addParcel(String parcelid) {
 		ContentValues initialValues = new ContentValues();
 		initialValues.put(KEY_PARCEL, parcelid);
+		
+		long rowId = mDb.insert(PARCEL_TABLE, null, initialValues);
 
-		return mDb.insert(PARCEL_TABLE, null, initialValues);
+		// Only start the service if there was no previous parcel in the database
+		if (rowId != -1 && getNumParcels() < 2) {
+			ServiceStarter.startService(mCtx, null);
+		}
+
+		return rowId;
 	}
 
 	public boolean deleteParcel(long rowId) {
@@ -159,6 +177,12 @@ public class ParcelDbAdapter {
 
 		if (deleted) {
 			mDb.delete(EVENT_TABLE, KEY_FOREIGN + "=" + rowId, null);
+		
+			// Stop the service if database is empty
+			if (getNumParcels() < 1) {
+				// We can bypass the preference lookup since we want to stop the service here
+				ServiceStarter.startService(mCtx, null, 0);
+			}
 		}
 
 		return deleted;
@@ -183,7 +207,7 @@ public class ParcelDbAdapter {
 	}
 
 	public Cursor fetchParcel(long rowId) throws SQLException {
-		Cursor mCursor =
+		Cursor parcel =
 			mDb.query(true, PARCEL_TABLE,
 					new String[] {
 						KEY_ROWID,
@@ -200,10 +224,10 @@ public class ParcelDbAdapter {
 						KEY_ERROR
 					}, KEY_ROWID + "= " + rowId, null, null, null, null, null);
 
-		if (mCursor != null) {
-			mCursor.moveToFirst();
+		if (parcel != null) {
+			parcel.moveToFirst();
 		}
-		return mCursor;
+		return parcel;
 	}
 
 	public boolean changeParcelId(long rowId, String newValue) {
@@ -247,10 +271,9 @@ public class ParcelDbAdapter {
 		}
 		args.put(KEY_UPDATE, now);
 		args.put(KEY_ERROR, parcelData.getError());
-		Log.d(TAG, args.toString());
 
 		return mDb.update(PARCEL_TABLE, args, KEY_ROWID + "=" + rowId, null) > 0;
-	}	
+	}
 
 	public boolean addEvent(long parcelId, ParcelEvent eventData) {
 		// Check for existing event.

@@ -50,7 +50,7 @@ public class ParcelView extends ListActivityWithRefreshDialog {
 	private static final int REFRESH_ID = Menu.FIRST + 2;
 
 	private Long mRowId;
-	private ParcelDbAdapter mDbHelper;
+	private ParcelDbAdapter mDbAdapter;
 	private LinearLayout mExtended;
 	private Button mToggleButton;
 	private boolean mExtendedShowing;
@@ -80,8 +80,8 @@ public class ParcelView extends ListActivityWithRefreshDialog {
 			}
 		});
 
-		mDbHelper = new ParcelDbAdapter(this);
-		mDbHelper.open();
+		mDbAdapter = new ParcelDbAdapter(this);
+		mDbAdapter.open();
 
 		mRowId = savedInstanceState != null ? savedInstanceState.getLong(ParcelDbAdapter.KEY_ROWID) 
 				: null;
@@ -118,7 +118,7 @@ public class ParcelView extends ListActivityWithRefreshDialog {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		mDbHelper.close();
+		mDbAdapter.close();
 	}
 
 	@Override
@@ -134,7 +134,7 @@ public class ParcelView extends ListActivityWithRefreshDialog {
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		switch(item.getItemId()) {
 		case DELETE_ID:
-			PactrackDroid.deleteParcel(mRowId, this, mDbHelper, new Runnable() {
+			PactrackDroid.deleteParcel(mRowId, this, mDbAdapter, new Runnable() {
 				@Override
 				public void run() {
 					finish();					
@@ -142,13 +142,13 @@ public class ParcelView extends ListActivityWithRefreshDialog {
 			});
 			return true;
 		case RENAME_ID:
-			ParcelIdDialog.show(this, mRowId, mDbHelper);
+			ParcelIdDialog.show(this, mRowId, mDbAdapter);
 			return true;
 		case REFRESH_ID:
 			errorShown = Error.NONE;
-			Cursor parcel = mDbHelper.fetchParcel(mRowId);
+			Cursor parcel = mDbAdapter.fetchParcel(mRowId);
 			startManagingCursor(parcel);
-			ParcelUpdater.update(this, parcel, mDbHelper);
+			ParcelUpdater.update(this, parcel, mDbAdapter);
 			return true;
 		}
 
@@ -165,14 +165,14 @@ public class ParcelView extends ListActivityWithRefreshDialog {
 		
 		Cursor parcel = null;
 		try {
-			parcel = mDbHelper.fetchParcel(mRowId);
+			parcel = mDbAdapter.fetchParcel(mRowId);
 			startManagingCursor(parcel);
 
 			int error = parcel.getInt(parcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_ERROR));
 			
 			if (forceRefresh) {
 				errorShown = error = Error.NONE;
-				ParcelUpdater.update(this, parcel, mDbHelper);
+				ParcelUpdater.update(this, parcel, mDbAdapter);
 			}
 			
 			String status = parcel.getString(parcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_STATUS));
@@ -244,7 +244,7 @@ public class ParcelView extends ListActivityWithRefreshDialog {
 			((ImageView)findViewById(R.id.status_icon)).setImageResource(
 					PactrackDroid.getStatusImage(parcel, parcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_STATUSCODE)));
 
-			Cursor eventCursor = mDbHelper.fetchEvents(mRowId);
+			Cursor eventCursor = mDbAdapter.fetchEvents(mRowId);
 			startManagingCursor(eventCursor);
 
 			String[] from = new String[]{ParcelDbAdapter.KEY_CUSTOM, ParcelDbAdapter.KEY_DESC};

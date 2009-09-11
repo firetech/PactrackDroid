@@ -21,6 +21,7 @@
 package nu.firetech.android.pactrack.frontend;
 
 import nu.firetech.android.pactrack.R;
+import nu.firetech.android.pactrack.backend.ParcelDbAdapter;
 import nu.firetech.android.pactrack.backend.ServiceStarter;
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -35,6 +36,7 @@ import android.text.format.DateUtils;
 import android.text.method.NumberKeyListener;
 
 public class ConfigView extends PreferenceActivity {
+	private ParcelDbAdapter mDbAdapter;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -47,12 +49,15 @@ public class ConfigView extends PreferenceActivity {
 		ListPreference checkIntervalPref = (ListPreference)findPreference(getString(R.string.key_check_interval));
 		checkIntervalPref.setEnabled(((ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE)).getBackgroundDataSetting());
 		
+		mDbAdapter = new ParcelDbAdapter(this);
+		mDbAdapter.open();
+		
 		checkIntervalPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
 			@Override
 			public boolean onPreferenceChange(Preference preference, Object newValue) {
 				long newInterval = Long.parseLong((String) newValue) * DateUtils.MINUTE_IN_MILLIS;
 				if (newInterval != ServiceStarter.getCurrentInterval()) {
-					ServiceStarter.startService(ConfigView.this, newInterval);
+					ServiceStarter.startService(ConfigView.this, mDbAdapter, newInterval);
 				}
 				
 				return true;
@@ -88,5 +93,11 @@ public class ConfigView extends PreferenceActivity {
 		EditTextPreference lightOfftimePref = (EditTextPreference)findPreference(getString(R.string.key_notify_light_offtime));
 		lightOfftimePref.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
 	}
+	
 
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		mDbAdapter.close();
+	}
 }
