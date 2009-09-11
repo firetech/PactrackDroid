@@ -22,17 +22,17 @@ import android.util.Log;
 public class ParcelUpdater extends BroadcastReceiver implements Runnable, RefreshContext.Listener {
 	private static final String TAG = "<PactrackDroid> ParcelUpdater";
 
-	public static void update(final RefreshContext act, Cursor parcel, final ParcelDbAdapter dbAdapter) {
+	public static void update(final RefreshContext ctx, Cursor parcel, ParcelDbAdapter dbAdapter) {
 		ArrayList<Bundle> workParcels = new ArrayList<Bundle>();
 		workParcels.add(cursorToBundle(parcel));
 
-		new Thread(new ParcelUpdater(workParcels, act)).start();
+		new Thread(new ParcelUpdater(workParcels, ctx)).start();
 	}
 
-	public static void updateAll(final RefreshContext act, final ParcelDbAdapter dbAdapter) {
+	public static void updateAll(final RefreshContext ctx, ParcelDbAdapter dbAdapter) {
 		final Cursor parcel = dbAdapter.fetchAllParcels();
 		if (parcel == null) {
-			PactrackDroid.dbErrorDialog((Context)act);
+			PactrackDroid.dbErrorDialog((Context)ctx);
 			return;
 		}
 
@@ -43,13 +43,15 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable, Refres
 			parcel.moveToNext();
 		}
 
+		parcel.close();
+
 		if (workParcels.isEmpty()) {
+			ctx.startRefreshDialog(1, null);
+			ctx.getRefreshHandler().sendEmptyMessage(1);
 			return;
 		}
 
-		parcel.close();
-
-		new Thread(new ParcelUpdater(workParcels, act)).start();
+		new Thread(new ParcelUpdater(workParcels, ctx)).start();
 	}
 
 	private static Bundle cursorToBundle(Cursor parcel) {
