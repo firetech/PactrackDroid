@@ -19,16 +19,16 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 -->
 <resources>
-	<string name="app_name">PactrackDroid</string>
-	<string name="version_name">1.0rc1</string>
-	<string name="home_page">http://firetech.nu/pactrackdroid</string>
+	<string name="app_name" translatable="false">PactrackDroid</string>
+	<string name="version_name" translatable="false">1.0rc1</string>
+	<string name="home_page" translatable="false">http://firetech.nu/pactrackdroid</string>
 
-	<string name="key_check_interval">checkInterval</string>
-	<string name="key_notify_on">notificationEnabled</string>
-	<string name="key_notify_vibrate">notificationVibrate</string>
-	<string name="key_notify_light">notificationLight</string>
-	<string name="key_notify_light_color">notificationLightColor</string>
-	<string name="key_notify_light_ontime">notificationLightOntime</string>
-	<string name="key_notify_light_offtime">notificationLightOfftime</string>
-	<string name="key_notify_sound">notificationSound</string>
+	<string name="key_check_interval" translatable="false">checkInterval</string>
+	<string name="key_notify_on" translatable="false">notificationEnabled</string>
+	<string name="key_notify_vibrate" translatable="false">notificationVibrate</string>
+	<string name="key_notify_light" translatable="false">notificationLight</string>
+	<string name="key_notify_light_color" translatable="false">notificationLightColor</string>
+	<string name="key_notify_light_ontime" translatable="false">notificationLightOntime</string>
+	<string name="key_notify_light_offtime" translatable="false">notificationLightOfftime</string>
+	<string name="key_notify_sound" translatable="false">notificationSound</string>
 </resources>
