@@ -20,7 +20,7 @@
 -->
 <resources>
 	<string name="app_name" translatable="false">PactrackDroid</string>
-	<string name="version_name" translatable="false">1.0rc1</string>
+	<string name="version_name" translatable="false">1.0rc2</string>
 	<string name="home_page" translatable="false">http://firetech.nu/pactrackdroid</string>
 
 	<string name="key_check_interval" translatable="false">checkInterval</string>
