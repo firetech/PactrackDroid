@@ -19,7 +19,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="nu.firetech.android.pactrack" android:versionCode="992" android:versionName="1.0rc2">
+	package="nu.firetech.android.pactrack" android:versionName="1.0rc3" android:versionCode="993">
 	<application android:icon="@drawable/icon" android:label="@string/app_name">
 
 		<meta-data android:name="com.a0soft.gphone.aTrackDog.webURL"
