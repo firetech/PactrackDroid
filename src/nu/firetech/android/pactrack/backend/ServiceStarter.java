@@ -35,8 +35,11 @@ public class ServiceStarter extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context ctx, Intent intent) {
-		// The only received intents here are BOOT_COMPLETED or BACKGROUND_DATA_SETTING_CHANGED 
-		startService(ctx, null);
+		// The only received intents here are BOOT_COMPLETED or BACKGROUND_DATA_SETTING_CHANGED
+		ParcelDbAdapter dbAdapter = new ParcelDbAdapter(ctx);
+		dbAdapter.open();
+		startService(ctx, dbAdapter);
+		dbAdapter.close();
 	}
 	
 	public static void startService(Context ctx, ParcelDbAdapter dbAdapter) {
