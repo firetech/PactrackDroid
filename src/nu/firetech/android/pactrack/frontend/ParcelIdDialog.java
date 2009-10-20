@@ -38,39 +38,68 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.view.WindowManager.LayoutParams;
 
-public class ParcelIdDialog extends Dialog {
+public class ParcelIdDialog extends Dialog implements
+		DialogAwareListActivity.Dialog {
 
 	private EditText mParcelText;
 	private Long mRowId;
 	private ParcelDbAdapter mDbAdapter;
+	private boolean mCloseDbAdapter = false;
+	private String mInitialText;
 
 	private AlertDialog mErrorDialog;
 
-	public static void show(Context context, Long rowId, ParcelDbAdapter dbHelper) {
-		ParcelIdDialog d = new ParcelIdDialog(context, rowId, dbHelper);
-		if (context instanceof Activity) {
-			d.setOwnerActivity((Activity)context);
-		}
+	public static void show(final DialogAwareListActivity context, Long rowId,
+			ParcelDbAdapter dbAdapter) {
+		ParcelIdDialog d = new ParcelIdDialog(context, rowId, dbAdapter);
 		d.show();
 	}
 
-	public ParcelIdDialog(Context context, Long rowId, ParcelDbAdapter dbHelper) {
-		super(context);
-		mRowId = rowId;
-		mDbAdapter = dbHelper;
+	public static void show(final DialogAwareListActivity context, Bundle dialogData) {
+		ParcelDbAdapter dbAdapter = new ParcelDbAdapter(context);
+		dbAdapter.open();
+		ParcelIdDialog d = new ParcelIdDialog(context,
+				(dialogData.containsKey(ParcelDbAdapter.KEY_ROWID) ? dialogData.getLong(ParcelDbAdapter.KEY_ROWID) : null),
+				dbAdapter);
+		d.mInitialText = dialogData.getString(ParcelDbAdapter.KEY_PARCEL);
+		d.mCloseDbAdapter = true;
+		d.show();
+	}
 
-		mErrorDialog = new AlertDialog.Builder(context)
-		.setTitle(R.string.id_error_title)
-		.setIcon(android.R.drawable.ic_dialog_alert)
-		.setMessage(R.string.id_error_message)
-		.setNeutralButton(R.string.ok,
-				new OnClickListener() {
+	public ParcelIdDialog(final DialogAwareListActivity context, Long rowId,
+			ParcelDbAdapter dbAdapter) {
+		super(context);
+		if (context instanceof Activity) {
+			setOwnerActivity((Activity)context);
+		}
+		
+		mRowId = rowId;
+		mDbAdapter = dbAdapter;
+
+		mInitialText = null;
+
+		context.addDialog(this);
+		setOnDismissListener(new OnDismissListener() {
 			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				dialog.dismiss();
+			public void onDismiss(DialogInterface dialog) {
+				context.removeDialog(ParcelIdDialog.this);
+				
+				if (mCloseDbAdapter) {
+					mDbAdapter.close();
+				}
 			}
-		})
-		.create();
+		});
+
+		mErrorDialog = new AlertDialog.Builder(context).setTitle(
+				R.string.id_error_title).setIcon(
+				android.R.drawable.ic_dialog_alert).setMessage(
+				R.string.id_error_message).setNeutralButton(R.string.ok,
+				new OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.dismiss();
+					}
+				}).create();
 	}
 
 	@Override
@@ -88,17 +117,17 @@ public class ParcelIdDialog extends Dialog {
 		params.width = LayoutParams.FILL_PARENT;
 		w.setAttributes(params);
 
-		mParcelText = (EditText)findViewById(R.id.parcelid);
+		mParcelText = (EditText) findViewById(R.id.parcelid);
 		mParcelText.setKeyListener(new NumberKeyListener() {
 			private char[] acceptedChars = null;
 
 			@Override
 			protected char[] getAcceptedChars() {
 				if (acceptedChars == null) {
-					acceptedChars = new char[] {
-							'0','1','2','3','4','5','6','7','8','9',
-							'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'
-					};
+					acceptedChars = new char[] { '0', '1', '2', '3', '4', '5',
+							'6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F',
+							'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
+							'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
 				}
 
 				return acceptedChars;
@@ -106,39 +135,49 @@ public class ParcelIdDialog extends Dialog {
 
 			@Override
 			public int getInputType() {
-				return InputType.TYPE_CLASS_NUMBER | InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS;
+				return InputType.TYPE_CLASS_TEXT
+						| InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS;
 			}
 		});
 
-		Button okButton = (Button)findViewById(R.id.ok);
+		Button okButton = (Button) findViewById(R.id.ok);
 		okButton.setOnClickListener(new OkListener());
-		Button cancelButton = (Button)findViewById(R.id.cancel);
+		Button cancelButton = (Button) findViewById(R.id.cancel);
 		cancelButton.setOnClickListener(new ButtonListener());
 
-
 		if (savedInstanceState != null) {
-			mRowId = savedInstanceState.getLong(ParcelDbAdapter.KEY_ROWID); 
+			mRowId = savedInstanceState.getLong(ParcelDbAdapter.KEY_ROWID);
 		}
 
-		if (mRowId != null) {
-			String text;
-			if (savedInstanceState != null && savedInstanceState.containsKey(ParcelDbAdapter.KEY_PARCEL)) {
-				text = savedInstanceState.getString(ParcelDbAdapter.KEY_PARCEL);
+		if (mRowId != null && mInitialText == null) {
+			if (savedInstanceState != null
+					&& savedInstanceState
+							.containsKey(ParcelDbAdapter.KEY_PARCEL)) {
+				mInitialText = savedInstanceState
+						.getString(ParcelDbAdapter.KEY_PARCEL);
 			} else {
 				Cursor parcel = mDbAdapter.fetchParcel(mRowId);
-				text = parcel.getString(parcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_PARCEL));
+				mInitialText = parcel.getString(parcel
+						.getColumnIndexOrThrow(ParcelDbAdapter.KEY_PARCEL));
 				parcel.close();
 			}
-			mParcelText.setText(text);
 		}
+
+		if (mInitialText == null) {
+			mInitialText = "";
+		}
+		mParcelText.setText(mInitialText);
 	}
 
 	@Override
-	public Bundle onSaveInstanceState() {
-		super.onSaveInstanceState();
-		Bundle outState = new Bundle(1);
-		outState.putLong(ParcelDbAdapter.KEY_ROWID, mRowId);
-		outState.putString(ParcelDbAdapter.KEY_PARCEL, mParcelText.getText().toString());
+	public Bundle getInstanceState() {
+		Bundle outState = new Bundle(2);
+
+		if (mRowId != null) {
+			outState.putLong(ParcelDbAdapter.KEY_ROWID, mRowId);
+		}
+		outState.putString(ParcelDbAdapter.KEY_PARCEL, mParcelText.getText()
+				.toString());
 		return outState;
 	}
 
@@ -163,7 +202,8 @@ public class ParcelIdDialog extends Dialog {
 				mRowId = mDbAdapter.addParcel(parcel);
 			} else {
 				Cursor dbParcel = mDbAdapter.fetchParcel(mRowId);
-				String oldParcel = dbParcel.getString(dbParcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_PARCEL));
+				String oldParcel = dbParcel.getString(dbParcel
+						.getColumnIndexOrThrow(ParcelDbAdapter.KEY_PARCEL));
 				dbParcel.close();
 
 				if (oldParcel.equals(parcel)) {
@@ -175,18 +215,27 @@ public class ParcelIdDialog extends Dialog {
 
 			if (changed) {
 				if (getOwnerActivity() instanceof ParcelView) {
-					((ParcelView)getOwnerActivity()).updateView(true);
+					((ParcelView) getOwnerActivity()).updateView(true);
 				} else {
 					Intent i = new Intent(getContext(), ParcelView.class)
-					.putExtra(ParcelDbAdapter.KEY_ROWID, mRowId)
-					.putExtra(ParcelView.FORCE_REFRESH, true);
-					
+							.putExtra(ParcelDbAdapter.KEY_ROWID, mRowId)
+							.putExtra(ParcelView.FORCE_REFRESH, true);
+
 					getContext().startActivity(i);
 				}
 			}
 
 			super.onClick(v);
 		}
-	} 
+	}
+
+	@Override
+	public void onContextChange(Context newContext) {
+	}
+
+	@Override
+	public void onContextDestroy(Context oldContext) {
+		dismiss();
+	}
 
 }

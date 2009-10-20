@@ -3,6 +3,7 @@ package nu.firetech.android.pactrack.backend;
 import java.util.ArrayList;
 
 import nu.firetech.android.pactrack.R;
+import nu.firetech.android.pactrack.common.ContextListener;
 import nu.firetech.android.pactrack.common.RefreshContext;
 import nu.firetech.android.pactrack.frontend.PactrackDroid;
 import nu.firetech.android.pactrack.frontend.ParcelView;
@@ -17,9 +18,11 @@ import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
-public class ParcelUpdater extends BroadcastReceiver implements Runnable, RefreshContext.Listener {
+public class ParcelUpdater extends BroadcastReceiver implements Runnable, ContextListener {
 	private static final String TAG = "<PactrackDroid> ParcelUpdater";
 
 	public static void update(final RefreshContext ctx, Cursor parcel, ParcelDbAdapter dbAdapter) {
@@ -46,8 +49,7 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable, Refres
 		parcel.close();
 
 		if (workParcels.isEmpty()) {
-			ctx.startRefreshDialog(1, null);
-			ctx.getRefreshHandler().sendEmptyMessage(1);
+			ctx.refreshDone();
 			return;
 		}
 
@@ -105,14 +107,17 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable, Refres
 		mWorkParcels = workParcels;
 		mCtx = ctx;
 
-		mConnectivityManager = (ConnectivityManager) ((Context)ctx).getSystemService(Context.CONNECTIVITY_SERVICE);
+		mConnectivityManager = (ConnectivityManager)((Context)ctx).getSystemService(Context.CONNECTIVITY_SERVICE);
 
-		ctx.startRefreshDialog(workParcels.size(), this);
+		ctx.startRefreshProgress(workParcels.size(), this);
 	}
 
 	@Override
-	public void onContextChange(RefreshContext newContext) {
-		mCtx = newContext;
+	public void onContextDestroy(Context oldContext) {}
+	
+	@Override
+	public void onContextChange(Context newContext) {
+		mCtx = (RefreshContext)newContext;
 	}
 
 	@Override
@@ -144,9 +149,16 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable, Refres
 
 		for(int i = 0; i < mWorkParcels.size(); i++) {
 			updateParcel(mWorkParcels.get(i), mDbAdapter, notMgr);
-			mCtx.getRefreshHandler().sendEmptyMessage(i + 1);
+			mCtx.getProgressHandler().sendEmptyMessage(i + 1);
 		}
 
+		new Handler(((Context)mCtx).getMainLooper()) {
+			@Override
+			public void handleMessage(Message m) {
+				mCtx.refreshDone();
+			}
+		}.sendEmptyMessage(0);
+		
 		mDbAdapter.close();
 	}
 

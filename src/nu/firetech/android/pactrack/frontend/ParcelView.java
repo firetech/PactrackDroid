@@ -23,13 +23,16 @@ package nu.firetech.android.pactrack.frontend;
 import nu.firetech.android.pactrack.R;
 import nu.firetech.android.pactrack.backend.ParcelDbAdapter;
 import nu.firetech.android.pactrack.backend.ParcelUpdater;
+import nu.firetech.android.pactrack.common.ContextListener;
 import nu.firetech.android.pactrack.common.Error;
+import nu.firetech.android.pactrack.common.RefreshContext;
 import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -39,7 +42,7 @@ import android.widget.LinearLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
-public class ParcelView extends ListActivityWithRefreshDialog {
+public class ParcelView extends DialogAwareListActivity implements RefreshContext {
 	public static final String FORCE_REFRESH = "force_update";
 
 	private static final String KEY_EXTENDED = "extended_view";
@@ -153,6 +156,17 @@ public class ParcelView extends ListActivityWithRefreshDialog {
 		}
 
 		return super.onMenuItemSelected(featureId, item);
+	}
+	
+	@Override
+	public Handler getProgressHandler() {
+		return ((RefreshDialog)getDialogByClass(RefreshDialog.class)).getProgressHandler();
+	}
+
+	@Override
+	public void startRefreshProgress(int maxValue, ContextListener contextListener) {
+		RefreshDialog.show(this, maxValue);
+		addContextListener(contextListener);
 	}
 	
 	@Override

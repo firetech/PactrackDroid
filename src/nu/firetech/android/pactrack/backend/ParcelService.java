@@ -1,24 +1,22 @@
 package nu.firetech.android.pactrack.backend;
 
+import nu.firetech.android.pactrack.common.ContextListener;
 import nu.firetech.android.pactrack.common.RefreshContext;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
 import android.util.Log;
 
 public class ParcelService extends Service implements RefreshContext {
 	private static final String TAG = "<PactrackDroid> ParcelService";
 
+	private Handler mHandler;
 	private ParcelDbAdapter mDbAdapter;
-	private StatusHandler mHandler;
-	private int mMaxStatus;
 
 	@Override
 	public void onCreate() {
-		mHandler = new StatusHandler();
-
+		mHandler = new Handler();
 		mDbAdapter = new ParcelDbAdapter(this);
 		mDbAdapter.open();
 	}
@@ -37,27 +35,22 @@ public class ParcelService extends Service implements RefreshContext {
 	}
 
 	@Override
-	public Handler getRefreshHandler() {
+	public Handler getProgressHandler() {
 		return mHandler;
 	}
 
 	@Override
-	public void startRefreshDialog(int maxValue, RefreshContext.Listener listener) {
-		mMaxStatus = maxValue;
+	public void startRefreshProgress(int maxValue, ContextListener listener) {
+		Log.d(TAG, "Automatic update running");
 	}
 
-	private class StatusHandler extends Handler {
-		@Override
-		public void handleMessage(Message m) {
-			if (m.what == mMaxStatus) {
-				ParcelService.this.stopSelf();
-			}
-		}
-	};
+	@Override
+	public void refreshDone() {
+		stopSelf();	
+	}
 
 	@Override
 	public IBinder onBind(Intent intent) {
 		return null;
 	}
-
 }

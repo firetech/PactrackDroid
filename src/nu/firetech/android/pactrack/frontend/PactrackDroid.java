@@ -25,7 +25,9 @@ import nu.firetech.android.pactrack.backend.ParcelDbAdapter;
 import nu.firetech.android.pactrack.backend.ParcelUpdater;
 import nu.firetech.android.pactrack.backend.ParcelXMLParser;
 import nu.firetech.android.pactrack.backend.ServiceStarter;
+import nu.firetech.android.pactrack.common.ContextListener;
 import nu.firetech.android.pactrack.common.Error;
+import nu.firetech.android.pactrack.common.RefreshContext;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -34,6 +36,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -45,7 +48,7 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
-public class PactrackDroid extends ListActivityWithRefreshDialog {
+public class PactrackDroid extends DialogAwareListActivity implements RefreshContext {
 	private static final int ABOUT_ID = Menu.FIRST;
 	private static final int REFRESH_ID = Menu.FIRST + 1;
 	private static final int SETTINGS_ID = Menu.FIRST + 2;
@@ -118,6 +121,17 @@ public class PactrackDroid extends ListActivityWithRefreshDialog {
 	protected void onDestroy() {
 		super.onDestroy();
 		mDbAdapter.close();
+	}
+
+	@Override
+	public Handler getProgressHandler() {
+		return ((RefreshDialog)getDialogByClass(RefreshDialog.class)).getProgressHandler();
+	}
+
+	@Override
+	public void startRefreshProgress(int maxValue, ContextListener contextListener) {
+		RefreshDialog.show(this, maxValue);
+		addContextListener(contextListener);
 	}
 
 	@Override
