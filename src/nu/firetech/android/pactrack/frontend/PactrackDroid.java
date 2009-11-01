@@ -48,12 +48,12 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
-public class PactrackDroid extends DialogAwareListActivity implements RefreshContext {
+public class PactrackDroid extends DialogAwareListActivity implements RefreshContext, ParcelOptionsMenu.UpdateableView {
 	private static final int ABOUT_ID = Menu.FIRST;
 	private static final int REFRESH_ID = Menu.FIRST + 1;
 	private static final int SETTINGS_ID = Menu.FIRST + 2;
-	private static final int DELETE_ID = Menu.FIRST + 3;
-	private static final int RENAME_ID = Menu.FIRST + 4;
+	private static final int RENAME_ID = Menu.FIRST + 3;
+	private static final int DELETE_ID = Menu.FIRST + 4;
 	
 	private static String sAboutMessage = null;
 
@@ -136,7 +136,7 @@ public class PactrackDroid extends DialogAwareListActivity implements RefreshCon
 
 	@Override
 	public void refreshDone() {
-		Cursor parcelCursor = mDbAdapter.fetchAllParcels();
+		Cursor parcelCursor = mDbAdapter.fetchAllParcels(false);
 		startManagingCursor(parcelCursor);
 
 		String[] from = new String[]{ParcelDbAdapter.KEY_PARCEL, ParcelDbAdapter.KEY_CUSTOMER, ParcelDbAdapter.KEY_STATUSCODE};
@@ -150,6 +150,11 @@ public class PactrackDroid extends DialogAwareListActivity implements RefreshCon
 			public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
 				if (view instanceof ImageView && view.getId() == android.R.id.icon) {
 					((ImageView)view).setImageResource(getStatusImage(cursor, columnIndex));
+					if (cursor.getInt(cursor.getColumnIndexOrThrow(ParcelDbAdapter.KEY_AUTO)) == 1) {
+						((ImageView)view).getDrawable().mutate().setAlpha(255);
+					} else {
+						((ImageView)view).getDrawable().mutate().setAlpha(70);
+					}
 					return true;
 				} else {
 					return false;
@@ -158,6 +163,13 @@ public class PactrackDroid extends DialogAwareListActivity implements RefreshCon
 		});
 
 		setListAdapter(parcels);
+	}
+	
+
+	@Override
+	public void updateAutoUpdateView(int position, boolean value) {
+		ImageView icon = (ImageView)getListView().getChildAt(position).findViewById(android.R.id.icon);
+		icon.getDrawable().mutate().setAlpha((value ? 255 : 70));
 	}
 
 	@Override
@@ -180,7 +192,7 @@ public class PactrackDroid extends DialogAwareListActivity implements RefreshCon
 			if (ServiceStarter.getCurrentInterval() > 0) {
 				ServiceStarter.startService(this, mDbAdapter);
 			}
-			ParcelUpdater.updateAll(this, mDbAdapter);
+			ParcelUpdater.updateAll(false, this, mDbAdapter);
 			return true;
 		case SETTINGS_ID:
 			startActivity(new Intent(this, ConfigView.class));
@@ -194,6 +206,8 @@ public class PactrackDroid extends DialogAwareListActivity implements RefreshCon
 	public void onCreateContextMenu(ContextMenu menu, View v,
 			ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo)menuInfo;
+		new ParcelOptionsMenu(menu, false, info.id, info.position, mDbAdapter, this);
 		menu.add(0, RENAME_ID, 0, R.string.menu_rename);
 		menu.add(0, DELETE_ID, 0, R.string.menu_delete);
 	}
@@ -202,6 +216,10 @@ public class PactrackDroid extends DialogAwareListActivity implements RefreshCon
 	public boolean onContextItemSelected(MenuItem item) {
 		AdapterContextMenuInfo info;
 		switch(item.getItemId()) {
+		case RENAME_ID:
+			info = (AdapterContextMenuInfo) item.getMenuInfo();
+			ParcelIdDialog.show(this, info.id, mDbAdapter);
+			return true;
 		case DELETE_ID:
 			info = (AdapterContextMenuInfo) item.getMenuInfo();
 			deleteParcel(info.id, this, mDbAdapter, new Runnable() {
@@ -210,10 +228,6 @@ public class PactrackDroid extends DialogAwareListActivity implements RefreshCon
 					refreshDone();					
 				}
 			});
-			return true;
-		case RENAME_ID:
-			info = (AdapterContextMenuInfo) item.getMenuInfo();
-			ParcelIdDialog.show(this, info.id, mDbAdapter);
 			return true;
 		}
 		return super.onContextItemSelected(item);

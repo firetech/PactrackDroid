@@ -33,6 +33,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -42,7 +43,9 @@ import android.widget.LinearLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
-public class ParcelView extends DialogAwareListActivity implements RefreshContext {
+public class ParcelView extends DialogAwareListActivity implements RefreshContext, ParcelOptionsMenu.UpdateableView {
+	private static final String TAG = "<PactrackDroid> ParcelView";
+	
 	public static final String FORCE_REFRESH = "force_update";
 
 	private static final String KEY_EXTENDED = "extended_view";
@@ -64,8 +67,6 @@ public class ParcelView extends DialogAwareListActivity implements RefreshContex
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.parcel_view);
 
-		
-		
 		mExtended = (LinearLayout)findViewById(R.id.extended);
 		mToggleButton = (Button)findViewById(R.id.extended_toggle);
 
@@ -129,6 +130,7 @@ public class ParcelView extends DialogAwareListActivity implements RefreshContex
 		super.onCreateOptionsMenu(menu);
 		menu.add(0, DELETE_ID, 0, R.string.menu_delete).setIcon(android.R.drawable.ic_menu_delete);
 		menu.add(0, RENAME_ID, 0, R.string.menu_rename).setIcon(android.R.drawable.ic_menu_edit);
+		new ParcelOptionsMenu(menu, true, mRowId, R.id.status_icon, mDbAdapter, this);
 		menu.add(0, REFRESH_ID, 0, R.string.menu_refresh).setIcon(R.drawable.ic_menu_refresh);
 		return true;
 	}
@@ -257,6 +259,7 @@ public class ParcelView extends DialogAwareListActivity implements RefreshContex
 			
 			((ImageView)findViewById(R.id.status_icon)).setImageResource(
 					PactrackDroid.getStatusImage(parcel, parcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_STATUSCODE)));
+			updateAutoUpdateView(R.id.status_icon, parcel.getInt(parcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_AUTO)) == 1);
 
 			Cursor eventCursor = mDbAdapter.fetchEvents(mRowId);
 			startManagingCursor(eventCursor);
@@ -269,11 +272,19 @@ public class ParcelView extends DialogAwareListActivity implements RefreshContex
 				new SimpleCursorAdapter(this, R.layout.event_row, eventCursor, from, to);
 			setListAdapter(eventAdapter);
 		} catch (Exception e) {
+			Log.d(TAG, "Database error", e);
 			PactrackDroid.dbErrorDialog(this);
 		}
 	}
 
 	private TextView findTextView(int resId) {
 		return (TextView)findViewById(resId);
+	}
+
+	@Override
+	public void updateAutoUpdateView(int position, boolean value) {
+		ImageView icon = (ImageView)findViewById(position);
+		icon.getDrawable().setAlpha((value ? 255 : 70));
+		icon.invalidate();
 	}
 }

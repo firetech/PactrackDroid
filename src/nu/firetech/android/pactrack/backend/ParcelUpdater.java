@@ -32,8 +32,8 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable, Contex
 		new Thread(new ParcelUpdater(workParcels, ctx)).start();
 	}
 
-	public static void updateAll(final RefreshContext ctx, ParcelDbAdapter dbAdapter) {
-		final Cursor parcel = dbAdapter.fetchAllParcels();
+	public static void updateAll(boolean autoOnly, final RefreshContext ctx, ParcelDbAdapter dbAdapter) {
+		final Cursor parcel = dbAdapter.fetchAllParcels(autoOnly);
 		if (parcel == null) {
 			PactrackDroid.dbErrorDialog((Context)ctx);
 			return;

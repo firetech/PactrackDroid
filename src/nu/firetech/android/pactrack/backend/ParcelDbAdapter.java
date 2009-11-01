@@ -48,6 +48,7 @@ public class ParcelDbAdapter {
 	public static final String KEY_UPDATE = "last_update";
 	public static final String KEY_OK_UPDATE = "last_successful_update";
 	public static final String KEY_ERROR = "error_code";
+	public static final String KEY_AUTO = "auto_included";
 
 	//Positions table
 	public static final String KEY_FOREIGN = "parcel_id";
@@ -64,7 +65,7 @@ public class ParcelDbAdapter {
 	private static final String DATABASE_NAME = "parcels.db";
 	private static final String PARCEL_TABLE = "parcels";
 	private static final String EVENT_TABLE= "events";
-	private static final int DATABASE_VERSION = 3;
+	private static final int DATABASE_VERSION = 4;
 
 
 	private final Context mCtx;
@@ -89,7 +90,8 @@ public class ParcelDbAdapter {
 					+KEY_STATUSCODE+" integer, "
 					+KEY_UPDATE+" varchar(19), "
 					+KEY_OK_UPDATE+" varchar(19), "
-					+KEY_ERROR+" integer default "+Error.NONE+");");
+					+KEY_ERROR+" integer default "+Error.NONE+", "
+					+KEY_AUTO+" integer(1) default 1);");
 			db.execSQL("create table "+EVENT_TABLE
 					+ " ("+KEY_ROWID+" integer primary key autoincrement, "
 					+KEY_FOREIGN+" integer not null,"
@@ -115,6 +117,10 @@ public class ParcelDbAdapter {
 			if (oldVersion < 3) {
 				db.execSQL("ALTER TABLE "+PARCEL_TABLE+" ADD "+KEY_STATUSCODE+" integer");
 				oldVersion = 3;
+			}
+			if (oldVersion < 4) {
+				db.execSQL("ALTER TABLE "+PARCEL_TABLE+" ADD "+KEY_AUTO+" integer(1) default 1");
+				oldVersion = 4;
 			}
 			
 			if (oldVersion == newVersion) {
@@ -147,10 +153,10 @@ public class ParcelDbAdapter {
 		return (mDbHelper != null);
 	}
 	
-	public long getNumParcels() {
+	public long getNumAutoParcels() {
 		Cursor data = mDb.query(PARCEL_TABLE,
 				new String[] { "COUNT("+KEY_ROWID+") AS "+KEY_CUSTOM },
-				null, null, null, null, null);
+				KEY_AUTO + "=1", null, null, null, null);
 		data.moveToFirst();
 		long count = data.getLong(data.getColumnIndexOrThrow(KEY_CUSTOM));
 		data.close();
@@ -165,7 +171,7 @@ public class ParcelDbAdapter {
 		long rowId = mDb.insert(PARCEL_TABLE, null, initialValues);
 
 		// Only start the service if there was no previous parcel in the database
-		if (rowId != -1 && getNumParcels() < 2) {
+		if (rowId != -1 && getNumAutoParcels() < 2) {
 			ServiceStarter.startService(mCtx, null);
 		}
 
@@ -179,7 +185,7 @@ public class ParcelDbAdapter {
 			mDb.delete(EVENT_TABLE, KEY_FOREIGN + "=" + rowId, null);
 		
 			// Stop the service if database is empty
-			if (getNumParcels() < 1) {
+			if (getNumAutoParcels() < 1) {
 				// We can bypass the preference lookup since we want to stop the service here
 				ServiceStarter.startService(mCtx, null, 0);
 			}
@@ -188,7 +194,7 @@ public class ParcelDbAdapter {
 		return deleted;
 	}
 
-	public Cursor fetchAllParcels() {
+	public Cursor fetchAllParcels(boolean autoOnly) {
 		return mDb.query(PARCEL_TABLE,
 				new String[] {
 					KEY_ROWID,
@@ -202,8 +208,9 @@ public class ParcelDbAdapter {
 					KEY_STATUSCODE,
 					KEY_UPDATE,
 					KEY_OK_UPDATE,
-					KEY_ERROR
-				}, null, null, null, null, KEY_PARCEL);
+					KEY_ERROR,
+					KEY_AUTO
+				}, (autoOnly ? KEY_AUTO + "=1" : null), null, null, null, KEY_PARCEL);
 	}
 
 	public Cursor fetchParcel(long rowId) throws SQLException {
@@ -221,8 +228,9 @@ public class ParcelDbAdapter {
 						KEY_STATUSCODE,
 						KEY_UPDATE,
 						KEY_OK_UPDATE,
-						KEY_ERROR
-					}, KEY_ROWID + "= " + rowId, null, null, null, null, null);
+						KEY_ERROR,
+						KEY_AUTO
+					}, KEY_ROWID + "=" + rowId, null, null, null, null, null);
 
 		if (parcel != null) {
 			parcel.moveToFirst();
@@ -241,6 +249,35 @@ public class ParcelDbAdapter {
 		}
 
 		return updated;   
+	}
+	
+	public boolean getAutoUpdate(long rowId) {
+		Cursor parcel = mDb.query(PARCEL_TABLE, new String[] { KEY_AUTO }, KEY_ROWID + "=" + rowId, null, null, null, null);
+		parcel.moveToFirst();
+		boolean auto = parcel.getInt(parcel.getColumnIndexOrThrow(KEY_AUTO)) == 1;
+		parcel.close();
+		
+		return auto;
+	}
+	
+	public boolean setAutoUpdate(long rowId, boolean newValue) {
+		ContentValues args = new ContentValues();
+		args.put(KEY_AUTO, newValue);
+		
+		boolean updated = mDb.update(PARCEL_TABLE, args, KEY_ROWID + "=" + rowId, null) > 0;
+		
+		if (updated) {
+			long numAutoParcels = getNumAutoParcels();
+			if (newValue && numAutoParcels < 2) { // Start the service if this is a "new" parcel
+				ServiceStarter.startService(mCtx, null);
+				
+			} else if (!newValue && numAutoParcels < 1) { // Stop the service if database is "empty"
+				// We can bypass the preference lookup since we want to stop the service here
+				ServiceStarter.startService(mCtx, null, 0);
+			}
+		}
+		
+		return updated;
 	}
 
 	public Cursor fetchEvents(long parcelId) {

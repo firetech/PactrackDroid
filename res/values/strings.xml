@@ -26,6 +26,9 @@
 	<string name="menu_settings">Inställningar</string>
 	<string name="menu_delete">Ta bort</string>
 	<string name="menu_rename">Redigera kolli-ID</string>
+	<string name="menu_parcel_options">Kolli-inställningar</string>
+	
+	<string name="menu_auto_include">Uppdatera automatiskt</string>
 
 	<string name="parcelid">Kolli-ID</string>
 	<string name="empty">Inga kollin inlagda</string>

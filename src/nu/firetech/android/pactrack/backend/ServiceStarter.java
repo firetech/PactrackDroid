@@ -55,7 +55,7 @@ public class ServiceStarter extends BroadcastReceiver {
 		
 		ConnectivityManager cm = (ConnectivityManager)ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
 		
-		if (dbAdapter != null && dbAdapter.getNumParcels() < 1) {
+		if (dbAdapter != null && dbAdapter.getNumAutoParcels() < 1) {
 			interval = 0;
 		}
 

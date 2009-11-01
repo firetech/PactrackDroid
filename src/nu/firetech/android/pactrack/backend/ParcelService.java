@@ -26,7 +26,7 @@ public class ParcelService extends Service implements RefreshContext {
 		super.onStart(intent, startId);
 
 		Log.d(TAG, "Automatic update initiated");
-		ParcelUpdater.updateAll(this, mDbAdapter);
+		ParcelUpdater.updateAll(true, this, mDbAdapter);
 	}
 
 	@Override
