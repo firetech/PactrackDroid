@@ -31,6 +31,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.text.InputType;
+import android.text.Selection;
 import android.text.method.NumberKeyListener;
 import android.view.View;
 import android.view.Window;
@@ -38,14 +39,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.view.WindowManager.LayoutParams;
 
-public class ParcelIdDialog extends Dialog implements
-		DialogAwareListActivity.Dialog {
-
+public class ParcelIdDialog extends Dialog implements DialogAwareListActivity.Dialog {
+	private static final String KEY_SELECTION_START = "selection_start";
+	private static final String KEY_SELECTION_END = "selection_end";
+	
 	private EditText mParcelText;
 	private Long mRowId;
 	private ParcelDbAdapter mDbAdapter;
 	private boolean mCloseDbAdapter = false;
 	private String mInitialText;
+	private int mInitialSelectionStart;
+	private int mInitialSelectionEnd;
 
 	private AlertDialog mErrorDialog;
 
@@ -62,6 +66,8 @@ public class ParcelIdDialog extends Dialog implements
 				(dialogData.containsKey(ParcelDbAdapter.KEY_ROWID) ? dialogData.getLong(ParcelDbAdapter.KEY_ROWID) : null),
 				dbAdapter);
 		d.mInitialText = dialogData.getString(ParcelDbAdapter.KEY_PARCEL);
+		d.mInitialSelectionStart = dialogData.getInt(KEY_SELECTION_START);
+		d.mInitialSelectionEnd = dialogData.getInt(KEY_SELECTION_END);
 		d.mCloseDbAdapter = true;
 		d.show();
 	}
@@ -77,6 +83,7 @@ public class ParcelIdDialog extends Dialog implements
 		mDbAdapter = dbAdapter;
 
 		mInitialText = null;
+		mInitialSelectionStart = mInitialSelectionEnd = 0;
 
 		context.addDialog(this);
 		setOnDismissListener(new OnDismissListener() {
@@ -150,16 +157,16 @@ public class ParcelIdDialog extends Dialog implements
 		}
 
 		if (mRowId != null && mInitialText == null) {
-			if (savedInstanceState != null
-					&& savedInstanceState
-							.containsKey(ParcelDbAdapter.KEY_PARCEL)) {
-				mInitialText = savedInstanceState
-						.getString(ParcelDbAdapter.KEY_PARCEL);
+			if (savedInstanceState != null && savedInstanceState.containsKey(ParcelDbAdapter.KEY_PARCEL)) {
+				mInitialText = savedInstanceState.getString(ParcelDbAdapter.KEY_PARCEL);
 			} else {
 				Cursor parcel = mDbAdapter.fetchParcel(mRowId);
-				mInitialText = parcel.getString(parcel
-						.getColumnIndexOrThrow(ParcelDbAdapter.KEY_PARCEL));
+				mInitialText = parcel.getString(parcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_PARCEL));
 				parcel.close();
+			}
+			if (savedInstanceState != null && savedInstanceState.containsKey(KEY_SELECTION_START) && savedInstanceState.containsKey(KEY_SELECTION_END)) {
+				mInitialSelectionStart = savedInstanceState.getInt(KEY_SELECTION_START);
+				mInitialSelectionEnd = savedInstanceState.getInt(KEY_SELECTION_END);
 			}
 		}
 
@@ -167,6 +174,8 @@ public class ParcelIdDialog extends Dialog implements
 			mInitialText = "";
 		}
 		mParcelText.setText(mInitialText);
+		
+		Selection.setSelection(mParcelText.getText(), mInitialSelectionStart, mInitialSelectionEnd);
 	}
 
 	@Override
@@ -178,6 +187,8 @@ public class ParcelIdDialog extends Dialog implements
 		}
 		outState.putString(ParcelDbAdapter.KEY_PARCEL, mParcelText.getText()
 				.toString());
+		outState.putInt(KEY_SELECTION_START, Selection.getSelectionStart(mParcelText.getText()));
+		outState.putInt(KEY_SELECTION_END, Selection.getSelectionEnd(mParcelText.getText()));
 		return outState;
 	}
 
