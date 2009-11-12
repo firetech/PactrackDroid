@@ -22,6 +22,8 @@
 	android:orientation="vertical" android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
 
+	<Button android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:text="@string/scan_barcode" android:id="@+id/barcode" style="?android:attr/buttonStyleSmall"/>
 	<EditText android:id="@+id/parcelid"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content" />

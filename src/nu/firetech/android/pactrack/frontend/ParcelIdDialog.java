@@ -20,9 +20,10 @@
 
 package nu.firetech.android.pactrack.frontend;
 
+import com.google.zxing.integration.android.IntentResult;
+
 import nu.firetech.android.pactrack.R;
 import nu.firetech.android.pactrack.backend.ParcelDbAdapter;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -39,7 +40,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.view.WindowManager.LayoutParams;
 
-public class ParcelIdDialog extends Dialog implements DialogAwareListActivity.Dialog {
+public class ParcelIdDialog extends Dialog implements DialogAwareListActivity.Dialog, BarcodeListener {
 	private static final String KEY_SELECTION_START = "selection_start";
 	private static final String KEY_SELECTION_END = "selection_end";
 	
@@ -53,13 +54,13 @@ public class ParcelIdDialog extends Dialog implements DialogAwareListActivity.Di
 
 	private AlertDialog mErrorDialog;
 
-	public static void show(final DialogAwareListActivity context, Long rowId,
+	public static void show(final BarcodeListeningListActivity context, Long rowId,
 			ParcelDbAdapter dbAdapter) {
 		ParcelIdDialog d = new ParcelIdDialog(context, rowId, dbAdapter);
 		d.show();
 	}
 
-	public static void show(final DialogAwareListActivity context, Bundle dialogData) {
+	public static void show(final BarcodeListeningListActivity context, Bundle dialogData) {
 		ParcelDbAdapter dbAdapter = new ParcelDbAdapter(context);
 		dbAdapter.open();
 		ParcelIdDialog d = new ParcelIdDialog(context,
@@ -72,11 +73,11 @@ public class ParcelIdDialog extends Dialog implements DialogAwareListActivity.Di
 		d.show();
 	}
 
-	public ParcelIdDialog(final DialogAwareListActivity context, Long rowId,
+	public ParcelIdDialog(final BarcodeListeningListActivity context, Long rowId,
 			ParcelDbAdapter dbAdapter) {
 		super(context);
-		if (context instanceof Activity) {
-			setOwnerActivity((Activity)context);
+		if (context instanceof BarcodeListeningListActivity) {
+			setOwnerActivity((BarcodeListeningListActivity)context);
 		}
 		
 		mRowId = rowId;
@@ -147,10 +148,12 @@ public class ParcelIdDialog extends Dialog implements DialogAwareListActivity.Di
 			}
 		});
 
+		Button scanButton = (Button) findViewById(R.id.barcode);
+		scanButton.setOnClickListener(new ScanButtonListener());
 		Button okButton = (Button) findViewById(R.id.ok);
 		okButton.setOnClickListener(new OkListener());
 		Button cancelButton = (Button) findViewById(R.id.cancel);
-		cancelButton.setOnClickListener(new ButtonListener());
+		cancelButton.setOnClickListener(new ClosingButtonListener());
 
 		if (savedInstanceState != null) {
 			mRowId = savedInstanceState.getLong(ParcelDbAdapter.KEY_ROWID);
@@ -192,14 +195,23 @@ public class ParcelIdDialog extends Dialog implements DialogAwareListActivity.Di
 		return outState;
 	}
 
-	private class ButtonListener implements android.view.View.OnClickListener {
+	private class ScanButtonListener implements android.view.View.OnClickListener {
+		@Override
+		public void onClick(View v) {
+			if (getOwnerActivity() != null) {
+				((BarcodeListeningListActivity)getOwnerActivity()).initiateScan(ParcelIdDialog.this); 	
+			}
+		}
+	}
+
+	private class ClosingButtonListener implements android.view.View.OnClickListener {
 		@Override
 		public void onClick(View v) {
 			ParcelIdDialog.this.dismiss();
 		}
 	}
 
-	private class OkListener extends ButtonListener {
+	private class OkListener extends ClosingButtonListener {
 		@Override
 		public void onClick(View v) {
 			String parcel = mParcelText.getText().toString();
@@ -242,11 +254,17 @@ public class ParcelIdDialog extends Dialog implements DialogAwareListActivity.Di
 
 	@Override
 	public void onContextChange(Context newContext) {
+		((BarcodeListeningListActivity)newContext).setBarcodeListener(this);
 	}
 
 	@Override
 	public void onContextDestroy(Context oldContext) {
 		dismiss();
+	}
+
+	@Override
+	public void handleBarcode(IntentResult barcode) {
+		mParcelText.setText(barcode.getContents());
 	}
 
 }

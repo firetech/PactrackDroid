@@ -39,6 +39,10 @@
 
 	<string name="yes">Ja</string>
 	<string name="no">Nej</string>
+	
+	<string name="scan_barcode">Scanna streckkod</string>
+	<string name="install_barcode_title">Installera Barcode Scanner?</string>
+	<string name="install_barcode_message">Den här funktionen kräver Barcode Scanner. Vill du installera det?</string>
 
 	<string name="go_homepage">Hemsida</string>
 

@@ -48,7 +48,7 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
-public class PactrackDroid extends DialogAwareListActivity implements RefreshContext, ParcelOptionsMenu.UpdateableView {
+public class PactrackDroid extends BarcodeListeningListActivity implements RefreshContext, ParcelOptionsMenu.UpdateableView {
 	private static final int ABOUT_ID = Menu.FIRST;
 	private static final int REFRESH_ID = Menu.FIRST + 1;
 	private static final int SETTINGS_ID = Menu.FIRST + 2;

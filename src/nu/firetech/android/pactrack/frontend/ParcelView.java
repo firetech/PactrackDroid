@@ -43,7 +43,7 @@ import android.widget.LinearLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
-public class ParcelView extends DialogAwareListActivity implements RefreshContext, ParcelOptionsMenu.UpdateableView {
+public class ParcelView extends BarcodeListeningListActivity implements RefreshContext, ParcelOptionsMenu.UpdateableView {
 	private static final String TAG = "<PactrackDroid> ParcelView";
 	
 	public static final String FORCE_REFRESH = "force_update";

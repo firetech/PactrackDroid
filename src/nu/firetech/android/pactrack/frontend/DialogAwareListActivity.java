@@ -45,7 +45,7 @@ public class DialogAwareListActivity extends ListActivity {
 			for (int i = 0; i < dialogs.length; i++) {
 				try {
 					Class<?> c = Class.forName(dialogs[i]); 
-					Method m = c.getMethod("show", DialogAwareListActivity.class, Bundle.class);
+					Method m = getShowMethodForClass(c);
 					m.invoke(c, this, savedInstanceState.getBundle(String.format(KEY_DIALOG_DATA, i)));
 				} catch (Exception e) {} // Ignore errors, null pointers for example.
 			}
@@ -60,6 +60,10 @@ public class DialogAwareListActivity extends ListActivity {
     	}
 	}
 	
+	protected Method getShowMethodForClass(Class<?> c) throws NoSuchMethodException {
+		return c.getMethod("show", DialogAwareListActivity.class, Bundle.class);
+	}
+
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
