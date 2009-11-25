@@ -69,7 +69,7 @@ public class ParcelXMLParser extends DefaultHandler {
 		} catch (IllegalArgumentException e) {
 			Log.d(TAG, "MULTI_PARCEL error", e);
 			return new Parcel(Error.MULTI_PARCEL);
-		} catch (IndexOutOfBoundsException e) {
+		} catch (NoSuchFieldError e) {
 			Log.d(TAG, "NOT_FOUND error", e);
 			return new Parcel(Error.NOT_FOUND);
 		} catch (Exception e) { //Other errors are server errors
@@ -125,7 +125,7 @@ public class ParcelXMLParser extends DefaultHandler {
 			throw new IllegalArgumentException();
 		} else if (lastTag.equals("internalstatus") && contents.equals("0")) {
 			//Parcel doesn't exist.
-			throw new IndexOutOfBoundsException();
+			throw new NoSuchFieldError();
 
 		// Get parcel fields
 		} else if (!mInEvent && (lastTag.equals("customername") ||
