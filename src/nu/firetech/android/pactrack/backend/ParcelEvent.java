@@ -26,6 +26,7 @@ public class ParcelEvent {
 	private String mLocation;
 	private String mDescription;
 	private String mTime;
+	private boolean mError = false;
 	
 	ParcelEvent(HashMap<String, String> eventData) {
 		mLocation = eventData.get("location");
@@ -43,6 +44,11 @@ public class ParcelEvent {
     		.append(':')
     		.append(time.substring(2, 4))
 			.toString();
+		
+		if (eventData.containsKey("errorevent") &&
+				eventData.get("errorevent").equals("true")) {
+			mError = true;
+		}
 	}
 	
 ////////////////////////////////////////////////////////////////////////////////
@@ -57,5 +63,9 @@ public class ParcelEvent {
 
 	public String getTime() {
 		return mTime;
+	}
+	
+	public boolean isError() {
+		return mError;
 	}
 }

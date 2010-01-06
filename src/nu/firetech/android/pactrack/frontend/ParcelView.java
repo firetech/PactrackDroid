@@ -264,12 +264,30 @@ public class ParcelView extends BarcodeListeningListActivity implements RefreshC
 			Cursor eventCursor = mDbAdapter.fetchEvents(mRowId);
 			startManagingCursor(eventCursor);
 
-			String[] from = new String[]{ParcelDbAdapter.KEY_CUSTOM, ParcelDbAdapter.KEY_DESC};
+			String[] from = new String[]{ParcelDbAdapter.KEY_CUSTOM, ParcelDbAdapter.KEY_DESC, ParcelDbAdapter.KEY_ERREV};
 
-			int[] to = new int[]{android.R.id.text1, android.R.id.text2};
+			int[] to = new int[]{android.R.id.title, android.R.id.text1, android.R.id.text2};
 
 			SimpleCursorAdapter eventAdapter =
 				new SimpleCursorAdapter(this, R.layout.event_row, eventCursor, from, to);
+
+			eventAdapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
+				@Override
+				public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
+					if (view instanceof TextView && view.getId() == android.R.id.text2) {
+						if (cursor.getInt(columnIndex) == 1) {
+							((TextView)view).setVisibility(View.VISIBLE);
+							((TextView)view).setText(getString(R.string.error_event));
+						} else {
+							((TextView)view).setVisibility(View.GONE);
+						}
+						return true;
+					} else {
+						return false;
+					}
+				}
+			});
+			
 			setListAdapter(eventAdapter);
 		} catch (Exception e) {
 			Log.d(TAG, "Database error", e);

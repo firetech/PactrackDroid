@@ -50,11 +50,12 @@ public class ParcelDbAdapter {
 	public static final String KEY_ERROR = "error_code";
 	public static final String KEY_AUTO = "auto_included";
 
-	//Positions table
+	//Events table
 	public static final String KEY_FOREIGN = "parcel_id";
 	public static final String KEY_LOC = "location";
 	public static final String KEY_DESC = "description";
 	public static final String KEY_TIME = "time";
+	public static final String KEY_ERREV = "error_event";
 
 	//Special
 	public static final String KEY_CUSTOM = "custom_field";
@@ -65,7 +66,7 @@ public class ParcelDbAdapter {
 	private static final String DATABASE_NAME = "parcels.db";
 	private static final String PARCEL_TABLE = "parcels";
 	private static final String EVENT_TABLE= "events";
-	private static final int DATABASE_VERSION = 4;
+	private static final int DATABASE_VERSION = 5;
 
 
 	private final Context mCtx;
@@ -97,7 +98,8 @@ public class ParcelDbAdapter {
 					+KEY_FOREIGN+" integer not null,"
 					+KEY_LOC+" text not null,"
 					+KEY_DESC+" text not null,"
-					+KEY_TIME+" varchar(16) not null);");
+					+KEY_TIME+" varchar(16) not null,"
+					+KEY_ERREV+" integer(1) default 0);");
 
 			// Create an index to efficiently access positions for a particular parcel.
 			db.execSQL("CREATE INDEX idx_positions ON "+EVENT_TABLE+" ("+KEY_FOREIGN+");");
@@ -121,6 +123,10 @@ public class ParcelDbAdapter {
 			if (oldVersion < 4) {
 				db.execSQL("ALTER TABLE "+PARCEL_TABLE+" ADD "+KEY_AUTO+" integer(1) default 1");
 				oldVersion = 4;
+			}
+			if (oldVersion < 5) {
+				db.execSQL("ALTER TABLE "+EVENT_TABLE+" ADD "+KEY_ERREV+" integer(1) default 0");
+				oldVersion = 5;
 			}
 			
 			if (oldVersion == newVersion) {
@@ -286,7 +292,8 @@ public class ParcelDbAdapter {
 					KEY_ROWID,
 					KEY_LOC,
 					KEY_DESC,
-					"("+KEY_TIME+" || ': ' || "+KEY_LOC+") AS "+KEY_CUSTOM
+					"("+KEY_TIME+" || ': ' || "+KEY_LOC+") AS "+KEY_CUSTOM,
+					KEY_ERREV
 				}, KEY_FOREIGN + "=" + parcelId, null, null, null, KEY_TIME+" DESC");
 	}
 
@@ -316,8 +323,9 @@ public class ParcelDbAdapter {
 		// Check for existing event.
 		// We have an index preventing insertion of such events, but relying on that only fills the logs with errors.
 		Cursor existingCheck = mDb.query(EVENT_TABLE, new String[] {KEY_ROWID}, 
-				KEY_FOREIGN+" = "+parcelId+" AND "+KEY_LOC+" = ? AND "+KEY_DESC+" = ? AND "+KEY_TIME+" = ?",
-				new String[] {eventData.getLocation(), eventData.getDescription(), eventData.getTime()}, null, null, null, null);
+				KEY_FOREIGN+" = "+parcelId+" AND "+KEY_LOC+" = ? AND "+KEY_DESC+" = ? AND "+KEY_TIME+" = ? AND "+KEY_ERREV+" = ?",
+				new String[] {eventData.getLocation(), eventData.getDescription(), eventData.getTime(), (eventData.isError() ? "1" : "0")},
+				null, null, null, null);
 		
 		boolean existing = false;
 		if (existingCheck != null) {
@@ -331,6 +339,7 @@ public class ParcelDbAdapter {
 			args.put(KEY_LOC, eventData.getLocation());
 			args.put(KEY_DESC, eventData.getDescription());
 			args.put(KEY_TIME, eventData.getTime());
+			args.put(KEY_ERREV, (eventData.isError() ? 1 : 0));
 	
 			return mDb.insert(EVENT_TABLE, null, args) > 0;
 		} else {

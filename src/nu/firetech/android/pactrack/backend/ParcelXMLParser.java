@@ -84,6 +84,7 @@ public class ParcelXMLParser extends DefaultHandler {
 	private HashMap<String,Object> mData = new HashMap<String,Object>();
 
 	private boolean mInEvent = false;
+	private boolean mInErrorEvent = false;
 	private HashMap<String,String> mEventData = new HashMap<String,String>();
 
 
@@ -97,6 +98,9 @@ public class ParcelXMLParser extends DefaultHandler {
 
 		if (localName.equals("event")) {
 			mInEvent = true;
+		} else if (localName.equals("errorevent")) {
+			mEventData.put("errorevent", "true");
+			mInErrorEvent = true;
 		}
 	}
 
@@ -105,10 +109,18 @@ public class ParcelXMLParser extends DefaultHandler {
 	public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
 		if (!localName.equals(mElementPath.peek())) {
 			throw new SAXException("Unexpected end tag!");
-		} else if (localName.equals("event")) {
-			((ArrayList<ParcelEvent>)mData.get("events")).add(new ParcelEvent(mEventData));
-			mEventData.clear();
+		} else if (localName.equals("event") || localName.equals("errorevent")) {
+			if (mInEvent) {
+				((ArrayList<ParcelEvent>)mData.get("events")).add(new ParcelEvent(mEventData));
+				mEventData.clear();
+			} else if (mInErrorEvent) {
+				((ArrayList<ParcelEvent>)mData.get("events")).add(new ParcelEvent(mEventData));
+				mEventData.clear();
+			} else {
+				throw new SAXException("Unexpected event end tag!");
+			}
 			mInEvent = false;
+			mInErrorEvent = false;
 		}
 
 		mElementPath.pop();
@@ -128,7 +140,7 @@ public class ParcelXMLParser extends DefaultHandler {
 			throw new NoSuchFieldError();
 
 		// Get parcel fields
-		} else if (!mInEvent && (lastTag.equals("customername") ||
+		} else if (!(mInEvent || mInErrorEvent) && (lastTag.equals("customername") ||
 				lastTag.equals("datesent") ||
 				lastTag.equals("actualweight") ||
 				lastTag.equals("receiverzipcode") ||
@@ -139,7 +151,8 @@ public class ParcelXMLParser extends DefaultHandler {
 			mData.put(lastTag, contents);
 		
 		// Get Event fields
-		} else if (mInEvent && (lastTag.equals("location") ||
+		} else if ((mInEvent || mInErrorEvent) &&
+				(lastTag.equals("location") ||
 				lastTag.equals("description") ||
 				lastTag.equals("date") ||
 				lastTag.equals("time"))) {
