@@ -43,10 +43,15 @@ public class ParcelService extends Service implements RefreshContext {
 
 	@Override
 	public void onStart(Intent intent, int startId) {
-		super.onStart(intent, startId);
-
 		Log.d(TAG, "Automatic update initiated");
 		ParcelUpdater.updateAll(true, this, mDbAdapter);
+	}
+	
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
+		//For Android 2.0+, start the service and tell the system that we don't need to stay running.
+		onStart(intent, startId);		
+		return START_NOT_STICKY;
 	}
 
 	@Override
