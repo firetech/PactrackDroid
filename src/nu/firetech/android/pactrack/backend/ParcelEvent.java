@@ -28,12 +28,12 @@ public class ParcelEvent {
 	private String mTime;
 	private boolean mError = false;
 	
-	ParcelEvent(HashMap<String, String> eventData) {
-		mLocation = eventData.get("location");
-		mDescription = eventData.get("description");
+	ParcelEvent(HashMap<String,Object> eventData) {
+		mLocation = (String)eventData.get("location");
+		mDescription = (String)eventData.get("description");
 		
-		String date = eventData.get("date");
-		String time = eventData.get("time");
+		String date = (String)eventData.get("date");
+		String time = (String)eventData.get("time");
 		mTime = new StringBuilder(date.substring(0, 4))
 			.append('-')
 			.append(date.substring(4, 6))
@@ -67,5 +67,9 @@ public class ParcelEvent {
 	
 	public boolean isError() {
 		return mError;
+	}
+	
+	public String toString() {
+		return mTime + ": " + mLocation + " - " + mDescription;
 	}
 }

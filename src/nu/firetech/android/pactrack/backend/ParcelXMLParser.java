@@ -85,7 +85,7 @@ public class ParcelXMLParser extends DefaultHandler {
 
 	private boolean mInEvent = false;
 	private boolean mInErrorEvent = false;
-	private HashMap<String,String> mEventData = new HashMap<String,String>();
+	private HashMap<String,Object> mEventData = new HashMap<String,Object>();
 
 
 	private ParcelXMLParser() {
@@ -130,6 +130,8 @@ public class ParcelXMLParser extends DefaultHandler {
 	public void characters(char ch[], int start, int length) throws SAXException {
 		String lastTag = mElementPath.peek();
 		String contents = new String(ch, start, length);
+		
+		HashMap<String,Object> destHash = null;
 
 		// Handle errors
 		if (lastTag.equals("noofparcelentries") && !contents.equals("1")) {
@@ -148,7 +150,7 @@ public class ParcelXMLParser extends DefaultHandler {
 				lastTag.equals("servicename") ||
 				lastTag.equals("statusdescription") ||
 				lastTag.equals("statuscode"))) {
-			mData.put(lastTag, contents);
+			destHash = mData;
 		
 		// Get Event fields
 		} else if ((mInEvent || mInErrorEvent) &&
@@ -156,7 +158,15 @@ public class ParcelXMLParser extends DefaultHandler {
 				lastTag.equals("description") ||
 				lastTag.equals("date") ||
 				lastTag.equals("time"))) {
-			mEventData.put(lastTag, contents);
+			destHash = mEventData;
 		}
+		
+		if (destHash != null) {
+			if (destHash.containsKey(lastTag)) {
+				contents = (String)destHash.get(lastTag) + contents;
+			}
+			destHash.put(lastTag, contents);
+		}
+		
 	}
 }
