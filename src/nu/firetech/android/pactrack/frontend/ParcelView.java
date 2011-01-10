@@ -139,7 +139,7 @@ public class ParcelView extends BarcodeListeningListActivity implements RefreshC
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		switch(item.getItemId()) {
 		case DELETE_ID:
-			PactrackDroid.deleteParcel(mRowId, this, mDbAdapter, new Runnable() {
+			MainWindow.deleteParcel(mRowId, this, mDbAdapter, new Runnable() {
 				@Override
 				public void run() {
 					finish();					
@@ -263,7 +263,7 @@ public class ParcelView extends BarcodeListeningListActivity implements RefreshC
 			findTextView(R.id.service).setText(parcel.getString(parcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_SERVICE)));
 			
 			((ImageView)findViewById(R.id.status_icon)).setImageResource(
-					PactrackDroid.getStatusImage(parcel, parcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_STATUSCODE)));
+					MainWindow.getStatusImage(parcel, parcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_STATUSCODE)));
 			updateAutoUpdateView(R.id.status_icon, parcel.getInt(parcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_AUTO)) == 1);
 
 			Cursor eventCursor = mDbAdapter.fetchEvents(mRowId);
@@ -296,7 +296,7 @@ public class ParcelView extends BarcodeListeningListActivity implements RefreshC
 			setListAdapter(eventAdapter);
 		} catch (Exception e) {
 			Log.d(TAG, "Database error", e);
-			PactrackDroid.dbErrorDialog(this);
+			MainWindow.dbErrorDialog(this);
 		}
 	}
 

@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import nu.firetech.android.pactrack.R;
 import nu.firetech.android.pactrack.common.ContextListener;
 import nu.firetech.android.pactrack.common.RefreshContext;
-import nu.firetech.android.pactrack.frontend.PactrackDroid;
+import nu.firetech.android.pactrack.frontend.MainWindow;
 import nu.firetech.android.pactrack.frontend.ParcelView;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -57,7 +57,7 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable, Contex
 	public static void updateAll(boolean autoOnly, final RefreshContext ctx, ParcelDbAdapter dbAdapter) {
 		final Cursor parcel = dbAdapter.fetchAllParcels(autoOnly);
 		if (parcel == null) {
-			PactrackDroid.dbErrorDialog((Context)ctx);
+			MainWindow.dbErrorDialog((Context)ctx);
 			return;
 		}
 
