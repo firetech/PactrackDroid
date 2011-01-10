@@ -75,6 +75,11 @@ public class ParcelService extends Service implements RefreshContext {
 	}
 
 	@Override
+	public boolean showsNews() {
+		return false;
+	}
+
+	@Override
 	public IBinder onBind(Intent intent) {
 		return null;
 	}

@@ -26,4 +26,5 @@ public interface RefreshContext {
 	public Handler getProgressHandler();
 	public void startRefreshProgress(int maxValue, ContextListener listener);
 	public void refreshDone();
+	public boolean showsNews();
 }

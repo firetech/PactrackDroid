@@ -34,12 +34,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 public class ParcelUpdater extends BroadcastReceiver implements Runnable, ContextListener {
@@ -194,17 +196,27 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable, Contex
 		Parcel parcelData = ParcelXMLParser.fetch(parcelId);
 
 		mDbAdapter.updateParcelData(rowId, parcelData);
+		
+		Context realCtx = (Context)mCtx;
+		
+		SharedPreferences liveViewPref = PreferenceManager.getDefaultSharedPreferences(realCtx);
+		boolean liveViewEnabled = liveViewPref.getBoolean(realCtx.getString(R.string.key_liveview_announce), false);
 
 		int newEvents = 0;
 		for (ParcelEvent eventData : parcelData.getEvents()) { //loop through events
-			if (mDbAdapter.addEvent(rowId, eventData)) { // if event was new
+			if (mDbAdapter.addEvent(rowId, eventData)) { //if event was new
 				newEvents++;
+				if (!mCtx.showsNews() && liveViewEnabled) {
+					Intent i = new Intent(realCtx.getString(R.string.intent_announce))
+						.putExtra(ParcelDbAdapter.KEY_PARCEL, parcelId)
+						.putExtra(ParcelDbAdapter.KEY_STATUS, eventData.toString())
+						.putExtra(ParcelDbAdapter.KEY_ROWID, rowId);
+					realCtx.startService(i);
+				}
 			}
 		}
 
-		if (newEvents > 0 && !(mCtx instanceof ParcelView)) {
-			Context realCtx = (Context)mCtx;
-
+		if (newEvents > 0 && !mCtx.showsNews()) {
 			Preferences prefs = Preferences.getPreferences(realCtx);
 
 			if (prefs.getNotificationEnabled()) {

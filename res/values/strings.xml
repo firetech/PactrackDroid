@@ -109,6 +109,10 @@
 	<string name="notify_light_offtime_summary">Hur länge lysdioden är släckt i varje cykel (i millisekunder)</string>
 
 	<string name="check_interval_title">Uppdateringsintervall</string>
-	<string name="check_interval_summary">Välj hur ofta automatiska uppdateringar ska göras
-	</string>
+	<string name="check_interval_summary">Välj hur ofta automatiska uppdateringar ska göras</string>
+	<string name="check_interval_summary_disabled">Denna funktion är inte tillgänglig då data i bakgrunden inte är tillåtet!</string>
+	
+	<string name="liveview_enabled_title">LiveView-uppdateringar</string>
+	<string name="liveview_enabled_summary">Skicka nya händelser till LiveView</string>
+	<string name="liveview_enabled_summary_disabled">Kräver LiveView™ Application och ett kompatibelt tillbehör!</string>
 </resources>

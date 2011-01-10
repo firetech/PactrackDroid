@@ -176,6 +176,11 @@ public class ParcelView extends BarcodeListeningListActivity implements RefreshC
 		updateView(false);
 	}
 
+	@Override
+	public boolean showsNews() {
+		return true;
+	}
+
 	public void updateView(boolean forceRefresh) {
 		((NotificationManager)getSystemService(NOTIFICATION_SERVICE)).cancel(mRowId.hashCode());
 		

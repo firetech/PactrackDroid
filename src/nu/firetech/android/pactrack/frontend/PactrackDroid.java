@@ -164,8 +164,12 @@ public class PactrackDroid extends BarcodeListeningListActivity implements Refre
 
 		setListAdapter(parcels);
 	}
-	
 
+	@Override
+	public boolean showsNews() {
+		return false;
+	}
+	
 	@Override
 	public void updateAutoUpdateView(int position, boolean value) {
 		ImageView icon = (ImageView)getListView().getChildAt(position).findViewById(android.R.id.icon);

@@ -60,4 +60,8 @@
 
 		</PreferenceScreen>
 	</PreferenceScreen>
+	
+	<CheckBoxPreference android:key="@string/key_liveview_announce"
+		android:title="@string/liveview_enabled_title" android:summary="@string/liveview_enabled_summary" 
+		android:defaultValue = "false"/>
 </PreferenceScreen>

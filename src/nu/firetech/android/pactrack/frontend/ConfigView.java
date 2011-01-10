@@ -20,12 +20,20 @@
 
 package nu.firetech.android.pactrack.frontend;
 
+import java.util.List;
+
+import com.sonyericsson.extras.liveview.plugins.PluginConstants;
+
 import nu.firetech.android.pactrack.R;
 import nu.firetech.android.pactrack.backend.ParcelDbAdapter;
 import nu.firetech.android.pactrack.backend.ServiceStarter;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -48,6 +56,11 @@ public class ConfigView extends PreferenceActivity {
 		
 		ListPreference checkIntervalPref = (ListPreference)findPreference(getString(R.string.key_check_interval));
 		checkIntervalPref.setEnabled(((ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE)).getBackgroundDataSetting());
+		if (!checkIntervalPref.isEnabled()) {
+			checkIntervalPref.setSummary(R.string.check_interval_summary_disabled);
+		} else {
+			checkIntervalPref.setSummary(R.string.check_interval_summary);
+		}
 		
 		mDbAdapter = new ParcelDbAdapter(this);
 		mDbAdapter.open();
@@ -92,6 +105,18 @@ public class ConfigView extends PreferenceActivity {
 		lightOntimePref.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
 		EditTextPreference lightOfftimePref = (EditTextPreference)findPreference(getString(R.string.key_notify_light_offtime));
 		lightOfftimePref.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+		
+		CheckBoxPreference liveViewPref = (CheckBoxPreference)findPreference(getString(R.string.key_liveview_announce));
+		Intent i = new Intent(PluginConstants.LIVEVIEW_SERVICE_BIND_INTENT);
+		List<ResolveInfo> list = getPackageManager().queryIntentServices(i, PackageManager.MATCH_DEFAULT_ONLY);  
+        if (list.size() == 0) {
+        	liveViewPref.setEnabled(false);
+        	liveViewPref.setChecked(false);
+        	liveViewPref.setSummary(R.string.liveview_enabled_summary_disabled);
+        } else {
+        	liveViewPref.setEnabled(true);
+        	liveViewPref.setSummary(R.string.liveview_enabled_summary);
+        }
 	}
 	
 
