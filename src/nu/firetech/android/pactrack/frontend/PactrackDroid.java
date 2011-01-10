@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Joakim Andersson
+ * Copyright (C) 2011 Joakim Andersson
  * 
  * This file is part of PactrackDroid, an Android application to keep
  * track of parcels sent with the Swedish mail service (Posten).
@@ -88,7 +88,7 @@ public class PactrackDroid extends BarcodeListeningListActivity implements Refre
 			.append(" - ")
 			.append(getString(R.string.version_name))
 			.append(spacer)
-			.append("Copyright (C) 2009 Joakim Andersson")
+			.append("Copyright (C) 2011 Joakim Andersson")
 			.append(spacer)
 			.append("This program comes with ABSOLUTELY NO WARRANTY.\nThis is free software, licensed under the GNU General Public License; version 2.")
 			.toString();
