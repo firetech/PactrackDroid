@@ -28,6 +28,7 @@ import nu.firetech.android.pactrack.common.Error;
 class Parcel {
 	private int mErrorCode;
 
+	private String mParcel;
 	private String mCustomer;
 	private String mSent;
 	private double mWeight;
@@ -44,6 +45,8 @@ class Parcel {
 
 	@SuppressWarnings("unchecked")
 	Parcel(HashMap<String, Object> data) {
+		mParcel = (String)data.get("parcel");
+		
 		mCustomer = (String)data.get("customername");
 		mPostal = new StringBuilder((String)data.get("receiverzipcode"))
 				.append(' ')
@@ -85,6 +88,10 @@ class Parcel {
 	
 	public int getError() {
 		return mErrorCode;
+	}
+
+	public String getParcel() {
+		return mParcel;
 	}
 
 	public String getCustomer() {

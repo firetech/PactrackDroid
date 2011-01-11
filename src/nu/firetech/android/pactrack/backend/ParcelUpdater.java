@@ -196,6 +196,9 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable, Contex
 		Parcel parcelData = ParcelXMLParser.fetch(parcelId);
 
 		mDbAdapter.updateParcelData(rowId, parcelData);
+		if (parcelData.getParcel() != null) {
+			parcelId = parcelData.getParcel();
+		}
 		
 		Context realCtx = (Context)mCtx;
 		
@@ -203,6 +206,7 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable, Contex
 		boolean liveViewEnabled = liveViewPref.getBoolean(realCtx.getString(R.string.key_liveview_announce), false);
 
 		int newEvents = 0;
+		ParcelEvent lastEvent = null;
 		for (ParcelEvent eventData : parcelData.getEvents()) { //loop through events
 			if (mDbAdapter.addEvent(rowId, eventData)) { //if event was new
 				newEvents++;
@@ -213,6 +217,7 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable, Contex
 						.putExtra(ParcelDbAdapter.KEY_ROWID, rowId);
 					realCtx.startService(i);
 				}
+				lastEvent = eventData;
 			}
 		}
 
@@ -226,8 +231,11 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable, Contex
 				Intent i = new Intent(realCtx, ParcelView.class).putExtra(ParcelDbAdapter.KEY_ROWID, rowId);
 				PendingIntent pi = PendingIntent.getActivity(realCtx, rowId.hashCode(), i, 0);
 
-				stringId = (newEvents > 1 ? R.string.notification_message : R.string.notification_message_one);
-				n.setLatestEventInfo(realCtx.getApplicationContext(), realCtx.getString(R.string.parcel_title, parcelId), realCtx.getString(stringId, newEvents), pi);
+				String eventInfo = realCtx.getString(R.string.notification_message, newEvents);
+				if (newEvents == 1) {
+					eventInfo = lastEvent.toString();
+				}
+				n.setLatestEventInfo(realCtx.getApplicationContext(), realCtx.getString(R.string.parcel_title, parcelId), eventInfo, pi);
 
 				n.sound = prefs.getNotificationSound();
 				if (prefs.getNotificationLight()) {

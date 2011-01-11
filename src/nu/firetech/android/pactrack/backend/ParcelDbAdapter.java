@@ -304,6 +304,9 @@ public class ParcelDbAdapter {
 		String now = String.format("%tF %tT", c, c);
 		
 		if (parcelData.getError() == Error.NONE) {
+			if (parcelData.getParcel() != null) {
+				args.put(KEY_PARCEL, parcelData.getParcel());
+			}
 			args.put(KEY_CUSTOMER, parcelData.getCustomer());
 			args.put(KEY_SENT, parcelData.getSent());
 			args.put(KEY_WEIGHT, parcelData.getWeight());

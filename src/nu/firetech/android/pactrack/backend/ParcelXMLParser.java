@@ -96,7 +96,12 @@ public class ParcelXMLParser extends DefaultHandler {
 	public void startElement(String namespaceURI, String localName, String qName, Attributes atts) {
 		mElementPath.push(localName);
 
-		if (localName.equals("event")) {
+		if (localName.equals("parcel")) {
+			String parcel = atts.getValue("id");
+			if (parcel != null) {
+				mData.put("parcel", parcel);
+			}
+	    } else if (localName.equals("event")) {
 			mInEvent = true;
 		} else if (localName.equals("errorevent")) {
 			mEventData.put("errorevent", "true");

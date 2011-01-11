@@ -86,7 +86,6 @@
 
 	<string name="notification_ticker_one">Ny händelse för kolli %s</string>
 	<string name="notification_ticker">Nya händelser för kolli %s</string>
-	<string name="notification_message_one">%d ny händelse</string>
 	<string name="notification_message">%d nya händelser</string>
 
 	<string name="notify_on_title">Aviseringar</string>
