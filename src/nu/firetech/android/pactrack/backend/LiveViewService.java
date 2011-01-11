@@ -47,7 +47,6 @@ import nu.firetech.android.pactrack.frontend.ParcelView;
 
 import com.sonyericsson.extras.liveview.plugins.AbstractPluginService;
 import com.sonyericsson.extras.liveview.plugins.PluginConstants;
-import com.sonyericsson.extras.liveview.plugins.PluginUtils;
 
 import android.content.ComponentName;
 import android.content.Intent;
@@ -57,22 +56,6 @@ import android.os.IBinder;
 import android.util.Log;
 
 public class LiveViewService extends AbstractPluginService {
-    // Template menu icon file name.
-    private static final String TEMPLATE_ANNOUNCE_ICON = "plugin_announce_icon.png";
-
-    // Announce icon that will be shown in LiveView unit
-    protected String mAnnounceIcon = null;
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        Log.d(PluginConstants.LOG_TAG, "Enter AbstractPluginService.onCreate.");
-
-        // Load menu icon
-        int iconId = PluginUtils.getDynamicResourceId(this, "liveview_announce", "drawable");
-        mAnnounceIcon = PluginUtils.storeIconToFile(this, getResources(), iconId, TEMPLATE_ANNOUNCE_ICON);
-    }
-    
 	/**
 	 * Plugin is just sending notifications.
 	 */
@@ -116,7 +99,7 @@ public class LiveViewService extends AbstractPluginService {
 	private void sendAnnounce(String parcelId, String body, long rowId) {
 		try {
 			if((mLiveViewAdapter != null) && mSharedPreferences.getBoolean(PluginConstants.PREFERENCES_PLUGIN_ENABLED, false)) {
-			    mLiveViewAdapter.sendAnnounce(mPluginId, mAnnounceIcon, parcelId, body, System.currentTimeMillis(), String.valueOf(rowId));
+			    mLiveViewAdapter.sendAnnounce(mPluginId, mMenuIcon, parcelId, body, System.currentTimeMillis(), String.valueOf(rowId));
 				Log.d(PluginConstants.LOG_TAG, "Announce sent to LiveView");
 			} else {
 				Log.d(PluginConstants.LOG_TAG, "LiveView not reachable");
