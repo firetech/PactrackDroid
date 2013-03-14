@@ -114,17 +114,9 @@ public class ParcelIdDialog extends Dialog implements DialogAwareListActivity.Di
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Window w = getWindow();
-		w.requestFeature(Window.FEATURE_LEFT_ICON);
 
 		setContentView(R.layout.parcel_id_dialog);
 		setTitle(R.string.parcelid);
-
-		w.setFeatureDrawableResource(Window.FEATURE_LEFT_ICON,
-				R.drawable.ic_dialog_menu_generic);
-		LayoutParams params = w.getAttributes();
-		params.width = LayoutParams.FILL_PARENT;
-		w.setAttributes(params);
 
 		mParcelText = (EditText) findViewById(R.id.parcelid);
 		mParcelText.setKeyListener(new NumberKeyListener() {
