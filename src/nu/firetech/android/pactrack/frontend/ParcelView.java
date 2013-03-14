@@ -128,10 +128,10 @@ public class ParcelView extends BarcodeListeningListActivity implements RefreshC
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
-		menu.add(0, DELETE_ID, 0, R.string.menu_delete).setIcon(android.R.drawable.ic_menu_delete);
-		menu.add(0, RENAME_ID, 0, R.string.menu_rename).setIcon(android.R.drawable.ic_menu_edit);
+		menu.add(0, DELETE_ID, 0, R.string.menu_delete).setIcon(android.R.drawable.ic_menu_delete).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+		menu.add(0, RENAME_ID, 0, R.string.menu_rename).setIcon(android.R.drawable.ic_menu_edit).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 		new ParcelOptionsMenu(menu, true, mRowId, R.id.status_icon, mDbAdapter, this);
-		menu.add(0, REFRESH_ID, 0, R.string.menu_refresh).setIcon(R.drawable.ic_menu_refresh).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+		menu.add(0, REFRESH_ID, 0, R.string.menu_refresh).setIcon(R.drawable.ic_menu_refresh).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		return true;
 	}
 
@@ -216,7 +216,7 @@ public class ParcelView extends BarcodeListeningListActivity implements RefreshC
 				new AlertDialog.Builder(this)
 				.setTitle(R.string.parcel_problem)
 				.setMessage(getString(R.string.parcel_error_message, status))
-				.setIcon(android.R.drawable.ic_dialog_alert)
+				.setIconAttribute(android.R.attr.alertDialogIcon)
 				.setPositiveButton(R.string.yes, new OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -236,9 +236,7 @@ public class ParcelView extends BarcodeListeningListActivity implements RefreshC
 			
 			errorShown = error;
 
-			setTitle(getString(R.string.app_name) + " - " +
-					getString(R.string.parcel_title, parcel.getString(parcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_PARCEL))));
-			
+			setTitle(getString(R.string.parcel_title, parcel.getString(parcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_PARCEL))));
 			String lastUpdate = null, lastOkUpdate = null;
 			int lastUpdateIndex = parcel.getColumnIndex(ParcelDbAdapter.KEY_UPDATE);
 			if (lastUpdateIndex >= 0) {
