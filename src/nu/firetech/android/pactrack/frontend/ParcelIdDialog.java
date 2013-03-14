@@ -98,10 +98,11 @@ public class ParcelIdDialog extends Dialog implements DialogAwareListActivity.Di
 			}
 		});
 
-		mErrorDialog = new AlertDialog.Builder(context).setTitle(
-				R.string.id_error_title).setIcon(
-				android.R.drawable.ic_dialog_alert).setMessage(
-				R.string.id_error_message).setNeutralButton(R.string.ok,
+		mErrorDialog = new AlertDialog.Builder(context)
+			.setTitle(R.string.id_error_title)
+			.setIconAttribute(android.R.attr.alertDialogIcon)
+			.setMessage(R.string.id_error_message)
+			.setNeutralButton(R.string.ok,
 				new OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -150,10 +151,10 @@ public class ParcelIdDialog extends Dialog implements DialogAwareListActivity.Di
 
 		Button scanButton = (Button) findViewById(R.id.barcode);
 		scanButton.setOnClickListener(new ScanButtonListener());
-		Button okButton = (Button) findViewById(R.id.ok);
-		okButton.setOnClickListener(new OkListener());
 		Button cancelButton = (Button) findViewById(R.id.cancel);
 		cancelButton.setOnClickListener(new ClosingButtonListener());
+		Button okButton = (Button) findViewById(R.id.ok);
+		okButton.setOnClickListener(new OkListener());
 
 		if (savedInstanceState != null) {
 			mRowId = savedInstanceState.getLong(ParcelDbAdapter.KEY_ROWID);
