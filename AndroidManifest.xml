@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
  * Copyright (C) 2011 Joakim Andersson
+ * Copyright (C) 2013 blunden
  * 
  * This file is part of PactrackDroid, an Android application to keep
  * track of parcels sent with the Swedish mail service (Posten).
@@ -19,7 +20,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="nu.firetech.android.pactrack" android:versionName="1.4" android:versionCode="1400">
+	package="nu.firetech.android.pactrack" android:versionName="1.4.1" android:versionCode="1410">
 	
 	<application 
 	    android:icon="@drawable/icon"
