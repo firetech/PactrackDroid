@@ -131,7 +131,7 @@ public class ParcelView extends BarcodeListeningListActivity implements RefreshC
 		menu.add(0, DELETE_ID, 0, R.string.menu_delete).setIcon(android.R.drawable.ic_menu_delete);
 		menu.add(0, RENAME_ID, 0, R.string.menu_rename).setIcon(android.R.drawable.ic_menu_edit);
 		new ParcelOptionsMenu(menu, true, mRowId, R.id.status_icon, mDbAdapter, this);
-		menu.add(0, REFRESH_ID, 0, R.string.menu_refresh).setIcon(R.drawable.ic_menu_refresh);
+		menu.add(0, REFRESH_ID, 0, R.string.menu_refresh).setIcon(R.drawable.ic_menu_refresh).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 		return true;
 	}
 
