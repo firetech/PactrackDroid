@@ -25,12 +25,12 @@
 	<application 
 	    android:icon="@drawable/icon"
 	    android:label="@string/app_name"
-	    android:description="@string/app_description">
+	    android:description="@string/app_description" 
+	    android:theme="@style/AppTheme" >
 
 		<activity 
 		    android:label="@string/app_name"
 		    android:name=".frontend.MainWindow"
-		    android:theme="@android:style/Theme.Holo.Light.DarkActionBar"
             android:hardwareAccelerated="true" >
 		    
 			<intent-filter>
@@ -41,12 +41,10 @@
 		<activity 
 		    android:label="@string/app_name"
 		    android:name=".frontend.ParcelView"
-		    android:theme="@android:style/Theme.Holo.Light.DarkActionBar"
             android:hardwareAccelerated="true" />
 		<activity
 		    android:label="@string/app_name"
 		    android:name=".frontend.ConfigView"
-		    android:theme="@android:style/Theme.Holo.Light.DarkActionBar"
             android:hardwareAccelerated="true" />
 		<receiver android:name=".backend.ServiceStarter">
 			<intent-filter>
