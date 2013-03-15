@@ -51,7 +51,7 @@ public class ConfigView extends PreferenceActivity {
 	{
 		super.onCreate(savedInstanceState);
 		
-		setTitle(getString(R.string.app_name) + " - " + getString(R.string.menu_settings));
+		setTitle(getString(R.string.menu_settings));
 		addPreferencesFromResource(R.layout.preferences);
 		
 		ListPreference checkIntervalPref = (ListPreference)findPreference(getString(R.string.key_check_interval));
