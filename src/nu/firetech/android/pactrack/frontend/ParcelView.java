@@ -33,6 +33,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -66,6 +67,7 @@ public class ParcelView extends BarcodeListeningListActivity implements RefreshC
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.parcel_view);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 
 		mExtended = (LinearLayout)findViewById(R.id.extended);
 		mToggleButton = (Button)findViewById(R.id.extended_toggle);
@@ -158,6 +160,16 @@ public class ParcelView extends BarcodeListeningListActivity implements RefreshC
 		}
 
 		return super.onMenuItemSelected(featureId, item);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch(item.getItemId()) {
+		case android.R.id.home:
+	        NavUtils.navigateUpFromSameTask(this);
+	        return true;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 	
 	@Override
