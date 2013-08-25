@@ -89,6 +89,7 @@ public class MainWindow extends BarcodeListeningListActivity implements RefreshC
 			.append(getString(R.string.version_name))
 			.append(spacer)
 			.append("Copyright (C) 2011 Joakim Andersson")
+			.append("\n")
 			.append("Copyright (C) 2013 blunden")
 			.append(spacer)
 			.append("This program comes with ABSOLUTELY NO WARRANTY.\nThis is free software, licensed under the GNU General Public License; version 2.")
