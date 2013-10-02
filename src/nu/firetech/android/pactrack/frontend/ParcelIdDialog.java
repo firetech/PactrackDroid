@@ -38,6 +38,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.view.WindowManager.LayoutParams;
 
 public class ParcelIdDialog extends Dialog implements DialogAwareListActivity.Dialog, BarcodeListener {
@@ -115,8 +116,9 @@ public class ParcelIdDialog extends Dialog implements DialogAwareListActivity.Di
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		//this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.parcel_id_dialog);
-		setTitle(R.string.parcelid);
+		setTitle(R.string.add_parcel);
 
 		mParcelText = (EditText) findViewById(R.id.parcelid);
 		mParcelText.setKeyListener(new NumberKeyListener() {
@@ -141,7 +143,7 @@ public class ParcelIdDialog extends Dialog implements DialogAwareListActivity.Di
 			}
 		});
 
-		Button scanButton = (Button) findViewById(R.id.barcode);
+		ImageButton scanButton = (ImageButton) findViewById(R.id.barcode);
 		scanButton.setOnClickListener(new ScanButtonListener());
 		Button cancelButton = (Button) findViewById(R.id.cancel);
 		cancelButton.setOnClickListener(new ClosingButtonListener());

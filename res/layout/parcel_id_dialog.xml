@@ -22,13 +22,30 @@
 	android:orientation="vertical" android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
 
-	<Button android:layout_width="fill_parent" android:layout_height="wrap_content"
-		android:text="@string/scan_barcode" android:id="@+id/barcode" style="?android:attr/buttonStyleSmall"/>
-	<EditText android:id="@+id/parcelid" android:hint="@string/parcelid"
-		android:layout_width="fill_parent"
-		android:layout_height="wrap_content" />
+	<LinearLayout
+	    android:orientation="horizontal"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content">
+	    
+		<EditText
+		    android:id="@+id/parcelid"
+		    android:hint="@string/parcelid"
+		    android:layout_weight="1"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content" />
+		<ImageButton 
+		    android:contentDescription="@string/scan_barcode"
+		    android:id="@+id/barcode"
+		    android:src="@drawable/ic_button_barcode"
+		    android:layout_width="40dip"
+		    android:layout_height="40dip"
+		    android:drawablePadding="0dip"
+		    android:layout_marginBottom="2dip"
+		    android:layout_gravity="bottom" 
+		    style="?android:attr/borderlessButtonStyle"/>		
+	</LinearLayout>
 	
-	<!-- This view only adds the top button divider -->
+	<!-- This view only adds the top button divider (hack) -->
 	<View
     	android:layout_width="fill_parent"
     	android:layout_height="1dip"
@@ -48,7 +65,7 @@
 			android:text="@string/cancel"
 			android:id="@+id/cancel"/>
 		
-		<!-- This view only adds the divider between the buttons -->
+		<!-- This view only adds the divider between the buttons (hack) -->
 		<View
     		android:layout_width="1dip"
     		android:layout_height="fill_parent"
