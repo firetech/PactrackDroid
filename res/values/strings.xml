@@ -42,12 +42,12 @@
 	
 	<string name="scan_barcode">Scanna streckkod</string>
 	<string name="install_barcode_title">Installera Barcode Scanner?</string>
-	<string name="install_barcode_message">Den här funktionen kräver Barcode Scanner. Vill du installera det?</string>
+	<string name="install_barcode_message">Den här funktionen kräver Barcode Scanner. Vill du installera den?</string>
 
 	<string name="go_homepage">Hemsida</string>
 
-	<string name="loading">Laddar...</string>
-	<string name="refreshing">Uppdaterar...</string>
+	<string name="loading">Laddar…</string>
+	<string name="refreshing">Uppdaterar…</string>
 
 	<string name="id_error_title">Felaktigt Kolli-ID</string>
 	<string name="id_error_message">Kolli-ID måste vara minst 9 tecken!</string>
