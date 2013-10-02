@@ -31,7 +31,7 @@
 		    android:id="@+id/parcelid"
 		    android:hint="@string/parcelid"
 		    android:layout_weight="1"
-			android:layout_width="fill_parent"
+			android:layout_width="0dip"
 			android:layout_height="wrap_content" />
 		<ImageButton 
 		    android:contentDescription="@string/scan_barcode"
