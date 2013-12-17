@@ -20,18 +20,12 @@
 
 package nu.firetech.android.pactrack.frontend;
 
-import java.util.List;
-
 import nu.firetech.android.pactrack.R;
 import nu.firetech.android.pactrack.backend.ParcelDbAdapter;
 import nu.firetech.android.pactrack.backend.ServiceStarter;
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -46,6 +40,7 @@ import android.view.MenuItem;
 public class ConfigView extends PreferenceActivity {
 	private ParcelDbAdapter mDbAdapter;
 	
+	@SuppressWarnings("deprecation")
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{

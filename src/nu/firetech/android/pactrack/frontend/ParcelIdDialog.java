@@ -20,8 +20,6 @@
 
 package nu.firetech.android.pactrack.frontend;
 
-import com.google.zxing.integration.android.IntentResult;
-
 import nu.firetech.android.pactrack.R;
 import nu.firetech.android.pactrack.backend.ParcelDbAdapter;
 import android.app.AlertDialog;
@@ -35,11 +33,11 @@ import android.text.InputType;
 import android.text.Selection;
 import android.text.method.NumberKeyListener;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.view.WindowManager.LayoutParams;
+
+import com.google.zxing.integration.android.IntentResult;
 
 public class ParcelIdDialog extends Dialog implements DialogAwareListActivity.Dialog, BarcodeListener {
 	private static final String KEY_SELECTION_START = "selection_start";
