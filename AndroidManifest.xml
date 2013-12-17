@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
  * Copyright (C) 2011 Joakim Andersson
+ * Copyright (C) 2013 blunden
  * 
  * This file is part of PactrackDroid, an Android application to keep
  * track of parcels sent with the Swedish mail service (Posten).
@@ -19,21 +20,45 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="nu.firetech.android.pactrack" android:versionName="1.3.1" android:versionCode="1310">
+	package="nu.firetech.android.pactrack" android:versionName="1.4.1" android:versionCode="1410">
 	
-	<application android:icon="@drawable/icon" android:label="@string/app_name" android:description="@string/app_description">
+	<application 
+	    android:icon="@drawable/icon"
+	    android:label="@string/app_name"
+	    android:description="@string/app_description" 
+	    android:theme="@style/AppTheme" 
+	    android:allowBackup="true" >
 
-		<meta-data android:name="com.a0soft.gphone.aTrackDog.webURL"
-			android:value="http://firetech.nu/pactrackdroid" />
-
-		<activity android:label="@string/app_name" android:name=".frontend.MainWindow">
+		<activity 
+		    android:label="@string/app_name"
+		    android:name=".frontend.MainWindow"
+            android:hardwareAccelerated="true" >
+		    
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
-		<activity android:label="@string/app_name" android:name=".frontend.ParcelView" />
-		<activity android:label="@string/app_name" android:name=".frontend.ConfigView" />
+		<activity 
+		    android:label="@string/app_name"
+		    android:name=".frontend.ParcelView"
+		    android:hardwareAccelerated="true" 
+		    android:parentActivityName=".frontend.MainWindow" >
+    		<!-- Parent activity meta-data to support API level 4+ -->
+    		<meta-data
+        		android:name="android.support.PARENT_ACTIVITY"
+        		android:value=".frontend.MainWindow" />
+		</activity>
+    	<activity
+		    android:label="@string/app_name"
+		    android:name=".frontend.ConfigView"
+            android:hardwareAccelerated="true"
+            android:parentActivityName=".frontend.MainWindow" >
+    		<!-- Parent activity meta-data to support API level 4+ -->
+    		<meta-data
+        		android:name="android.support.PARENT_ACTIVITY"
+        		android:value=".frontend.MainWindow" />
+		</activity>
 		<receiver android:name=".backend.ServiceStarter">
 			<intent-filter>
 				<action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -65,7 +90,7 @@
 	    </receiver>
 	</application>
 
-	<uses-sdk android:minSdkVersion="3"/>
+	<uses-sdk android:minSdkVersion="11" android:targetSdkVersion="18"/>
 	<supports-screens android:largeScreens="true" android:normalScreens="true"
 		android:smallScreens="true" />
 

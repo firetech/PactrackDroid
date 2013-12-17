@@ -89,6 +89,8 @@ public class MainWindow extends BarcodeListeningListActivity implements RefreshC
 			.append(getString(R.string.version_name))
 			.append(spacer)
 			.append("Copyright (C) 2011 Joakim Andersson")
+			.append("\n")
+			.append("Copyright (C) 2013 blunden")
 			.append(spacer)
 			.append("This program comes with ABSOLUTELY NO WARRANTY.\nThis is free software, licensed under the GNU General Public License; version 2.")
 			.toString();
@@ -97,7 +99,6 @@ public class MainWindow extends BarcodeListeningListActivity implements RefreshC
 		mAboutDialog = new AlertDialog.Builder(this)
 		.setTitle(R.string.menu_about)
 		.setMessage(sAboutMessage)
-		.setIcon(android.R.drawable.ic_dialog_info)
 		.setPositiveButton(R.string.ok, new OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -134,6 +135,7 @@ public class MainWindow extends BarcodeListeningListActivity implements RefreshC
 		addContextListener(contextListener);
 	}
 
+	@SuppressWarnings("deprecation") // Suppress the warnings for now
 	@Override
 	public void refreshDone() {
 		Cursor parcelCursor = mDbAdapter.fetchAllParcels(false);
@@ -257,7 +259,7 @@ public class MainWindow extends BarcodeListeningListActivity implements RefreshC
 		new AlertDialog.Builder(c)
 		.setTitle(R.string.db_error_title)
 		.setMessage(R.string.db_error_message)
-		.setIcon(android.R.drawable.ic_dialog_alert)
+		.setIconAttribute(android.R.attr.alertDialogIcon)
 		.setNeutralButton(R.string.ok, new OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -287,7 +289,7 @@ public class MainWindow extends BarcodeListeningListActivity implements RefreshC
 		new AlertDialog.Builder(c)
 		.setTitle(R.string.remove_confirm_title)
 		.setMessage(R.string.remove_confirm_message)
-		.setIcon(android.R.drawable.ic_dialog_alert)
+		.setIconAttribute(android.R.attr.alertDialogIcon)
 		.setPositiveButton(R.string.ok, new OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {

@@ -224,6 +224,7 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable, Contex
 		if (newEvents > 0 && !mCtx.showsNews()) {
 			Preferences prefs = Preferences.getPreferences(realCtx);
 
+			// TODO: Change to Notification.Builder when updating the code
 			if (prefs.getNotificationEnabled()) {
 				int stringId = (newEvents > 1 ? R.string.notification_ticker : R.string.notification_ticker_one);
 				Notification n = new Notification(R.drawable.notification, realCtx.getString(stringId, parcelId), System.currentTimeMillis());

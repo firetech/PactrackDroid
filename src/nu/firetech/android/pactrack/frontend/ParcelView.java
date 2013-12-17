@@ -33,6 +33,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -66,6 +67,7 @@ public class ParcelView extends BarcodeListeningListActivity implements RefreshC
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.parcel_view);
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 
 		mExtended = (LinearLayout)findViewById(R.id.extended);
 		mToggleButton = (Button)findViewById(R.id.extended_toggle);
@@ -128,10 +130,10 @@ public class ParcelView extends BarcodeListeningListActivity implements RefreshC
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
-		menu.add(0, DELETE_ID, 0, R.string.menu_delete).setIcon(android.R.drawable.ic_menu_delete);
-		menu.add(0, RENAME_ID, 0, R.string.menu_rename).setIcon(android.R.drawable.ic_menu_edit);
+		menu.add(0, DELETE_ID, 0, R.string.menu_delete).setIcon(android.R.drawable.ic_menu_delete).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+		menu.add(0, RENAME_ID, 0, R.string.menu_rename).setIcon(android.R.drawable.ic_menu_edit).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 		new ParcelOptionsMenu(menu, true, mRowId, R.id.status_icon, mDbAdapter, this);
-		menu.add(0, REFRESH_ID, 0, R.string.menu_refresh).setIcon(R.drawable.ic_menu_refresh);
+		menu.add(0, REFRESH_ID, 0, R.string.menu_refresh).setIcon(R.drawable.ic_menu_refresh).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		return true;
 	}
 
@@ -158,6 +160,16 @@ public class ParcelView extends BarcodeListeningListActivity implements RefreshC
 		}
 
 		return super.onMenuItemSelected(featureId, item);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch(item.getItemId()) {
+		case android.R.id.home:
+	        NavUtils.navigateUpFromSameTask(this);
+	        return true;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 	
 	@Override
@@ -216,7 +228,7 @@ public class ParcelView extends BarcodeListeningListActivity implements RefreshC
 				new AlertDialog.Builder(this)
 				.setTitle(R.string.parcel_problem)
 				.setMessage(getString(R.string.parcel_error_message, status))
-				.setIcon(android.R.drawable.ic_dialog_alert)
+				.setIconAttribute(android.R.attr.alertDialogIcon)
 				.setPositiveButton(R.string.yes, new OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -236,9 +248,7 @@ public class ParcelView extends BarcodeListeningListActivity implements RefreshC
 			
 			errorShown = error;
 
-			setTitle(getString(R.string.app_name) + " - " +
-					getString(R.string.parcel_title, parcel.getString(parcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_PARCEL))));
-			
+			setTitle(getString(R.string.parcel_title, parcel.getString(parcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_PARCEL))));
 			String lastUpdate = null, lastOkUpdate = null;
 			int lastUpdateIndex = parcel.getColumnIndex(ParcelDbAdapter.KEY_UPDATE);
 			if (lastUpdateIndex >= 0) {

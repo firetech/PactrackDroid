@@ -38,6 +38,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.view.WindowManager.LayoutParams;
 
 public class ParcelIdDialog extends Dialog implements DialogAwareListActivity.Dialog, BarcodeListener {
@@ -98,10 +99,11 @@ public class ParcelIdDialog extends Dialog implements DialogAwareListActivity.Di
 			}
 		});
 
-		mErrorDialog = new AlertDialog.Builder(context).setTitle(
-				R.string.id_error_title).setIcon(
-				android.R.drawable.ic_dialog_alert).setMessage(
-				R.string.id_error_message).setNeutralButton(R.string.ok,
+		mErrorDialog = new AlertDialog.Builder(context)
+			.setTitle(R.string.id_error_title)
+			.setIconAttribute(android.R.attr.alertDialogIcon)
+			.setMessage(R.string.id_error_message)
+			.setNeutralButton(R.string.ok,
 				new OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -113,17 +115,10 @@ public class ParcelIdDialog extends Dialog implements DialogAwareListActivity.Di
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Window w = getWindow();
-		w.requestFeature(Window.FEATURE_LEFT_ICON);
 
+		//this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.parcel_id_dialog);
-		setTitle(R.string.parcelid);
-
-		w.setFeatureDrawableResource(Window.FEATURE_LEFT_ICON,
-				R.drawable.ic_dialog_menu_generic);
-		LayoutParams params = w.getAttributes();
-		params.width = LayoutParams.FILL_PARENT;
-		w.setAttributes(params);
+		setTitle(R.string.add_parcel);
 
 		mParcelText = (EditText) findViewById(R.id.parcelid);
 		mParcelText.setKeyListener(new NumberKeyListener() {
@@ -148,12 +143,12 @@ public class ParcelIdDialog extends Dialog implements DialogAwareListActivity.Di
 			}
 		});
 
-		Button scanButton = (Button) findViewById(R.id.barcode);
+		ImageButton scanButton = (ImageButton) findViewById(R.id.barcode);
 		scanButton.setOnClickListener(new ScanButtonListener());
-		Button okButton = (Button) findViewById(R.id.ok);
-		okButton.setOnClickListener(new OkListener());
 		Button cancelButton = (Button) findViewById(R.id.cancel);
 		cancelButton.setOnClickListener(new ClosingButtonListener());
+		Button okButton = (Button) findViewById(R.id.ok);
+		okButton.setOnClickListener(new OkListener());
 
 		if (savedInstanceState != null) {
 			mRowId = savedInstanceState.getLong(ParcelDbAdapter.KEY_ROWID);

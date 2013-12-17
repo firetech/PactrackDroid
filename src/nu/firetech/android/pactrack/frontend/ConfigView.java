@@ -38,10 +38,12 @@ import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.support.v4.app.NavUtils;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.format.DateUtils;
 import android.text.method.NumberKeyListener;
+import android.view.MenuItem;
 
 public class ConfigView extends PreferenceActivity {
 	private ParcelDbAdapter mDbAdapter;
@@ -51,8 +53,10 @@ public class ConfigView extends PreferenceActivity {
 	{
 		super.onCreate(savedInstanceState);
 		
-		setTitle(getString(R.string.app_name) + " - " + getString(R.string.menu_settings));
+		setTitle(getString(R.string.menu_settings));
 		addPreferencesFromResource(R.layout.preferences);
+		
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 		
 		ListPreference checkIntervalPref = (ListPreference)findPreference(getString(R.string.key_check_interval));
 		checkIntervalPref.setEnabled(((ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE)).getBackgroundDataSetting());
@@ -119,6 +123,15 @@ public class ConfigView extends PreferenceActivity {
         }
 	}
 	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch(item.getItemId()) {
+		case android.R.id.home:
+	        NavUtils.navigateUpFromSameTask(this);
+	        return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
 
 	@Override
 	protected void onDestroy() {
