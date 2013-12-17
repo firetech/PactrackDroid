@@ -1,1 +1,4 @@
 /bin
+/gen
+.DS_Store
+market-stuff
