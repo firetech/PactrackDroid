@@ -138,7 +138,6 @@ public class ParcelView extends BarcodeListeningListActivity implements RefreshC
 		return true;
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		switch(item.getItemId()) {
@@ -195,7 +194,6 @@ public class ParcelView extends BarcodeListeningListActivity implements RefreshC
 		return true;
 	}
 
-	@SuppressWarnings("deprecation")
 	public void updateView(boolean forceRefresh) {
 		((NotificationManager)getSystemService(NOTIFICATION_SERVICE)).cancel(mRowId.hashCode());
 		

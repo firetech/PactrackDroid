@@ -49,8 +49,7 @@ public class ServiceStarter extends BroadcastReceiver {
 		
 		startService(ctx, dbAdapter, interval);
 	}
-	
-	@SuppressWarnings("deprecation")
+
 	public static void startService(Context ctx, ParcelDbAdapter dbAdapter, long interval) {
 		PendingIntent pi = PendingIntent.getService(ctx, 0, new Intent(ctx, ParcelService.class), 0);
 		AlarmManager am = (AlarmManager) ctx.getSystemService(Context.ALARM_SERVICE);

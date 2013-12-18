@@ -41,7 +41,6 @@ import android.view.MenuItem;
 public class ConfigView extends PreferenceActivity {
 	private ParcelDbAdapter mDbAdapter;
 	
-	@SuppressWarnings("deprecation")
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{

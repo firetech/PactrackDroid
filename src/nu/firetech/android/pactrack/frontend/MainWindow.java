@@ -136,7 +136,6 @@ public class MainWindow extends BarcodeListeningListActivity implements RefreshC
 		addContextListener(contextListener);
 	}
 
-	@SuppressWarnings("deprecation") // Suppress the warnings for now
 	@Override
 	public void refreshDone() {
 		Cursor parcelCursor = mDbAdapter.fetchAllParcels(false);

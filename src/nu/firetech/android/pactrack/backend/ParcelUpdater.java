@@ -190,7 +190,6 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable, Contex
 		return (info != null && info.isConnected());
 	}
 
-	@SuppressWarnings("deprecation")
 	private void updateParcel(Bundle parcel, ParcelDbAdapter dbAdapter, NotificationManager notMgr) {
 		Long rowId = parcel.getLong(ParcelDbAdapter.KEY_ROWID);
 		String parcelId = parcel.getString(ParcelDbAdapter.KEY_PARCEL);
