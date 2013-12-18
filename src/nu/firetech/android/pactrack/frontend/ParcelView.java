@@ -291,7 +291,7 @@ public class ParcelView extends BarcodeListeningListActivity implements RefreshC
 			int[] to = new int[]{android.R.id.title, android.R.id.text1, android.R.id.text2};
 
 			SimpleCursorAdapter eventAdapter =
-				new SimpleCursorAdapter(this, R.layout.event_row, eventCursor, from, to);
+				new SimpleCursorAdapter(this, R.layout.event_row, eventCursor, from, to, 0);
 
 			eventAdapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
 				@Override

@@ -61,6 +61,7 @@ public class MainWindow extends BarcodeListeningListActivity implements RefreshC
 
 	private ParcelDbAdapter mDbAdapter;
 	private AlertDialog mAboutDialog;
+	private SimpleCursorAdapter mAdapter;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -116,8 +117,35 @@ public class MainWindow extends BarcodeListeningListActivity implements RefreshC
 		})
 		.create();
 
-		refreshDone();
+		String[] from = new String[]{ParcelDbAdapter.KEY_CUSTOM, ParcelDbAdapter.KEY_CUSTOMER, ParcelDbAdapter.KEY_STATUSCODE};
+		int[] to = new int[]{android.R.id.text1, android.R.id.text2, android.R.id.icon};
+		
+		mAdapter = new SimpleCursorAdapter(this, R.layout.parcel_row, null, from, to, 0);
+		mAdapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
+			@Override
+			public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
+				if (view instanceof ImageView && view.getId() == android.R.id.icon) {
+					((ImageView)view).setImageResource(getStatusImage(cursor, columnIndex));
+					if (cursor.getInt(cursor.getColumnIndexOrThrow(ParcelDbAdapter.KEY_AUTO)) == 1) {
+						((ImageView)view).getDrawable().mutate().setAlpha(255);
+					} else {
+						((ImageView)view).getDrawable().mutate().setAlpha(70);
+					}
+					return true;
+				} else {
+					return false;
+				}
+			}
+		});
+		setListAdapter(mAdapter);
+
 		registerForContextMenu(getListView());
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		refreshDone();
 	}
 
 	@Override
@@ -140,32 +168,9 @@ public class MainWindow extends BarcodeListeningListActivity implements RefreshC
 	@Override
 	public void refreshDone() {
 		Cursor parcelCursor = mDbAdapter.fetchAllParcels(false);
+		stopManagingCursor(mAdapter.getCursor());
 		startManagingCursor(parcelCursor);
-
-		String[] from = new String[]{ParcelDbAdapter.KEY_CUSTOM, ParcelDbAdapter.KEY_CUSTOMER, ParcelDbAdapter.KEY_STATUSCODE};
-		int[] to = new int[]{android.R.id.text1, android.R.id.text2, android.R.id.icon};
-
-		SimpleCursorAdapter parcels = 
-			new SimpleCursorAdapter(this, R.layout.parcel_row, parcelCursor, from, to);
-
-		parcels.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
-			@Override
-			public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
-				if (view instanceof ImageView && view.getId() == android.R.id.icon) {
-					((ImageView)view).setImageResource(getStatusImage(cursor, columnIndex));
-					if (cursor.getInt(cursor.getColumnIndexOrThrow(ParcelDbAdapter.KEY_AUTO)) == 1) {
-						((ImageView)view).getDrawable().mutate().setAlpha(255);
-					} else {
-						((ImageView)view).getDrawable().mutate().setAlpha(70);
-					}
-					return true;
-				} else {
-					return false;
-				}
-			}
-		});
-
-		setListAdapter(parcels);
+		mAdapter.changeCursor(parcelCursor);
 	}
 
 	@Override
