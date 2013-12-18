@@ -229,7 +229,7 @@ public class ParcelDbAdapter {
 					KEY_OK_UPDATE,
 					KEY_ERROR,
 					KEY_AUTO
-				}, (autoOnly ? KEY_AUTO + "=1" : null), null, null, null, KEY_PARCEL);
+				}, (autoOnly ? KEY_AUTO + "=1" : null), null, null, null, KEY_CUSTOM);
 	}
 
 	public Cursor fetchParcel(long rowId) throws SQLException {
