@@ -26,8 +26,7 @@
 	<string name="menu_about">Om</string>
 	<string name="menu_settings">Inställningar</string>
 	<string name="menu_delete">Ta bort</string>
-	<string name="menu_rename">Redigera kolli-ID</string>
-	<string name="menu_parcel_options">Kolli-inställningar</string>
+	<string name="menu_rename">Redigera kolli</string>
 	
 	<string name="menu_auto_include">Uppdatera automatiskt</string>
 

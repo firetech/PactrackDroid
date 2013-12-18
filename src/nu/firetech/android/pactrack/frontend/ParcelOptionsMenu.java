@@ -23,6 +23,8 @@ package nu.firetech.android.pactrack.frontend;
 
 import nu.firetech.android.pactrack.R;
 import nu.firetech.android.pactrack.backend.ParcelDbAdapter;
+import nu.firetech.android.pactrack.backend.Preferences;
+import android.content.Context;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
@@ -35,20 +37,22 @@ public class ParcelOptionsMenu {
 	private ParcelDbAdapter mDbAdapter;
 	private UpdateableView mViewToUpdate;
 	
-	public ParcelOptionsMenu(Menu parentMenu, boolean inSubMenu, long rowId, int position, ParcelDbAdapter dbAdapter, UpdateableView viewToUpdate) {
+	public ParcelOptionsMenu(Context ctx, Menu parentMenu, long rowId, int position, ParcelDbAdapter dbAdapter, UpdateableView viewToUpdate) {
 		mRowId = rowId;
 		mPosition = position;
 		mDbAdapter = dbAdapter;
 		mViewToUpdate = viewToUpdate;
 
-		Menu menu;
-		if (inSubMenu) {
-			menu = parentMenu.addSubMenu(R.string.menu_parcel_options).setIcon(android.R.drawable.ic_menu_manage);
-		} else {
-			menu = parentMenu;
-		}
+		Preferences pref = Preferences.getPreferences(ctx);
+
 		Listener l = new Listener();
-		menu.add(0, AUTO_ID, 0, R.string.menu_auto_include).setCheckable(true).setChecked(dbAdapter.getAutoUpdate(rowId)).setOnMenuItemClickListener(l);
+		boolean enabled = pref.getCheckInterval() > 0;
+		
+		parentMenu.add(0, AUTO_ID, 0, R.string.menu_auto_include)
+				.setEnabled(enabled)
+				.setCheckable(true)
+				.setChecked(enabled && dbAdapter.getAutoUpdate(rowId))
+				.setOnMenuItemClickListener(l);
 	}
 	
 	public class Listener implements OnMenuItemClickListener {

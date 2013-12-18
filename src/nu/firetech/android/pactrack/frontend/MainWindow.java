@@ -214,7 +214,7 @@ public class MainWindow extends BarcodeListeningListActivity implements RefreshC
 			ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo)menuInfo;
-		new ParcelOptionsMenu(menu, false, info.id, info.position, mDbAdapter, this);
+		new ParcelOptionsMenu(this, menu, info.id, info.position, mDbAdapter, this);
 		menu.add(0, RENAME_ID, 0, R.string.menu_rename);
 		menu.add(0, DELETE_ID, 0, R.string.menu_delete);
 	}
