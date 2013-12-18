@@ -40,6 +40,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import android.util.Log;
 
+//FIXME Rewrite to parse www.posten.se/tracktrace (using Regex, probably) instead.
 public class ParcelXMLParser extends DefaultHandler {
 	private static final String TAG = "<PactrackDroid> ParcelXMLParser";
 	
