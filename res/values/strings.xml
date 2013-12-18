@@ -60,7 +60,7 @@
 
 	<string name="parcel_error_unknown">Okänt fel (%d)</string>
 	<string name="parcel_error_server">Lyckades inte hämta/läsa data från Postens server</string>
-	<string name="parcel_error_not_found">Kolli-ID:t hittades inte</string>
+	<string name="parcel_error_not_found">Kolli-ID:t hittades inte\n(Detta kan bero på att det XML-API som PactrackDroid använder tyvärr inte inkluderar alla paket som går att spåra på www.posten.se. Det kan komma en lösning på detta problem i framtiden.)</string>
 	<string name="parcel_error_multi_parcel">Fler än ett kolli matchade kolli-ID:t</string>
 
 	<string name="parcel_error_message">Ett fel uppstod vid senaste	uppdateringen:\n\n%s\n\nVisa tillgänglig information ändå?</string>
