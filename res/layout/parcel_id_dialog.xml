@@ -45,6 +45,12 @@
 		    android:layout_gravity="bottom" 
 		    style="?android:attr/borderlessButtonStyle"/>		
 	</LinearLayout>
+	    
+	<EditText
+	    android:id="@+id/parcelname"
+	    android:hint="@string/parcelname"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content" />
 	
 	<!-- This view only adds the top button divider (hack) -->
 	<View

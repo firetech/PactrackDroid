@@ -41,16 +41,24 @@ import android.widget.ImageButton;
 import com.google.zxing.integration.android.IntentResult;
 
 public class ParcelIdDialog extends Dialog implements DialogAwareListActivity.Dialog, BarcodeListener {
-	private static final String KEY_SELECTION_START = "selection_start";
-	private static final String KEY_SELECTION_END = "selection_end";
-	
+	private static final String KEY_PARCEL_SELECTION_START = "parcel_selection_start";
+	private static final String KEY_PARCEL_SELECTION_END = "parcel_selection_end";
+	private static final String KEY_NAME_SELECTION_START = "name_selection_start";
+	private static final String KEY_NAME_SELECTION_END = "name_selection_end";
+	private static final String KEY_FOCUSED_FIELD = "focused_field";
+
 	private EditText mParcelText;
+	private EditText mNameText;
 	private Long mRowId;
 	private ParcelDbAdapter mDbAdapter;
 	private boolean mCloseDbAdapter = false;
-	private String mInitialText;
-	private int mInitialSelectionStart;
-	private int mInitialSelectionEnd;
+	private String mParcelInitialText;
+	private int mParcelInitialSelectionStart;
+	private int mParcelInitialSelectionEnd;
+	private String mNameInitialText;
+	private int mNameInitialSelectionStart;
+	private int mNameInitialSelectionEnd;
+	private int mFocusedField;
 
 	private AlertDialog mErrorDialog;
 
@@ -66,9 +74,15 @@ public class ParcelIdDialog extends Dialog implements DialogAwareListActivity.Di
 		ParcelIdDialog d = new ParcelIdDialog(context,
 				(dialogData.containsKey(ParcelDbAdapter.KEY_ROWID) ? dialogData.getLong(ParcelDbAdapter.KEY_ROWID) : null),
 				dbAdapter);
-		d.mInitialText = dialogData.getString(ParcelDbAdapter.KEY_PARCEL);
-		d.mInitialSelectionStart = dialogData.getInt(KEY_SELECTION_START);
-		d.mInitialSelectionEnd = dialogData.getInt(KEY_SELECTION_END);
+		d.mParcelInitialText = dialogData.getString(ParcelDbAdapter.KEY_PARCEL);
+		d.mParcelInitialSelectionStart = dialogData.getInt(KEY_PARCEL_SELECTION_START);
+		d.mParcelInitialSelectionEnd = dialogData.getInt(KEY_PARCEL_SELECTION_END);
+		d.mNameInitialText = dialogData.getString(ParcelDbAdapter.KEY_NAME);
+		d.mNameInitialSelectionStart = dialogData.getInt(KEY_NAME_SELECTION_START);
+		d.mNameInitialSelectionEnd = dialogData.getInt(KEY_NAME_SELECTION_END);
+		if (dialogData.containsKey(KEY_FOCUSED_FIELD)) {
+			d.mFocusedField = dialogData.getInt(KEY_FOCUSED_FIELD);
+		}
 		d.mCloseDbAdapter = true;
 		d.show();
 	}
@@ -83,8 +97,11 @@ public class ParcelIdDialog extends Dialog implements DialogAwareListActivity.Di
 		mRowId = rowId;
 		mDbAdapter = dbAdapter;
 
-		mInitialText = null;
-		mInitialSelectionStart = mInitialSelectionEnd = 0;
+		mParcelInitialText = null;
+		mParcelInitialSelectionStart = mParcelInitialSelectionEnd = 0;
+		mNameInitialText = null;
+		mNameInitialSelectionStart = mNameInitialSelectionEnd = 0;
+		mFocusedField = R.id.parcelid;
 
 		context.addDialog(this);
 		setOnDismissListener(new OnDismissListener() {
@@ -141,6 +158,7 @@ public class ParcelIdDialog extends Dialog implements DialogAwareListActivity.Di
 						| InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS;
 			}
 		});
+		mNameText = (EditText) findViewById(R.id.parcelname);
 
 		ImageButton scanButton = (ImageButton) findViewById(R.id.barcode);
 		scanButton.setOnClickListener(new ScanButtonListener());
@@ -153,26 +171,49 @@ public class ParcelIdDialog extends Dialog implements DialogAwareListActivity.Di
 			mRowId = savedInstanceState.getLong(ParcelDbAdapter.KEY_ROWID);
 		}
 
-		if (mRowId != null && mInitialText == null) {
+		if (mRowId != null && mParcelInitialText == null) {
 			if (savedInstanceState != null && savedInstanceState.containsKey(ParcelDbAdapter.KEY_PARCEL)) {
-				mInitialText = savedInstanceState.getString(ParcelDbAdapter.KEY_PARCEL);
+				mParcelInitialText = savedInstanceState.getString(ParcelDbAdapter.KEY_PARCEL);
 			} else {
 				Cursor parcel = mDbAdapter.fetchParcel(mRowId);
-				mInitialText = parcel.getString(parcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_PARCEL));
+				mParcelInitialText = parcel.getString(parcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_PARCEL));
 				parcel.close();
 			}
-			if (savedInstanceState != null && savedInstanceState.containsKey(KEY_SELECTION_START) && savedInstanceState.containsKey(KEY_SELECTION_END)) {
-				mInitialSelectionStart = savedInstanceState.getInt(KEY_SELECTION_START);
-				mInitialSelectionEnd = savedInstanceState.getInt(KEY_SELECTION_END);
+			if (savedInstanceState != null && savedInstanceState.containsKey(KEY_PARCEL_SELECTION_START) && savedInstanceState.containsKey(KEY_PARCEL_SELECTION_END)) {
+				mParcelInitialSelectionStart = savedInstanceState.getInt(KEY_PARCEL_SELECTION_START);
+				mParcelInitialSelectionEnd = savedInstanceState.getInt(KEY_PARCEL_SELECTION_END);
 			}
 		}
 
-		if (mInitialText == null) {
-			mInitialText = "";
+		if (mParcelInitialText == null) {
+			mParcelInitialText = "";
 		}
-		mParcelText.setText(mInitialText);
+		mParcelText.setText(mParcelInitialText);
+		Selection.setSelection(mParcelText.getText(), mParcelInitialSelectionStart, mParcelInitialSelectionEnd);
+
+		if (mRowId != null && mNameInitialText == null) {
+			if (savedInstanceState != null && savedInstanceState.containsKey(ParcelDbAdapter.KEY_NAME)) {
+				mNameInitialText = savedInstanceState.getString(ParcelDbAdapter.KEY_NAME);
+			} else {
+				Cursor parcel = mDbAdapter.fetchParcel(mRowId);
+				mNameInitialText = parcel.getString(parcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_NAME));
+				parcel.close();
+			}
+			if (savedInstanceState != null && savedInstanceState.containsKey(KEY_NAME_SELECTION_START) && savedInstanceState.containsKey(KEY_NAME_SELECTION_END)) {
+				mNameInitialSelectionStart = savedInstanceState.getInt(KEY_NAME_SELECTION_START);
+				mNameInitialSelectionEnd = savedInstanceState.getInt(KEY_NAME_SELECTION_END);
+			}
+		}
+
+		if (mNameInitialText == null) {
+			mNameInitialText = "";
+		}
+		mNameText.setText(mNameInitialText);
+		Selection.setSelection(mNameText.getText(), mNameInitialSelectionStart, mNameInitialSelectionEnd);
 		
-		Selection.setSelection(mParcelText.getText(), mInitialSelectionStart, mInitialSelectionEnd);
+		if (mFocusedField != 0) {
+			findViewById(mFocusedField).requestFocus();
+		}
 	}
 
 	@Override
@@ -182,10 +223,17 @@ public class ParcelIdDialog extends Dialog implements DialogAwareListActivity.Di
 		if (mRowId != null) {
 			outState.putLong(ParcelDbAdapter.KEY_ROWID, mRowId);
 		}
-		outState.putString(ParcelDbAdapter.KEY_PARCEL, mParcelText.getText()
-				.toString());
-		outState.putInt(KEY_SELECTION_START, Selection.getSelectionStart(mParcelText.getText()));
-		outState.putInt(KEY_SELECTION_END, Selection.getSelectionEnd(mParcelText.getText()));
+		outState.putString(ParcelDbAdapter.KEY_PARCEL, mParcelText.getText().toString());
+		outState.putInt(KEY_PARCEL_SELECTION_START, Selection.getSelectionStart(mParcelText.getText()));
+		outState.putInt(KEY_PARCEL_SELECTION_END, Selection.getSelectionEnd(mParcelText.getText()));
+		outState.putString(ParcelDbAdapter.KEY_NAME, mNameText.getText().toString());
+		outState.putInt(KEY_NAME_SELECTION_START, Selection.getSelectionStart(mNameText.getText()));
+		outState.putInt(KEY_NAME_SELECTION_END, Selection.getSelectionEnd(mNameText.getText()));
+		if (mParcelText.hasFocus()) {
+			outState.putInt(KEY_FOCUSED_FIELD, mParcelText.getId());
+		} else if (mNameText.hasFocus()) {
+			outState.putInt(KEY_FOCUSED_FIELD, mNameText.getId());
+		}
 		return outState;
 	}
 
@@ -209,6 +257,7 @@ public class ParcelIdDialog extends Dialog implements DialogAwareListActivity.Di
 		@Override
 		public void onClick(View v) {
 			String parcel = mParcelText.getText().toString();
+			String name = mNameText.getText().toString();
 			if (parcel.length() < 9) {
 				mErrorDialog.show();
 				return;
@@ -216,17 +265,19 @@ public class ParcelIdDialog extends Dialog implements DialogAwareListActivity.Di
 
 			boolean changed = true;
 			if (mRowId == null) {
-				mRowId = mDbAdapter.addParcel(parcel);
+				mRowId = mDbAdapter.addParcel(parcel, name);
 			} else {
 				Cursor dbParcel = mDbAdapter.fetchParcel(mRowId);
 				String oldParcel = dbParcel.getString(dbParcel
 						.getColumnIndexOrThrow(ParcelDbAdapter.KEY_PARCEL));
+				String oldName = dbParcel.getString(dbParcel
+						.getColumnIndexOrThrow(ParcelDbAdapter.KEY_NAME));
 				dbParcel.close();
 
-				if (oldParcel.equals(parcel)) {
+				if (parcel.equals(oldParcel) && ((oldName == null && (name == null || name.length() <= 0)) || name.equals(oldName))) {
 					changed = false;
 				} else {
-					mDbAdapter.changeParcelId(mRowId, parcel);
+					mDbAdapter.changeParcelIdName(mRowId, parcel, name);
 				}
 			}
 

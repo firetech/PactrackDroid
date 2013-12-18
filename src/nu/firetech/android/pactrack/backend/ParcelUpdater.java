@@ -84,6 +84,8 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable, Contex
 				parcel.getLong(parcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_ROWID)));
 		parcelBundle.putString(ParcelDbAdapter.KEY_PARCEL,
 				parcel.getString(parcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_PARCEL)));
+		parcelBundle.putString(ParcelDbAdapter.KEY_NAME,
+				parcel.getString(parcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_NAME)));
 
 		return parcelBundle;
 	}
@@ -216,8 +218,13 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable, Contex
 
 			// TODO: Change to Notification.Builder when updating the code
 			if (prefs.getNotificationEnabled()) {
+				String parcelName = parcel.getString(ParcelDbAdapter.KEY_NAME);
+				if(parcelName == null) {
+					parcelName = realCtx.getString(R.string.generic_parcel_name, parcelId);
+				}
+				
 				int stringId = (newEvents > 1 ? R.string.notification_ticker : R.string.notification_ticker_one);
-				Notification n = new Notification(R.drawable.notification, realCtx.getString(stringId, parcelId), System.currentTimeMillis());
+				Notification n = new Notification(R.drawable.notification, realCtx.getString(stringId, parcelName), System.currentTimeMillis());
 
 				Intent i = new Intent(realCtx, ParcelView.class).putExtra(ParcelDbAdapter.KEY_ROWID, rowId);
 				PendingIntent pi = PendingIntent.getActivity(realCtx, rowId.hashCode(), i, 0);
@@ -226,7 +233,7 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable, Contex
 				if (newEvents == 1) {
 					eventInfo = lastEvent.toString();
 				}
-				n.setLatestEventInfo(realCtx.getApplicationContext(), realCtx.getString(R.string.parcel_title, parcelId), eventInfo, pi);
+				n.setLatestEventInfo(realCtx.getApplicationContext(), parcelName, eventInfo, pi);
 
 				n.sound = prefs.getNotificationSound();
 				if (prefs.getNotificationLight()) {

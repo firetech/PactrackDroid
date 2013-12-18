@@ -142,7 +142,7 @@ public class MainWindow extends BarcodeListeningListActivity implements RefreshC
 		Cursor parcelCursor = mDbAdapter.fetchAllParcels(false);
 		startManagingCursor(parcelCursor);
 
-		String[] from = new String[]{ParcelDbAdapter.KEY_PARCEL, ParcelDbAdapter.KEY_CUSTOMER, ParcelDbAdapter.KEY_STATUSCODE};
+		String[] from = new String[]{ParcelDbAdapter.KEY_CUSTOM, ParcelDbAdapter.KEY_CUSTOMER, ParcelDbAdapter.KEY_STATUSCODE};
 		int[] to = new int[]{android.R.id.text1, android.R.id.text2, android.R.id.icon};
 
 		SimpleCursorAdapter parcels = 

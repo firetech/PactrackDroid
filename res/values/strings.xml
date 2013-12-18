@@ -41,6 +41,7 @@
 	<string name="yes">Ja</string>
 	<string name="no">Nej</string>
 	
+	<string name="parcelname">Beskrivning (valfritt)</string>
 	<string name="scan_barcode">Scanna streckkod</string>
 	<string name="install_barcode_title">Installera Barcode Scanner?</string>
 	<string name="install_barcode_message">Den här funktionen kräver Barcode Scanner. Vill du installera den?</string>
@@ -78,15 +79,15 @@
 
 	<string name="events">Händelser</string>
 	<string name="error_event">(Avvikelse)</string>
-
-	<string name="parcel_title">Kolli %s</string>
+	
+	<string name="generic_parcel_name">Kolli %s</string>
 
 	<string name="update_info_syntax">%1$s\n(%2$s)</string>
 	<string name="never">Aldrig</string>
 	<string name="same_time">Samma tid</string>
 
-	<string name="notification_ticker_one">Ny händelse för kolli %s</string>
-	<string name="notification_ticker">Nya händelser för kolli %s</string>
+	<string name="notification_ticker_one">Ny händelse för %s</string>
+	<string name="notification_ticker">Nya händelser för %s</string>
 	<string name="notification_message">%d nya händelser</string>
 
 	<string name="notify_on_title">Aviseringar</string>

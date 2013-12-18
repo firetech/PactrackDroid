@@ -251,7 +251,13 @@ public class ParcelView extends BarcodeListeningListActivity implements RefreshC
 			
 			errorShown = error;
 
-			setTitle(getString(R.string.parcel_title, parcel.getString(parcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_PARCEL))));
+			String parcelId = parcel.getString(parcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_PARCEL));
+			String parcelName = parcel.getString(parcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_NAME));
+			if (parcelName == null) {
+				parcelName = getString(R.string.generic_parcel_name, parcelId);
+			}
+
+			setTitle(parcelName);
 			String lastUpdate = null, lastOkUpdate = null;
 			int lastUpdateIndex = parcel.getColumnIndex(ParcelDbAdapter.KEY_UPDATE);
 			if (lastUpdateIndex >= 0) {

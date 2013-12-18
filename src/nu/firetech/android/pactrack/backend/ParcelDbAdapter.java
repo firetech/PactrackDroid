@@ -24,6 +24,7 @@ package nu.firetech.android.pactrack.backend;
 import java.util.Calendar;
 
 import nu.firetech.android.pactrack.common.Error;
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -39,6 +40,7 @@ public class ParcelDbAdapter {
 
 	//Parcels table
 	public static final String KEY_PARCEL = "parcelid";
+	public static final String KEY_NAME = "parcelname";
 	public static final String KEY_CUSTOMER = "customer";
 	public static final String KEY_SENT = "sent";
 	public static final String KEY_WEIGHT = "weight";
@@ -67,7 +69,7 @@ public class ParcelDbAdapter {
 	private static final String DATABASE_NAME = "parcels.db";
 	private static final String PARCEL_TABLE = "parcels";
 	private static final String EVENT_TABLE= "events";
-	private static final int DATABASE_VERSION = 5;
+	private static final int DATABASE_VERSION = 6;
 
 
 	private final Context mCtx;
@@ -82,7 +84,8 @@ public class ParcelDbAdapter {
 		public void onCreate(SQLiteDatabase db) {
 			db.execSQL("create table "+PARCEL_TABLE
 					+ " ("+KEY_ROWID+" integer primary key autoincrement, "
-					+KEY_PARCEL+" varchar(20) not null, "        
+					+KEY_PARCEL+" varchar(20) not null, "
+					+KEY_NAME+" text, "
 					+KEY_CUSTOMER+" text, "
 					+KEY_SENT+" varchar(10), "
 					+KEY_WEIGHT+" float, "
@@ -129,6 +132,10 @@ public class ParcelDbAdapter {
 				db.execSQL("ALTER TABLE "+EVENT_TABLE+" ADD "+KEY_ERREV+" integer(1) default 0");
 				oldVersion = 5;
 			}
+			if (oldVersion < 6) {
+				db.execSQL("ALTER TABLE "+PARCEL_TABLE+" ADD "+KEY_NAME+" text");
+				oldVersion = 6;
+			}
 			
 			if (oldVersion == newVersion) {
 				Log.d(TAG, "Database upgrade successful");
@@ -171,9 +178,12 @@ public class ParcelDbAdapter {
 		return count;
 	}
 
-	public long addParcel(String parcelid) {
+	public long addParcel(String parcel, String name) {
 		ContentValues initialValues = new ContentValues();
-		initialValues.put(KEY_PARCEL, parcelid);
+		initialValues.put(KEY_PARCEL, parcel);
+		if (name != null && name.length() > 0) {
+			initialValues.put(KEY_NAME, name);
+		}
 		
 		long rowId = mDb.insert(PARCEL_TABLE, null, initialValues);
 
@@ -206,6 +216,8 @@ public class ParcelDbAdapter {
 				new String[] {
 					KEY_ROWID,
 					KEY_PARCEL,
+					KEY_NAME,
+					"COALESCE("+KEY_NAME+","+KEY_PARCEL+", '???') AS "+KEY_CUSTOM,
 					KEY_CUSTOMER,
 					KEY_SENT,
 					KEY_WEIGHT,
@@ -226,6 +238,7 @@ public class ParcelDbAdapter {
 					new String[] {
 						KEY_ROWID,
 						KEY_PARCEL,
+						KEY_NAME,
 						KEY_CUSTOMER,
 						KEY_SENT,
 						KEY_WEIGHT,
@@ -245,9 +258,14 @@ public class ParcelDbAdapter {
 		return parcel;
 	}
 
-	public boolean changeParcelId(long rowId, String newValue) {
+	public boolean changeParcelIdName(long rowId, String newId, String newName) {
 		ContentValues args = new ContentValues();
-		args.put(KEY_PARCEL, newValue);
+		args.put(KEY_PARCEL, newId);
+		if (newName != null && newName.length() > 0) {
+			args.put(KEY_NAME, newName);
+		} else {
+			args.put(KEY_NAME, (String)null);
+		}
 
 		boolean updated = mDb.update(PARCEL_TABLE, args, KEY_ROWID + "=" + rowId, null) > 0;
 
@@ -298,6 +316,7 @@ public class ParcelDbAdapter {
 				}, KEY_FOREIGN + "=" + parcelId, null, null, null, KEY_TIME+" DESC");
 	}
 
+	@SuppressLint("DefaultLocale")
 	public boolean updateParcelData(long rowId, Parcel parcelData) {
 		ContentValues args = new ContentValues();
 		
