@@ -54,7 +54,7 @@ public class Preferences {
 	public long getCheckInterval() {
 		int interval = 0;
 		try {
-			interval = Integer.parseInt(mPrefs.getString(mRes.getString(R.string.key_check_interval), "0"));
+			interval = Integer.parseInt(mPrefs.getString(mRes.getString(R.string.key_check_interval), "60"));
 		} catch (Exception e) {}
 		
 		switch(interval) {

@@ -25,7 +25,7 @@
 		android:summary="@string/check_interval_summary" android:entryValues="@array/check_interval_values"
 		android:dialogTitle="@string/check_interval_title" android:key="@string/key_check_interval"
 		android:entries="@array/check_intervals" android:negativeButtonText="@string/cancel"
-		android:defaultValue="0" />
+		android:defaultValue="60" />
 	<CheckBoxPreference android:summary="@string/notify_on_summary"
 		android:title="@string/notify_on_title" android:key="@string/key_notify_on"
 		android:disableDependentsState="false" android:defaultValue="true" />
