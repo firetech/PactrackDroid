@@ -41,6 +41,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 public class ParcelUpdater extends BroadcastReceiver implements Runnable, ContextListener {
@@ -204,48 +205,54 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable, Contex
 		Context realCtx = (Context)mCtx;
 
 		int newEvents = 0;
-		ParcelEvent lastEvent = null;
+		StringBuilder eventList = new StringBuilder();
 		for (ParcelEvent eventData : parcelData.getEvents()) { //loop through events
 			if (mDbAdapter.addEvent(rowId, eventData)) { //if event was new
+				if (newEvents > 0) {
+					eventList.append("\n");
+				}
+				eventList.append(eventData.toString());
 				newEvents++;
-				lastEvent = eventData;
 			}
 		}
 
 		if (newEvents > 0 && !mCtx.showsNews()) {
 			Preferences prefs = Preferences.getPreferences(realCtx);
 
-			// TODO: Change to Notification.Builder when updating the code
 			if (prefs.getNotificationEnabled()) {
 				String parcelName = parcel.getString(ParcelDbAdapter.KEY_NAME);
 				if(parcelName == null) {
 					parcelName = realCtx.getString(R.string.generic_parcel_name, parcelId);
 				}
+
+				Intent intent = new Intent(realCtx, ParcelView.class).putExtra(ParcelDbAdapter.KEY_ROWID, rowId);
+				PendingIntent contentIntent = PendingIntent.getActivity(realCtx, rowId.hashCode(), intent, 0);
 				
 				int stringId = (newEvents > 1 ? R.string.notification_ticker : R.string.notification_ticker_one);
-				Notification n = new Notification(R.drawable.notification, realCtx.getString(stringId, parcelName), System.currentTimeMillis());
-
-				Intent i = new Intent(realCtx, ParcelView.class).putExtra(ParcelDbAdapter.KEY_ROWID, rowId);
-				PendingIntent pi = PendingIntent.getActivity(realCtx, rowId.hashCode(), i, 0);
-
-				String eventInfo = realCtx.getString(R.string.notification_message, newEvents);
-				if (newEvents == 1) {
-					eventInfo = lastEvent.toString();
+				NotificationCompat.Builder n = new NotificationCompat.Builder(realCtx)
+						.setSmallIcon(R.drawable.notification)
+						.setTicker(realCtx.getString(stringId, parcelName))
+						.setWhen(System.currentTimeMillis())
+						.setContentTitle(parcelName)
+						.setContentText(newEvents == 1 ?
+								eventList.toString() : realCtx.getString(R.string.notification_message, newEvents))
+						.setContentIntent(contentIntent)
+						.setSound(prefs.getNotificationSound());
+				
+				if (newEvents > 1) {
+					n.setStyle(new NotificationCompat.BigTextStyle().bigText(eventList.toString()));
 				}
-				n.setLatestEventInfo(realCtx.getApplicationContext(), parcelName, eventInfo, pi);
-
-				n.sound = prefs.getNotificationSound();
+				
 				if (prefs.getNotificationLight()) {
-					n.flags |= Notification.FLAG_SHOW_LIGHTS;
-					n.ledARGB = prefs.getNotificationColor();
-					n.ledOnMS = prefs.getNotificationOntime();
-					n.ledOffMS = prefs.getNotificationOfftime();
+					n.setLights(prefs.getNotificationColor(), 
+							prefs.getNotificationOntime(), 
+							prefs.getNotificationOfftime());
 				}
 				if (prefs.getNotificationVibrate()) {
-					n.defaults |= Notification.DEFAULT_VIBRATE;
+					n.setDefaults(Notification.DEFAULT_VIBRATE);
 				}
 
-				notMgr.notify(rowId.hashCode(), n);
+				notMgr.notify(rowId.hashCode(), n.build());
 			}
 		}
 	}
