@@ -32,22 +32,23 @@ import nu.firetech.android.pactrack.common.RefreshContext;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceActivity;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 
 public class MainWindow extends BarcodeListeningListActivity implements RefreshContext, ParcelOptionsMenu.UpdateableView {
 	private static final int ABOUT_ID = Menu.FIRST;
@@ -201,7 +202,9 @@ public class MainWindow extends BarcodeListeningListActivity implements RefreshC
 			ParcelUpdater.updateAll(false, this, mDbAdapter);
 			return true;
 		case SETTINGS_ID:
-			startActivity(new Intent(this, ConfigView.class));
+			Intent intent = new Intent(this, ConfigView.class);
+			intent.putExtra(PreferenceActivity.EXTRA_SHOW_FRAGMENT, ConfigView.ConfigFragment.class.getName());
+			startActivity(intent);
 			return true;
 		}
 

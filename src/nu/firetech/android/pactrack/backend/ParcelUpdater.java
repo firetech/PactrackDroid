@@ -219,6 +219,7 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable, Contex
 		if (newEvents > 0 && !mCtx.showsNews()) {
 			Preferences prefs = Preferences.getPreferences(realCtx);
 
+			//TODO Join existing notifications in some clever way...
 			if (prefs.getNotificationEnabled()) {
 				String parcelName = parcel.getString(ParcelDbAdapter.KEY_NAME);
 				if(parcelName == null) {

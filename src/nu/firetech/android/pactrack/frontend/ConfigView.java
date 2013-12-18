@@ -21,6 +21,8 @@
 
 package nu.firetech.android.pactrack.frontend;
 
+import java.util.List;
+
 import nu.firetech.android.pactrack.R;
 import nu.firetech.android.pactrack.backend.ParcelDbAdapter;
 import nu.firetech.android.pactrack.backend.ServiceStarter;
@@ -31,6 +33,7 @@ import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceFragment;
 import android.support.v4.app.NavUtils;
 import android.text.InputFilter;
 import android.text.InputType;
@@ -39,84 +42,114 @@ import android.text.method.NumberKeyListener;
 import android.view.MenuItem;
 
 public class ConfigView extends PreferenceActivity {
-	private ParcelDbAdapter mDbAdapter;
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-		
+
 		setTitle(getString(R.string.menu_settings));
-		addPreferencesFromResource(R.layout.preferences);
-		
 		getActionBar().setDisplayHomeAsUpEnabled(true);
-		
-		ListPreference checkIntervalPref = (ListPreference)findPreference(getString(R.string.key_check_interval));
-		checkIntervalPref.setEnabled(((ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE)).getBackgroundDataSetting());
-		if (!checkIntervalPref.isEnabled()) {
-			checkIntervalPref.setSummary(R.string.check_interval_summary_disabled);
-		} else {
-			checkIntervalPref.setSummary(R.string.check_interval_summary);
-		}
-		
-		mDbAdapter = new ParcelDbAdapter(this);
-		mDbAdapter.open();
-		
-		checkIntervalPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-			@Override
-			public boolean onPreferenceChange(Preference preference, Object newValue) {
-				long newInterval = Long.parseLong((String) newValue) * DateUtils.MINUTE_IN_MILLIS;
-				if (newInterval != ServiceStarter.getCurrentInterval()) {
-					ServiceStarter.startService(ConfigView.this, mDbAdapter, newInterval);
-				}
-				
-				return true;
-			}
-		});
-		
-		EditTextPreference lightColorPref = (EditTextPreference)findPreference(getString(R.string.key_notify_light_color));
-		lightColorPref.getEditText().setFilters(new InputFilter[] { new InputFilter.LengthFilter(6) });
-		lightColorPref.getEditText().setKeyListener(new NumberKeyListener() {
-			private char[] acceptedChars = null;
-
-			@Override
-			protected char[] getAcceptedChars() {
-				if (acceptedChars == null) {
-					acceptedChars = new char[] {
-							'0','1','2','3','4','5','6','7','8','9',
-							'A','B','C','D','E','F',
-							'a','b','c','d','e','f'
-					};
-				}
-
-				return acceptedChars;
-			}
-
-			@Override
-			public int getInputType() {
-				return InputType.TYPE_CLASS_NUMBER;
-			}
-		});
-		
-		EditTextPreference lightOntimePref = (EditTextPreference)findPreference(getString(R.string.key_notify_light_ontime));
-		lightOntimePref.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-		EditTextPreference lightOfftimePref = (EditTextPreference)findPreference(getString(R.string.key_notify_light_offtime));
-		lightOfftimePref.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
 		case android.R.id.home:
-	        NavUtils.navigateUpFromSameTask(this);
-	        return true;
+			NavUtils.navigateUpFromSameTask(this);
+			return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
 
 	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		mDbAdapter.close();
+	public void onBuildHeaders(List<Header> target) {
+		loadHeadersFromResource(R.xml.preference_headers, target);
+	}
+
+	@Override
+	protected boolean isValidFragment(String fragmentName)
+	{
+		if(ConfigFragment.class.getName().equals(fragmentName))
+			return true;
+		return false;
+
+	}
+
+	public static class ConfigFragment extends PreferenceFragment {
+		private ParcelDbAdapter mDbAdapter;
+
+		@Override
+		public void onCreate(Bundle savedInstanceState) {
+			super.onCreate(savedInstanceState);
+			
+			addPreferencesFromResource(R.xml.preferences);
+
+			mDbAdapter = new ParcelDbAdapter(getActivity());
+			mDbAdapter.open();
+
+			ListPreference checkIntervalPref = (ListPreference)findPreference(getString(R.string.key_check_interval));
+
+			ConnectivityManager cm = (ConnectivityManager)getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+			//We still have to do this for pre-ICS Android, and the "new" way has always been handled in ParcelUpdater.
+			@SuppressWarnings("deprecation")
+			boolean backgroundDataAllowed = cm.getBackgroundDataSetting(); 
+
+			checkIntervalPref.setEnabled(backgroundDataAllowed);
+			if (backgroundDataAllowed) {
+				checkIntervalPref.setSummary(R.string.check_interval_summary);
+			} else {
+				checkIntervalPref.setSummary(R.string.check_interval_summary_disabled);
+			}
+
+			checkIntervalPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+				@Override
+				public boolean onPreferenceChange(Preference preference, Object newValue) {
+					long newInterval = Long.parseLong((String) newValue) * DateUtils.MINUTE_IN_MILLIS;
+					if (newInterval != ServiceStarter.getCurrentInterval()) {
+						ServiceStarter.startService(getActivity(), mDbAdapter, newInterval);
+					}
+
+					return true;
+				}
+			});
+
+			EditTextPreference lightColorPref = (EditTextPreference)findPreference(getString(R.string.key_notify_light_color));
+			lightColorPref.getEditText().setFilters(new InputFilter[] { new InputFilter.LengthFilter(6) });
+			lightColorPref.getEditText().setKeyListener(new NumberKeyListener() {
+				private char[] acceptedChars = null;
+
+				@Override
+				protected char[] getAcceptedChars() {
+					if (acceptedChars == null) {
+						acceptedChars = new char[] {
+								'0','1','2','3','4','5','6','7','8','9',
+								'A','B','C','D','E','F',
+								'a','b','c','d','e','f'
+						};
+					}
+
+					return acceptedChars;
+				}
+
+				@Override
+				public int getInputType() {
+					return InputType.TYPE_CLASS_NUMBER;
+				}
+			});
+
+			EditTextPreference lightOntimePref = (EditTextPreference)findPreference(getString(R.string.key_notify_light_ontime));
+			lightOntimePref.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+			EditTextPreference lightOfftimePref = (EditTextPreference)findPreference(getString(R.string.key_notify_light_offtime));
+			lightOfftimePref.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+		}
+
+
+		@Override
+		public void onDestroy() {
+			super.onDestroy();
+			mDbAdapter.close();
+		}
 	}
 }

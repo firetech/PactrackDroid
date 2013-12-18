@@ -54,13 +54,22 @@ public class ServiceStarter extends BroadcastReceiver {
 		PendingIntent pi = PendingIntent.getService(ctx, 0, new Intent(ctx, ParcelService.class), 0);
 		AlarmManager am = (AlarmManager) ctx.getSystemService(Context.ALARM_SERVICE);
 		
-		ConnectivityManager cm = (ConnectivityManager)ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
 		
 		if (dbAdapter != null && dbAdapter.getNumAutoParcels() < 1) {
 			interval = 0;
+		} else {
+			ConnectivityManager cm = (ConnectivityManager)ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
+			
+			//We still have to do this for pre-ICS Android, and the "new" way has always been handled in ParcelUpdater.
+			@SuppressWarnings("deprecation")
+			boolean backgroundDataAllowed = cm.getBackgroundDataSetting();
+			
+			if (!backgroundDataAllowed) {
+				interval = 0;
+			}
 		}
-
-		if ((cm.getBackgroundDataSetting() ? interval : 0) > 0) {
+		
+		if (interval > 0) {
 			Log.d(TAG, "Scheduling service to be run every " + interval + " milliseconds (inexact)");
 			am.setInexactRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (interval / 2), interval, pi);
 		} else {
