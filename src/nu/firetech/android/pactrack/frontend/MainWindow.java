@@ -181,8 +181,8 @@ public class MainWindow extends BarcodeListeningListActivity implements RefreshC
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
+		menu.add(0, REFRESH_ID, 0, R.string.menu_refresh_all).setIcon(R.drawable.ic_menu_refresh).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		menu.add(0, ABOUT_ID, 0, R.string.menu_about).setIcon(android.R.drawable.ic_menu_info_details);
-		menu.add(0, REFRESH_ID, 0, R.string.menu_refresh_all).setIcon(R.drawable.ic_menu_refresh);
 		menu.add(0, SETTINGS_ID, 0, R.string.menu_settings).setIcon(android.R.drawable.ic_menu_preferences);
 		return true;
 	}
