@@ -47,7 +47,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -57,10 +56,11 @@ public class MainWindow extends BarcodeListeningListActivity implements
 	private static final int PARCELS_LOADER_ID = 0;
 
 	private static final int ABOUT_ID = Menu.FIRST;
-	private static final int REFRESH_ID = Menu.FIRST + 1;
-	private static final int SETTINGS_ID = Menu.FIRST + 2;
-	private static final int RENAME_ID = Menu.FIRST + 3;
-	private static final int DELETE_ID = Menu.FIRST + 4;
+	private static final int ADD_ID = Menu.FIRST + 1;
+	private static final int REFRESH_ID = Menu.FIRST + 2;
+	private static final int SETTINGS_ID = Menu.FIRST + 3;
+	private static final int RENAME_ID = Menu.FIRST + 4;
+	private static final int DELETE_ID = Menu.FIRST + 5;
 	
 	private static String sAboutMessage = null;
 
@@ -76,13 +76,6 @@ public class MainWindow extends BarcodeListeningListActivity implements
 
 		mDbAdapter = new ParcelDbAdapter(this);
 		mDbAdapter.open();
-
-		Button addButton = (Button)findViewById(R.id.add_parcel);
-		addButton.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View view) {
-				ParcelIdDialog.show(MainWindow.this, null, mDbAdapter);
-			}
-		});
 
 		// Start service if it isn't running (not entirely fool-proof, but works)
 		if (ServiceStarter.getCurrentInterval() == -1) {
@@ -194,6 +187,7 @@ public class MainWindow extends BarcodeListeningListActivity implements
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
+		menu.add(0, ADD_ID, 0, R.string.menu_add_parcel).setIcon(android.R.drawable.ic_menu_add).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		menu.add(0, REFRESH_ID, 0, R.string.menu_refresh_all).setIcon(R.drawable.ic_menu_refresh).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		menu.add(0, ABOUT_ID, 0, R.string.menu_about).setIcon(android.R.drawable.ic_menu_info_details);
 		menu.add(0, SETTINGS_ID, 0, R.string.menu_settings).setIcon(android.R.drawable.ic_menu_preferences);
@@ -205,6 +199,9 @@ public class MainWindow extends BarcodeListeningListActivity implements
 		switch(item.getItemId()) {
 		case ABOUT_ID:
 			mAboutDialog.show();
+			return true;
+		case ADD_ID:
+			ParcelIdDialog.show(MainWindow.this, null, mDbAdapter);
 			return true;
 		case REFRESH_ID:
 			//Defer automatic update at least another half interval

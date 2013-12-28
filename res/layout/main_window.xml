@@ -38,14 +38,5 @@
 			android:layout_weight="1"
 			android:layout_gravity="top"
 			android:layout_height="wrap_content"/>
-	
-	<Button android:text="@string/add_parcel"
-			android:id="@+id/add_parcel"
-			android:layout_width="fill_parent"
-			android:layout_weight="0"
-			android:layout_gravity="left"
-			android:layout_height="wrap_content"
-			android:drawableLeft="@android:drawable/ic_input_add"
-			android:drawableRight="@drawable/placeholder_32px"/>
 
 </LinearLayout>

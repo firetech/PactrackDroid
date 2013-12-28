@@ -138,7 +138,7 @@ public class ParcelIdDialog extends Dialog implements
 
 		//this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.parcel_id_dialog);
-		setTitle(R.string.add_parcel);
+		setTitle(R.string.menu_add_parcel);
 
 		mParcelText = (EditText) findViewById(R.id.parcelid);
 		mParcelText.setKeyListener(new NumberKeyListener() {

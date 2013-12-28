@@ -20,7 +20,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 -->
 <resources>
-	<string name="add_parcel">Lägg till kolli</string>
+	<string name="menu_add_parcel">Lägg till kolli</string>
 	<string name="menu_refresh">Uppdatera</string>
 	<string name="menu_refresh_all">Uppdatera alla</string>
 	<string name="menu_about">Om</string>
