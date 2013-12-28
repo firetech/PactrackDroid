@@ -138,7 +138,6 @@ public class ParcelIdDialog extends Dialog implements
 
 		//this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.parcel_id_dialog);
-		setTitle(R.string.menu_add_parcel);
 
 		mParcelText = (EditText) findViewById(R.id.parcelid);
 		mParcelText.setKeyListener(new NumberKeyListener() {
@@ -173,6 +172,11 @@ public class ParcelIdDialog extends Dialog implements
 
 		if (savedInstanceState != null) {
 			mRowId = savedInstanceState.getLong(ParcelDbAdapter.KEY_ROWID);
+		}
+		if (mRowId == null) {
+			setTitle(R.string.menu_add_parcel);
+		} else {
+			setTitle(R.string.menu_rename);
 		}
 
 		boolean loadParcel = false;
