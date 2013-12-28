@@ -211,7 +211,7 @@ public class ParcelDbAdapter {
 		return deleted;
 	}
 
-	public Cursor fetchAllParcels(boolean autoOnly) {
+	Cursor fetchAllParcels(boolean autoOnly) {
 		return mDb.query(PARCEL_TABLE,
 				new String[] {
 					KEY_ROWID,
@@ -231,8 +231,17 @@ public class ParcelDbAdapter {
 					KEY_AUTO
 				}, (autoOnly ? KEY_AUTO + "=1" : null), null, null, null, KEY_CUSTOM);
 	}
+	
+	public SimpleCursorLoader getAllParcelsLoader(final boolean autoOnly) {
+		return new SimpleCursorLoader(mCtx) {
+			@Override
+			public Cursor loadInBackground() {
+				return fetchAllParcels(autoOnly);
+			}
+		};
+	}
 
-	public Cursor fetchParcel(long rowId) throws SQLException {
+	Cursor fetchParcel(long rowId) throws SQLException {
 		Cursor parcel =
 			mDb.query(true, PARCEL_TABLE,
 					new String[] {
@@ -256,6 +265,15 @@ public class ParcelDbAdapter {
 			parcel.moveToFirst();
 		}
 		return parcel;
+	}
+	
+	public SimpleCursorLoader getParcelLoader(final long rowId) {
+		return new SimpleCursorLoader(mCtx) {
+			@Override
+			public Cursor loadInBackground() {
+				return fetchParcel(rowId);
+			}
+		};
 	}
 
 	public boolean changeParcelIdName(long rowId, String newId, String newName) {
@@ -305,7 +323,7 @@ public class ParcelDbAdapter {
 		return updated;
 	}
 
-	public Cursor fetchEvents(long parcelId) {
+	Cursor fetchEvents(long parcelId) {
 		return mDb.query(EVENT_TABLE,
 				new String[] {
 					KEY_ROWID,
@@ -314,6 +332,15 @@ public class ParcelDbAdapter {
 					"("+KEY_TIME+" || ': ' || "+KEY_LOC+") AS "+KEY_CUSTOM,
 					KEY_ERREV
 				}, KEY_FOREIGN + "=" + parcelId, null, null, null, KEY_TIME+" DESC");
+	}
+	
+	public SimpleCursorLoader getEventsLoader(final long parcelId) {
+		return new SimpleCursorLoader(mCtx) {
+			@Override
+			public Cursor loadInBackground() {
+				return fetchEvents(parcelId);
+			}
+		};
 	}
 
 	@SuppressLint("DefaultLocale")

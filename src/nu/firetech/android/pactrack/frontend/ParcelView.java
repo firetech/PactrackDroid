@@ -28,9 +28,11 @@ import nu.firetech.android.pactrack.common.ContextListener;
 import nu.firetech.android.pactrack.common.Error;
 import nu.firetech.android.pactrack.common.RefreshContext;
 import android.app.AlertDialog;
+import android.app.LoaderManager;
 import android.app.NotificationManager;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
@@ -45,7 +47,12 @@ import android.widget.LinearLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
-public class ParcelView extends BarcodeListeningListActivity implements RefreshContext, ParcelOptionsMenu.UpdateableView {
+public class ParcelView extends BarcodeListeningListActivity implements
+		RefreshContext, ParcelOptionsMenu.UpdateableView, LoaderManager.LoaderCallbacks<Cursor> {
+	private static final int PARCEL_LOADER_ID = 1;
+	private static final int EVENTS_LOADER_ID = 2;
+	private static final int REFRESH_LOADER_ID = 3;
+
 	private static final String TAG = "<PactrackDroid> ParcelView";
 	
 	public static final String FORCE_REFRESH = "force_update";
@@ -63,6 +70,7 @@ public class ParcelView extends BarcodeListeningListActivity implements RefreshC
 	private Button mToggleButton;
 	private boolean mExtendedShowing;
 	private int errorShown;
+	private SimpleCursorAdapter mEventsAdapter;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +112,29 @@ public class ParcelView extends BarcodeListeningListActivity implements RefreshC
 		} else {
 			errorShown = Error.NONE;
 		}
+
+
+		String[] from = new String[]{ParcelDbAdapter.KEY_CUSTOM, ParcelDbAdapter.KEY_DESC, ParcelDbAdapter.KEY_ERREV};
+		int[] to = new int[]{android.R.id.title, android.R.id.text1, android.R.id.text2};
+		
+		mEventsAdapter = new SimpleCursorAdapter(this, R.layout.event_row, null, from, to, 0);
+		mEventsAdapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
+			@Override
+			public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
+				if (view instanceof TextView && view.getId() == android.R.id.text2) {
+					if (cursor.getInt(columnIndex) == 1) {
+						((TextView)view).setVisibility(View.VISIBLE);
+						((TextView)view).setText(getString(R.string.error_event));
+					} else {
+						((TextView)view).setVisibility(View.GONE);
+					}
+					return true;
+				} else {
+					return false;
+				}
+			}
+		});
+		setListAdapter(mEventsAdapter);
 		
 		Bundle extras = null;
 		if (mRowId == null) {
@@ -111,7 +142,38 @@ public class ParcelView extends BarcodeListeningListActivity implements RefreshC
 			mRowId = extras != null ? extras.getLong(ParcelDbAdapter.KEY_ROWID) 
 					: null;
 		}
-		updateView(extras != null && extras.containsKey(FORCE_REFRESH));
+		if (extras != null && extras.containsKey(FORCE_REFRESH)) {
+			doRefresh();
+		}
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		refreshDone();
+	}
+	
+	@Override
+	public void refreshDone() {
+		int[] loaders = { PARCEL_LOADER_ID, EVENTS_LOADER_ID };
+		
+		LoaderManager lm = getLoaderManager();
+		for (int loader_id : loaders) {
+			if (lm.getLoader(loader_id) == null) {
+				lm.initLoader(loader_id, null, this);
+			} else {
+				lm.restartLoader(loader_id, null, this);
+			}
+		}
+	}
+	
+	public void doRefresh() {
+		LoaderManager lm = getLoaderManager();
+		if (lm.getLoader(REFRESH_LOADER_ID) == null) {
+			lm.initLoader(REFRESH_LOADER_ID, null, this);
+		} else {
+			lm.restartLoader(REFRESH_LOADER_ID, null, this);
+		}
 	}
 	
 	@Override
@@ -154,9 +216,7 @@ public class ParcelView extends BarcodeListeningListActivity implements RefreshC
 			return true;
 		case REFRESH_ID:
 			errorShown = Error.NONE;
-			Cursor parcel = mDbAdapter.fetchParcel(mRowId);
-			startManagingCursor(parcel);
-			ParcelUpdater.update(this, parcel, mDbAdapter);
+			doRefresh();
 			return true;
 		}
 
@@ -183,31 +243,17 @@ public class ParcelView extends BarcodeListeningListActivity implements RefreshC
 		RefreshDialog.show(this, maxValue);
 		addContextListener(contextListener);
 	}
-	
-	@Override
-	public void refreshDone() {
-		updateView(false);
-	}
 
 	@Override
 	public boolean showsNews() {
 		return true;
 	}
 
-	public void updateView(boolean forceRefresh) {
+	private void updateView(Cursor parcel) {
 		((NotificationManager)getSystemService(NOTIFICATION_SERVICE)).cancel(mRowId.hashCode());
 		
-		Cursor parcel = null;
 		try {
-			parcel = mDbAdapter.fetchParcel(mRowId);
-			startManagingCursor(parcel);
-
 			int error = parcel.getInt(parcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_ERROR));
-			
-			if (forceRefresh) {
-				errorShown = error = Error.NONE;
-				ParcelUpdater.update(this, parcel, mDbAdapter);
-			}
 			
 			String status = parcel.getString(parcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_STATUS));
 			
@@ -282,35 +328,6 @@ public class ParcelView extends BarcodeListeningListActivity implements RefreshC
 			((ImageView)findViewById(R.id.status_icon)).setImageResource(
 					MainWindow.getStatusImage(parcel, parcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_STATUSCODE)));
 			updateAutoUpdateView(R.id.status_icon, parcel.getInt(parcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_AUTO)) == 1);
-
-			Cursor eventCursor = mDbAdapter.fetchEvents(mRowId);
-			startManagingCursor(eventCursor);
-
-			String[] from = new String[]{ParcelDbAdapter.KEY_CUSTOM, ParcelDbAdapter.KEY_DESC, ParcelDbAdapter.KEY_ERREV};
-
-			int[] to = new int[]{android.R.id.title, android.R.id.text1, android.R.id.text2};
-
-			SimpleCursorAdapter eventAdapter =
-				new SimpleCursorAdapter(this, R.layout.event_row, eventCursor, from, to, 0);
-
-			eventAdapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
-				@Override
-				public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
-					if (view instanceof TextView && view.getId() == android.R.id.text2) {
-						if (cursor.getInt(columnIndex) == 1) {
-							((TextView)view).setVisibility(View.VISIBLE);
-							((TextView)view).setText(getString(R.string.error_event));
-						} else {
-							((TextView)view).setVisibility(View.GONE);
-						}
-						return true;
-					} else {
-						return false;
-					}
-				}
-			});
-			
-			setListAdapter(eventAdapter);
 		} catch (Exception e) {
 			Log.d(TAG, "Database error", e);
 			MainWindow.dbErrorDialog(this);
@@ -326,5 +343,42 @@ public class ParcelView extends BarcodeListeningListActivity implements RefreshC
 		ImageView icon = (ImageView)findViewById(position);
 		icon.getDrawable().setAlpha((value ? 255 : 70));
 		icon.invalidate();
+	}
+
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+	    switch (id) {
+		case PARCEL_LOADER_ID:
+			return mDbAdapter.getParcelLoader(mRowId);
+	    case EVENTS_LOADER_ID:
+			return mDbAdapter.getEventsLoader(mRowId);
+	    case REFRESH_LOADER_ID:
+			return mDbAdapter.getParcelLoader(mRowId);
+	    }
+	    return null;
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+		switch (loader.getId()) {
+		case PARCEL_LOADER_ID:
+			updateView(cursor);
+			break;
+		case EVENTS_LOADER_ID:
+			mEventsAdapter.swapCursor(cursor);
+			break;
+		case REFRESH_LOADER_ID:
+			ParcelUpdater.update(this, cursor, mDbAdapter);
+			break;
+	    }
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+		switch (loader.getId()) {
+		case EVENTS_LOADER_ID:
+			mEventsAdapter.swapCursor(null);
+			break;
+		}
 	}
 }

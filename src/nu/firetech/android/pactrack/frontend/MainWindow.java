@@ -30,10 +30,12 @@ import nu.firetech.android.pactrack.common.ContextListener;
 import nu.firetech.android.pactrack.common.Error;
 import nu.firetech.android.pactrack.common.RefreshContext;
 import android.app.AlertDialog;
+import android.app.LoaderManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -50,7 +52,10 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
-public class MainWindow extends BarcodeListeningListActivity implements RefreshContext, ParcelOptionsMenu.UpdateableView {
+public class MainWindow extends BarcodeListeningListActivity implements
+		RefreshContext, ParcelOptionsMenu.UpdateableView, LoaderManager.LoaderCallbacks<Cursor> {
+	private static final int PARCELS_LOADER_ID = 0;
+
 	private static final int ABOUT_ID = Menu.FIRST;
 	private static final int REFRESH_ID = Menu.FIRST + 1;
 	private static final int SETTINGS_ID = Menu.FIRST + 2;
@@ -62,7 +67,7 @@ public class MainWindow extends BarcodeListeningListActivity implements RefreshC
 	private ParcelDbAdapter mDbAdapter;
 	private AlertDialog mAboutDialog;
 	private SimpleCursorAdapter mAdapter;
-
+	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -75,7 +80,7 @@ public class MainWindow extends BarcodeListeningListActivity implements RefreshC
 		Button addButton = (Button)findViewById(R.id.add_parcel);
 		addButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View view) {
-				new ParcelIdDialog(MainWindow.this, null, mDbAdapter).show();
+				ParcelIdDialog.show(MainWindow.this, null, mDbAdapter);
 			}
 		});
 
@@ -167,10 +172,12 @@ public class MainWindow extends BarcodeListeningListActivity implements RefreshC
 
 	@Override
 	public void refreshDone() {
-		Cursor parcelCursor = mDbAdapter.fetchAllParcels(false);
-		stopManagingCursor(mAdapter.getCursor());
-		startManagingCursor(parcelCursor);
-		mAdapter.changeCursor(parcelCursor);
+		LoaderManager lm = getLoaderManager();
+		if (lm.getLoader(PARCELS_LOADER_ID) == null) {
+			lm.initLoader(PARCELS_LOADER_ID, null, this);
+		} else {
+			lm.restartLoader(PARCELS_LOADER_ID, null, this);
+		}
 	}
 
 	@Override
@@ -259,6 +266,35 @@ public class MainWindow extends BarcodeListeningListActivity implements RefreshC
 			Intent intent) {
 		super.onActivityResult(requestCode, resultCode, intent);
 		refreshDone();
+	}
+
+////////////////////////////////////////////////////////////////////////////////
+
+	@Override
+	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		switch (id) {
+		case PARCELS_LOADER_ID:
+			return mDbAdapter.getAllParcelsLoader(false);
+		}
+		return null;
+	}
+
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+		switch (loader.getId()) {
+		case PARCELS_LOADER_ID:
+			mAdapter.swapCursor(cursor);
+			break;
+		}
+	}
+
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+		switch (loader.getId()) {
+		case PARCELS_LOADER_ID:
+			mAdapter.swapCursor(null);
+			break;
+		}
 	}
 
 ////////////////////////////////////////////////////////////////////////////////
