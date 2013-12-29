@@ -145,6 +145,8 @@ public class ParcelView extends BarcodeListeningListActivity implements
 		if (extras != null && extras.containsKey(FORCE_REFRESH)) {
 			doRefresh();
 		}
+		
+		getLoaderManager(); // Workaround for a bug regarding LoaderManager life cycle when rotating the screen.
 	}
 	
 	@Override

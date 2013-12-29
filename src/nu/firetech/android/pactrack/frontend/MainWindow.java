@@ -138,6 +138,8 @@ public class MainWindow extends BarcodeListeningListActivity implements
 		setListAdapter(mAdapter);
 
 		registerForContextMenu(getListView());
+
+		getLoaderManager(); // Workaround for a bug regarding LoaderManager life cycle when rotating the screen.
 	}
 	
 	@Override
