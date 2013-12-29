@@ -25,6 +25,7 @@ import nu.firetech.android.pactrack.R;
 import nu.firetech.android.pactrack.backend.ParcelDbAdapter;
 import nu.firetech.android.pactrack.backend.ParcelUpdater;
 import nu.firetech.android.pactrack.backend.ParcelXMLParser;
+import nu.firetech.android.pactrack.backend.Preferences;
 import nu.firetech.android.pactrack.backend.ServiceStarter;
 import nu.firetech.android.pactrack.common.ContextListener;
 import nu.firetech.android.pactrack.common.Error;
@@ -124,7 +125,8 @@ public class MainWindow extends BarcodeListeningListActivity implements
 			public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
 				if (view instanceof ImageView && view.getId() == android.R.id.icon) {
 					((ImageView)view).setImageResource(getStatusImage(cursor, columnIndex));
-					if (cursor.getInt(cursor.getColumnIndexOrThrow(ParcelDbAdapter.KEY_AUTO)) == 1) {
+					if (Preferences.getPreferences(MainWindow.this).getCheckInterval() == 0 ||
+							cursor.getInt(cursor.getColumnIndexOrThrow(ParcelDbAdapter.KEY_AUTO)) == 1) {
 						((ImageView)view).getDrawable().mutate().setAlpha(255);
 					} else {
 						((ImageView)view).getDrawable().mutate().setAlpha(70);

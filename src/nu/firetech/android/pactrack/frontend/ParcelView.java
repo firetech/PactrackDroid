@@ -24,6 +24,7 @@ package nu.firetech.android.pactrack.frontend;
 import nu.firetech.android.pactrack.R;
 import nu.firetech.android.pactrack.backend.ParcelDbAdapter;
 import nu.firetech.android.pactrack.backend.ParcelUpdater;
+import nu.firetech.android.pactrack.backend.Preferences;
 import nu.firetech.android.pactrack.common.ContextListener;
 import nu.firetech.android.pactrack.common.Error;
 import nu.firetech.android.pactrack.common.RefreshContext;
@@ -335,7 +336,8 @@ public class ParcelView extends BarcodeListeningListActivity implements
 			
 			((ImageView)findViewById(R.id.status_icon)).setImageResource(
 					MainWindow.getStatusImage(parcel, parcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_STATUSCODE)));
-			updateAutoUpdateView(R.id.status_icon, parcel.getInt(parcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_AUTO)) == 1);
+			updateAutoUpdateView(R.id.status_icon, Preferences.getPreferences(this).getCheckInterval() == 0 ||
+					parcel.getInt(parcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_AUTO)) == 1);
 		} catch (Exception e) {
 			Log.d(TAG, "Database error", e);
 			MainWindow.dbErrorDialog(this);
