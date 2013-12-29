@@ -189,10 +189,16 @@ public class MainWindow extends BarcodeListeningListActivity implements
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
-		menu.add(0, ADD_ID, 0, R.string.menu_add_parcel).setIcon(android.R.drawable.ic_menu_add).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-		menu.add(0, REFRESH_ID, 0, R.string.menu_refresh_all).setIcon(R.drawable.ic_menu_refresh).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-		menu.add(0, ABOUT_ID, 0, R.string.menu_about).setIcon(android.R.drawable.ic_menu_info_details);
-		menu.add(0, SETTINGS_ID, 0, R.string.menu_settings).setIcon(android.R.drawable.ic_menu_preferences);
+		menu.add(0, ADD_ID, 0, R.string.menu_add_parcel)
+			.setIcon(android.R.drawable.ic_menu_add)
+			.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+		menu.add(0, REFRESH_ID, 0, R.string.menu_refresh_all)
+			.setIcon(R.drawable.ic_menu_refresh)
+			.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+		menu.add(0, SETTINGS_ID, 0, R.string.menu_settings)
+			.setIcon(android.R.drawable.ic_menu_preferences);
+		menu.add(0, ABOUT_ID, 0, R.string.menu_about)
+			.setIcon(android.R.drawable.ic_menu_info_details);
 		return true;
 	}
 

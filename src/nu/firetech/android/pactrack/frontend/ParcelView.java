@@ -195,10 +195,16 @@ public class ParcelView extends BarcodeListeningListActivity implements
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
-		menu.add(0, DELETE_ID, 0, R.string.menu_delete).setIcon(android.R.drawable.ic_menu_delete).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-		menu.add(0, RENAME_ID, 0, R.string.menu_rename).setIcon(android.R.drawable.ic_menu_edit).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+		menu.add(0, DELETE_ID, 0, R.string.menu_delete)
+			.setIcon(android.R.drawable.ic_menu_delete)
+			.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+		menu.add(0, RENAME_ID, 0, R.string.menu_rename)
+			.setIcon(android.R.drawable.ic_menu_edit)
+			.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 		new ParcelOptionsMenu(this, menu, mRowId, R.id.status_icon, mDbAdapter, this);
-		menu.add(0, REFRESH_ID, 0, R.string.menu_refresh).setIcon(R.drawable.ic_menu_refresh).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		menu.add(0, REFRESH_ID, 0, R.string.menu_refresh)
+			.setIcon(R.drawable.ic_menu_refresh)
+			.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 		return true;
 	}
 
