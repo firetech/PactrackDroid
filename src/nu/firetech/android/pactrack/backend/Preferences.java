@@ -52,9 +52,14 @@ public class Preferences {
 	}
 	
 	public long getCheckInterval() {
+		if (!mPrefs.getBoolean(mRes.getString(R.string.key_auto_updates), mRes.getBoolean(R.bool.auto_updates_default))) {
+			return 0;
+		}
+		
 		int interval = 0;
 		try {
-			interval = Integer.parseInt(mPrefs.getString(mRes.getString(R.string.key_check_interval), "60"));
+			interval = Integer.parseInt(mPrefs.getString(mRes.getString(R.string.key_check_interval),
+					mRes.getString(R.string.check_interval_default)));
 		} catch (Exception e) {}
 		
 		switch(interval) {
@@ -74,31 +79,34 @@ public class Preferences {
 	}
 	
 	public boolean getNotificationEnabled() {
-		return mPrefs.getBoolean(mRes.getString(R.string.key_notify_on), true);
+		return mPrefs.getBoolean(mRes.getString(R.string.key_notify_on), mRes.getBoolean(R.bool.notify_on_default));
 	}
 	
 	public boolean getNotificationVibrate() {
-		return mPrefs.getBoolean(mRes.getString(R.string.key_notify_vibrate), true);
+		return mPrefs.getBoolean(mRes.getString(R.string.key_notify_vibrate), mRes.getBoolean(R.bool.notify_vibrate_default));
 	}
 	
 	public boolean getNotificationLight() {
-		return mPrefs.getBoolean(mRes.getString(R.string.key_notify_light), true);
+		return mPrefs.getBoolean(mRes.getString(R.string.key_notify_light), mRes.getBoolean(R.bool.notify_light_default));
 	}
 	
 	public int getNotificationColor() {
-		return Integer.parseInt(mPrefs.getString(mRes.getString(R.string.key_notify_light_color), "00ffff"), 16) + 0xff000000;
+		return Integer.parseInt(mPrefs.getString(mRes.getString(R.string.key_notify_light_color),
+				mRes.getString(R.string.notify_light_color_default)), 16) + 0xff000000;
 	}
 	
 	public int getNotificationOntime() {
-		return Integer.parseInt(mPrefs.getString(mRes.getString(R.string.key_notify_light_ontime), "1000"));
+		return Integer.parseInt(mPrefs.getString(mRes.getString(R.string.key_notify_light_ontime),
+				mRes.getString(R.string.notify_light_ontime_default)));
 	}
 	
 	public int getNotificationOfftime() {
-		return Integer.parseInt(mPrefs.getString(mRes.getString(R.string.key_notify_light_offtime), "1000"));
+		return Integer.parseInt(mPrefs.getString(mRes.getString(R.string.key_notify_light_offtime),
+				mRes.getString(R.string.notify_light_offtime_default)));
 	}
 	
 	public Uri getNotificationSound() {
-		String uri = mPrefs.getString(mRes.getString(R.string.key_notify_sound), null);
-		return (uri == null ? null : Uri.parse(uri));
+		String uri = mPrefs.getString(mRes.getString(R.string.key_notify_sound), mRes.getString(R.string.notify_sound_default));
+		return (uri == null || uri.length() == 0 ? null : Uri.parse(uri));
 	}
 }

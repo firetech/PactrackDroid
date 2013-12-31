@@ -24,12 +24,23 @@
 	<string name="home_page" translatable="false">http://firetech.nu/pactrackdroid</string>
 	<string name="app_description" translatable="false">Keep track of parcels sent with the Swedish mail service (Posten).</string>
 
+	<string name="key_auto_updates" translatable="false">autoUpdatesEnabled</string>
+	<bool name="auto_updates_default" translatable="false">true</bool>
 	<string name="key_check_interval" translatable="false">checkInterval</string>
+	<string name="check_interval_default" translatable="false">60</string>
+	
 	<string name="key_notify_on" translatable="false">notificationEnabled</string>
-	<string name="key_notify_vibrate" translatable="false">notificationVibrate</string>
-	<string name="key_notify_light" translatable="false">notificationLight</string>
-	<string name="key_notify_light_color" translatable="false">notificationLightColor</string>
-	<string name="key_notify_light_ontime" translatable="false">notificationLightOntime</string>
-	<string name="key_notify_light_offtime" translatable="false">notificationLightOfftime</string>
+	<bool name="notify_on_default" translatable="false">true</bool>
 	<string name="key_notify_sound" translatable="false">notificationSound</string>
+	<string name="notify_sound_default" translatable="false"></string>
+	<string name="key_notify_vibrate" translatable="false">notificationVibrate</string>
+	<bool name="notify_vibrate_default" translatable="false">true</bool>
+	<string name="key_notify_light" translatable="false">notificationLight</string>
+	<bool name="notify_light_default" translatable="false">true</bool>
+	<string name="key_notify_light_color" translatable="false">notificationLightColor</string>
+	<string name="notify_light_color_default" translatable="false">00ffff</string>
+	<string name="key_notify_light_ontime" translatable="false">notificationLightOntime</string>
+	<string name="notify_light_ontime_default" translatable="false">1000</string>
+	<string name="key_notify_light_offtime" translatable="false">notificationLightOfftime</string>
+	<string name="notify_light_offtime_default" translatable="false">1000</string>
 </resources>

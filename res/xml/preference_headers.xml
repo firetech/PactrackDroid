@@ -22,7 +22,9 @@
 <preference-headers
         xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <header android:fragment="nu.firetech.android.pactrack.frontend.ConfigView$ConfigFragment"
-            android:title="@string/menu_settings" />
+    <header android:fragment="nu.firetech.android.pactrack.frontend.ConfigView$AutoUpdatesFragment"
+            android:title="@string/auto_updates_title" android:summary="@string/auto_updates_head_summary" />
+    <header android:fragment="nu.firetech.android.pactrack.frontend.ConfigView$NotificationFragment"
+            android:title="@string/notify_on_title" android:summary="@string/notify_on_head_summary" />
 
 </preference-headers>

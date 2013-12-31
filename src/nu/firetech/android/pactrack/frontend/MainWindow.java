@@ -42,7 +42,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.preference.PreferenceActivity;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -229,7 +228,6 @@ public class MainWindow extends BarcodeListeningListActivity implements
 			return true;
 		case SETTINGS_ID:
 			Intent intent = new Intent(this, ConfigView.class);
-			intent.putExtra(PreferenceActivity.EXTRA_SHOW_FRAGMENT, ConfigView.ConfigFragment.class.getName());
 			startActivity(intent);
 			return true;
 		}

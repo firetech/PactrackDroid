@@ -29,16 +29,12 @@ import nu.firetech.android.pactrack.backend.ServiceStarter;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.preference.EditTextPreference;
+import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
-import android.support.v4.app.NavUtils;
-import android.text.InputFilter;
-import android.text.InputType;
 import android.text.format.DateUtils;
-import android.text.method.NumberKeyListener;
 import android.view.MenuItem;
 
 public class ConfigView extends PreferenceActivity {
@@ -47,16 +43,15 @@ public class ConfigView extends PreferenceActivity {
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
-
-		setTitle(getString(R.string.menu_settings));
+		
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 	}
-
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
 		case android.R.id.home:
-			NavUtils.navigateUpFromSameTask(this);
+			finish();
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
@@ -70,20 +65,23 @@ public class ConfigView extends PreferenceActivity {
 	@Override
 	protected boolean isValidFragment(String fragmentName)
 	{
-		if(ConfigFragment.class.getName().equals(fragmentName))
+		if (AutoUpdatesFragment.class.getName().equals(fragmentName))
+			return true;
+		if (NotificationFragment.class.getName().equals(fragmentName))
+			return true;
+		if (NotificationLightFragment.class.getName().equals(fragmentName))
 			return true;
 		return false;
-
 	}
 
-	public static class ConfigFragment extends PreferenceFragment {
+	public static class AutoUpdatesFragment extends PreferenceFragment {
 		private ParcelDbAdapter mDbAdapter;
 
 		@Override
 		public void onCreate(Bundle savedInstanceState) {
 			super.onCreate(savedInstanceState);
 			
-			addPreferencesFromResource(R.xml.preferences);
+			addPreferencesFromResource(R.xml.auto_updates_preferences);
 
 			mDbAdapter = new ParcelDbAdapter(getActivity());
 			mDbAdapter.open();
@@ -114,42 +112,39 @@ public class ConfigView extends PreferenceActivity {
 					return true;
 				}
 			});
-
-			EditTextPreference lightColorPref = (EditTextPreference)findPreference(getString(R.string.key_notify_light_color));
-			lightColorPref.getEditText().setFilters(new InputFilter[] { new InputFilter.LengthFilter(6) });
-			lightColorPref.getEditText().setKeyListener(new NumberKeyListener() {
-				private char[] acceptedChars = null;
-
-				@Override
-				protected char[] getAcceptedChars() {
-					if (acceptedChars == null) {
-						acceptedChars = new char[] {
-								'0','1','2','3','4','5','6','7','8','9',
-								'A','B','C','D','E','F',
-								'a','b','c','d','e','f'
-						};
-					}
-
-					return acceptedChars;
-				}
-
-				@Override
-				public int getInputType() {
-					return InputType.TYPE_CLASS_NUMBER;
-				}
-			});
-
-			EditTextPreference lightOntimePref = (EditTextPreference)findPreference(getString(R.string.key_notify_light_ontime));
-			lightOntimePref.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-			EditTextPreference lightOfftimePref = (EditTextPreference)findPreference(getString(R.string.key_notify_light_offtime));
-			lightOfftimePref.getEditText().setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+			
+			//Backwards compatibility to old method of disabling automatic updates
+			if (checkIntervalPref.getValue().equals("0")) {
+				checkIntervalPref.setValue(getString(R.string.check_interval_default));
+				
+				CheckBoxPreference autoUpdatesEnabledPref = (CheckBoxPreference)findPreference(
+						getString(R.string.key_auto_updates));
+				autoUpdatesEnabledPref.setChecked(false);
+			}
 		}
-
 
 		@Override
 		public void onDestroy() {
 			super.onDestroy();
 			mDbAdapter.close();
+		}
+	}
+
+	public static class NotificationFragment extends PreferenceFragment {
+		@Override
+		public void onCreate(Bundle savedInstanceState) {
+			super.onCreate(savedInstanceState);
+			
+			addPreferencesFromResource(R.xml.notification_preferences);
+		}
+	}
+
+	public static class NotificationLightFragment extends PreferenceFragment {
+		@Override
+		public void onCreate(Bundle savedInstanceState) {
+			super.onCreate(savedInstanceState);
+			
+			addPreferencesFromResource(R.xml.notification_light_preferences);
 		}
 	}
 }

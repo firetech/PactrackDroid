@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ * Copyright (C) 2013 Joakim Andersson
+ * Copyright (C) 2013 blunden
+ * 
+ * This file is part of PactrackDroid, an Android application to keep
+ * track of parcels sent with the Swedish mail service (Posten).
+ * 
+ * PactrackDroid is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * PactrackDroid is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+-->
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orderingFromXml="true"
+    android:title="@string/auto_updates_title" >
+
+    <CheckBoxPreference
+        android:defaultValue="@bool/auto_updates_default"
+        android:disableDependentsState="false"
+        android:key="@string/key_auto_updates"
+        android:summary="@string/auto_updates_summary"
+        android:title="@string/auto_updates_title" />
+
+    <ListPreference
+        android:defaultValue="@string/check_interval_default"
+        android:dependency="@string/key_auto_updates"
+        android:dialogTitle="@string/check_interval_title"
+        android:entries="@array/check_intervals"
+        android:entryValues="@array/check_interval_values"
+        android:key="@string/key_check_interval"
+        android:negativeButtonText="@string/cancel"
+        android:summary="@string/check_interval_summary"
+        android:title="@string/check_interval_title" />
+
+</PreferenceScreen>
