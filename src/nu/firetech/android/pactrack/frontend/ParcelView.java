@@ -37,6 +37,7 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -359,11 +360,10 @@ public class ParcelView extends DialogAwareListActivity implements
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 	    switch (id) {
 		case PARCEL_LOADER_ID:
+	    case REFRESH_LOADER_ID:
 			return mDbAdapter.getParcelLoader(mRowId);
 	    case EVENTS_LOADER_ID:
 			return mDbAdapter.getEventsLoader(mRowId);
-	    case REFRESH_LOADER_ID:
-			return mDbAdapter.getParcelLoader(mRowId);
 	    }
 	    return null;
 	}
@@ -378,7 +378,14 @@ public class ParcelView extends DialogAwareListActivity implements
 			mEventsAdapter.swapCursor(cursor);
 			break;
 		case REFRESH_LOADER_ID:
-			ParcelUpdater.update(this, cursor, mDbAdapter);
+			//TODO This can probably be done better...
+			final Cursor fCursor = cursor;
+			new Handler(getMainLooper()){
+				@Override
+				public void handleMessage(Message m) {
+					ParcelUpdater.update(ParcelView.this, fCursor);
+				}
+			}.sendEmptyMessage(0);
 			break;
 	    }
 	}
