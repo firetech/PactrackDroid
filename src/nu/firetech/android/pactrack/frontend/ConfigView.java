@@ -65,12 +65,17 @@ public class ConfigView extends PreferenceActivity {
 	@Override
 	protected boolean isValidFragment(String fragmentName)
 	{
-		if (AutoUpdatesFragment.class.getName().equals(fragmentName))
-			return true;
-		if (NotificationFragment.class.getName().equals(fragmentName))
-			return true;
-		if (NotificationLightFragment.class.getName().equals(fragmentName))
-			return true;
+		Class<?> validFragments[] = new Class<?>[] {
+				AutoUpdatesFragment.class,
+				NotificationFragment.class,
+				NotificationLightFragment.class
+		};
+		for (Class<?> fragment : validFragments) {
+			if (fragment.getName().equals(fragmentName)) {
+				return true;
+			}
+		}
+		
 		return false;
 	}
 
