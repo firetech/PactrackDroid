@@ -52,7 +52,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
-public class MainWindow extends BarcodeListeningListActivity implements
+public class MainWindow extends DialogAwareListActivity implements
 		RefreshContext, ParcelOptionsMenu.UpdateableView, LoaderManager.LoaderCallbacks<Cursor> {
 	private static final int PARCELS_LOADER_ID = 0;
 
@@ -217,7 +217,7 @@ public class MainWindow extends BarcodeListeningListActivity implements
 			mAboutDialog.show();
 			return true;
 		case ADD_ID:
-			ParcelIdDialog.show(MainWindow.this, null, mDbAdapter);
+			ParcelIdDialog.show(MainWindow.this, null);
 			return true;
 		case REFRESH_ID:
 			//Defer automatic update at least another half interval
@@ -251,7 +251,7 @@ public class MainWindow extends BarcodeListeningListActivity implements
 		switch(item.getItemId()) {
 		case RENAME_ID:
 			info = (AdapterContextMenuInfo) item.getMenuInfo();
-			ParcelIdDialog.show(this, info.id, mDbAdapter);
+			ParcelIdDialog.show(this, info.id);
 			return true;
 		case DELETE_ID:
 			info = (AdapterContextMenuInfo) item.getMenuInfo();

@@ -159,6 +159,9 @@ public class ParcelDbAdapter {
 	}
 
 	public void close() {
+		if (!isOpen()) {
+			throw new IllegalStateException("Adapter is not open");
+		}
 		mDbHelper.close();
 		mDbHelper = null;
 	}

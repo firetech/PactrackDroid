@@ -48,7 +48,7 @@ import android.widget.LinearLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
-public class ParcelView extends BarcodeListeningListActivity implements
+public class ParcelView extends DialogAwareListActivity implements
 		RefreshContext, ParcelOptionsMenu.UpdateableView, LoaderManager.LoaderCallbacks<Cursor> {
 	private static final int PARCEL_LOADER_ID = 1;
 	private static final int EVENTS_LOADER_ID = 2;
@@ -221,7 +221,7 @@ public class ParcelView extends BarcodeListeningListActivity implements
 			});
 			return true;
 		case RENAME_ID:
-			ParcelIdDialog.show(this, mRowId, mDbAdapter);
+			ParcelIdDialog.show(this, mRowId);
 			return true;
 		case REFRESH_ID:
 			errorShown = Error.NONE;
