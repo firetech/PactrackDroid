@@ -21,7 +21,6 @@
 
 package nu.firetech.android.pactrack.backend;
 
-import nu.firetech.android.pactrack.common.ContextListener;
 import nu.firetech.android.pactrack.common.RefreshContext;
 import android.app.Service;
 import android.content.Intent;
@@ -32,12 +31,10 @@ import android.util.Log;
 public class ParcelService extends Service implements RefreshContext {
 	private static final String TAG = "<PactrackDroid> ParcelService";
 
-	private Handler mHandler;
 	private ParcelDbAdapter mDbAdapter;
 
 	@Override
 	public void onCreate() {
-		mHandler = new Handler();
 		mDbAdapter = new ParcelDbAdapter(this);
 		mDbAdapter.open();
 	}
@@ -61,13 +58,9 @@ public class ParcelService extends Service implements RefreshContext {
 	}
 
 	@Override
-	public Handler getProgressHandler() {
-		return mHandler;
-	}
-
-	@Override
-	public void startRefreshProgress(int maxValue, ContextListener listener) {
+	public Handler startRefreshProgress(int maxValue, ParcelUpdater updater) {
 		Log.d(TAG, "Automatic update running");
+		return null;
 	}
 
 	@Override

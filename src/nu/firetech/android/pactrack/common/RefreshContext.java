@@ -21,11 +21,11 @@
 
 package nu.firetech.android.pactrack.common;
 
+import nu.firetech.android.pactrack.backend.ParcelUpdater;
 import android.os.Handler;
 
 public interface RefreshContext {
-	public Handler getProgressHandler();
-	public void startRefreshProgress(int maxValue, ContextListener listener);
+	public Handler startRefreshProgress(int maxValue, ParcelUpdater updater);
 	public void refreshDone();
 	public boolean showsNews();
 }

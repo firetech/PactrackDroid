@@ -27,9 +27,7 @@ import nu.firetech.android.pactrack.backend.ParcelUpdater;
 import nu.firetech.android.pactrack.backend.ParcelXMLParser;
 import nu.firetech.android.pactrack.backend.Preferences;
 import nu.firetech.android.pactrack.backend.ServiceStarter;
-import nu.firetech.android.pactrack.common.ContextListener;
 import nu.firetech.android.pactrack.common.Error;
-import nu.firetech.android.pactrack.common.RefreshContext;
 import android.app.AlertDialog;
 import android.app.LoaderManager;
 import android.content.Context;
@@ -52,8 +50,8 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
-public class MainWindow extends DialogAwareListActivity implements
-		RefreshContext, ParcelOptionsMenu.UpdateableView, LoaderManager.LoaderCallbacks<Cursor> {
+public class MainWindow extends RefreshContextListActivity implements
+		ParcelOptionsMenu.UpdateableView, LoaderManager.LoaderCallbacks<Cursor> {
 	private static final int PARCELS_LOADER_ID = 0;
 
 	private static final int ABOUT_ID = Menu.FIRST;
@@ -69,9 +67,8 @@ public class MainWindow extends DialogAwareListActivity implements
 	private AlertDialog mAboutDialog;
 	private SimpleCursorAdapter mAdapter;
 	
-	/** Called when the activity is first created. */
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_window);
 
@@ -162,18 +159,12 @@ public class MainWindow extends DialogAwareListActivity implements
 	}
 
 	@Override
-	public Handler getProgressHandler() {
-		return ((RefreshDialog)getDialogByClass(RefreshDialog.class)).getProgressHandler();
+	public Handler startRefreshProgress(int maxValue) {
+		return RefreshDialog.show(this, maxValue);
 	}
 
 	@Override
-	public void startRefreshProgress(int maxValue, ContextListener contextListener) {
-		RefreshDialog.show(this, maxValue);
-		addContextListener(contextListener);
-	}
-
-	@Override
-	public void refreshDone() {
+	public void onRefreshDone() {
 		LoaderManager lm = getLoaderManager();
 		if (lm.getLoader(PARCELS_LOADER_ID) == null) {
 			lm.initLoader(PARCELS_LOADER_ID, null, this);

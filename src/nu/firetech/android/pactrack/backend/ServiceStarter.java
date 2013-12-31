@@ -54,7 +54,6 @@ public class ServiceStarter extends BroadcastReceiver {
 		PendingIntent pi = PendingIntent.getService(ctx, 0, new Intent(ctx, ParcelService.class), 0);
 		AlarmManager am = (AlarmManager) ctx.getSystemService(Context.ALARM_SERVICE);
 		
-		
 		if (dbAdapter != null && dbAdapter.getNumAutoParcels() < 1) {
 			interval = 0;
 		} else {

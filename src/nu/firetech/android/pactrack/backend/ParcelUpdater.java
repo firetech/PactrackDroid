@@ -24,7 +24,6 @@ package nu.firetech.android.pactrack.backend;
 import java.util.ArrayList;
 
 import nu.firetech.android.pactrack.R;
-import nu.firetech.android.pactrack.common.ContextListener;
 import nu.firetech.android.pactrack.common.RefreshContext;
 import nu.firetech.android.pactrack.frontend.MainWindow;
 import nu.firetech.android.pactrack.frontend.ParcelView;
@@ -44,10 +43,10 @@ import android.os.Message;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-public class ParcelUpdater extends BroadcastReceiver implements Runnable, ContextListener {
+public class ParcelUpdater extends BroadcastReceiver implements Runnable {
 	private static final String TAG = "<PactrackDroid> ParcelUpdater";
 
-	public static void update(final RefreshContext ctx, Cursor parcel, ParcelDbAdapter dbAdapter) {
+	public static void update(final RefreshContext ctx, Cursor parcel) {
 		ArrayList<Bundle> workParcels = new ArrayList<Bundle>();
 		workParcels.add(cursorToBundle(parcel));
 
@@ -126,6 +125,7 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable, Contex
 	private ArrayList<Bundle> mWorkParcels = null;
 	private ParcelDbAdapter mDbAdapter = null;
 	private RefreshContext mCtx = null;
+	private Handler mHandler = null;
 
 	private ParcelUpdater(ArrayList<Bundle> workParcels, RefreshContext ctx) {
 		mWorkParcels = workParcels;
@@ -133,15 +133,7 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable, Contex
 
 		mConnectivityManager = (ConnectivityManager)((Context)ctx).getSystemService(Context.CONNECTIVITY_SERVICE);
 
-		ctx.startRefreshProgress(workParcels.size(), this);
-	}
-
-	@Override
-	public void onContextDestroy(Context oldContext) {}
-	
-	@Override
-	public void onContextChange(Context newContext) {
-		mCtx = (RefreshContext)newContext;
+		mHandler = ctx.startRefreshProgress(workParcels.size(), this);
 	}
 
 	@Override
@@ -173,7 +165,9 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable, Contex
 
 		for(int i = 0; i < mWorkParcels.size(); i++) {
 			updateParcel(mWorkParcels.get(i), mDbAdapter, notMgr);
-			mCtx.getProgressHandler().sendEmptyMessage(i + 1);
+			if (mHandler != null) {
+				mHandler.sendEmptyMessage(i + 1);
+			}
 		}
 
 		new Handler(((Context)mCtx).getMainLooper()) {
@@ -184,6 +178,10 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable, Contex
 		}.sendEmptyMessage(0);
 		
 		mDbAdapter.close();
+	}
+	
+	public void setContext(RefreshContext newContext) {
+		mCtx = newContext;
 	}
 
 	private boolean isDataConnected() {

@@ -25,9 +25,7 @@ import nu.firetech.android.pactrack.R;
 import nu.firetech.android.pactrack.backend.ParcelDbAdapter;
 import nu.firetech.android.pactrack.backend.ParcelUpdater;
 import nu.firetech.android.pactrack.backend.Preferences;
-import nu.firetech.android.pactrack.common.ContextListener;
 import nu.firetech.android.pactrack.common.Error;
-import nu.firetech.android.pactrack.common.RefreshContext;
 import android.app.AlertDialog;
 import android.app.LoaderManager;
 import android.app.NotificationManager;
@@ -49,8 +47,8 @@ import android.widget.LinearLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
-public class ParcelView extends DialogAwareListActivity implements
-		RefreshContext, ParcelOptionsMenu.UpdateableView, LoaderManager.LoaderCallbacks<Cursor> {
+public class ParcelView extends RefreshContextListActivity implements
+		ParcelOptionsMenu.UpdateableView, LoaderManager.LoaderCallbacks<Cursor> {
 	private static final int PARCEL_LOADER_ID = 1;
 	private static final int EVENTS_LOADER_ID = 2;
 	private static final int REFRESH_LOADER_ID = 3;
@@ -157,20 +155,6 @@ public class ParcelView extends DialogAwareListActivity implements
 		refreshDone();
 	}
 	
-	@Override
-	public void refreshDone() {
-		int[] loaders = { PARCEL_LOADER_ID, EVENTS_LOADER_ID };
-		
-		LoaderManager lm = getLoaderManager();
-		for (int loader_id : loaders) {
-			if (lm.getLoader(loader_id) == null) {
-				lm.initLoader(loader_id, null, this);
-			} else {
-				lm.restartLoader(loader_id, null, this);
-			}
-		}
-	}
-	
 	public void doRefresh() {
 		LoaderManager lm = getLoaderManager();
 		if (lm.getLoader(REFRESH_LOADER_ID) == null) {
@@ -244,14 +228,22 @@ public class ParcelView extends DialogAwareListActivity implements
 	}
 	
 	@Override
-	public Handler getProgressHandler() {
-		return ((RefreshDialog)getDialogByClass(RefreshDialog.class)).getProgressHandler();
+	public Handler startRefreshProgress(int maxValue) {
+		return RefreshDialog.show(this, maxValue);
 	}
-
+	
 	@Override
-	public void startRefreshProgress(int maxValue, ContextListener contextListener) {
-		RefreshDialog.show(this, maxValue);
-		addContextListener(contextListener);
+	public void onRefreshDone() {
+		int[] loaders = { PARCEL_LOADER_ID, EVENTS_LOADER_ID };
+		
+		LoaderManager lm = getLoaderManager();
+		for (int loader_id : loaders) {
+			if (lm.getLoader(loader_id) == null) {
+				lm.initLoader(loader_id, null, this);
+			} else {
+				lm.restartLoader(loader_id, null, this);
+			}
+		}
 	}
 
 	@Override
