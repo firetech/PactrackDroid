@@ -37,6 +37,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -86,9 +87,14 @@ public class MainWindow extends BarcodeListeningListActivity implements
 		if (sAboutMessage == null) {
 			String spacer = "\n\n";
 			
+			String versionName = "?";
+			try {
+				versionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+			} catch (NameNotFoundException e) {}
+			
 			sAboutMessage = new StringBuilder(getString(R.string.app_name))
 			.append(" - ")
-			.append(getString(R.string.version_name))
+			.append(versionName)
 			.append(spacer)
 			.append("Copyright (C) 2013 Joakim Andersson")
 			.append("\n")
