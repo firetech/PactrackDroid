@@ -61,11 +61,17 @@ public class RefreshDialog extends DialogFragment {
 			dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 			dialog.setMessage(getString(R.string.refreshing));
 		}
-		//FIXME This doesn't work when rotating the screen, for some reason...
-		dialog.setProgress(mHandler.getValue());
 
 		return dialog;
 	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
+		// If we set the progress before the dialog is showing, it won't apply.
+		((ProgressDialog)getDialog()).setProgress(mHandler.getValue());
+	}
+	
 	@Override
 	public void onDestroyView() {
 		if (getDialog() != null && getRetainInstance())

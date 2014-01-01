@@ -6,7 +6,7 @@ import android.app.ListActivity;
 import android.os.Bundle;
 import android.os.Handler;
 
-//TODO Replace with Fragment.setRetainInstance() efter conversion to Fragments?
+//TODO Replace with Fragment.setRetainInstance() after conversion to Fragments?
 public abstract class RefreshContextListActivity extends ListActivity implements RefreshContext {
 	private ParcelUpdater mUpdater;
 	
@@ -14,6 +14,7 @@ public abstract class RefreshContextListActivity extends ListActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
+		//This is (hopefully) only a temporary solution (see above)
 		@SuppressWarnings("deprecation")
 		ParcelUpdater updater = (ParcelUpdater) getLastNonConfigurationInstance();
 		
@@ -40,7 +41,7 @@ public abstract class RefreshContextListActivity extends ListActivity implements
 	public void refreshDone() {
 		mUpdater = null;
 		if (isChangingConfigurations()) {
-			//FIXME This avoids a crash, but casues a lost update when rotating back and forth during an update.
+			//FIXME This avoids a crash, but causes a lost update when rotating back and forth during an update.
 			return;
 		}
 		onRefreshDone();
