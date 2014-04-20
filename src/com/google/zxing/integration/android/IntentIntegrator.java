@@ -1,6 +1,7 @@
 /*
  * Copyright 2009 ZXing authors
- * Copyright 2013 Joakim Andersson (modified to use Fragment instead of Activity)
+ * Copyright 2014 Joakim Andersson
+ * 		(modified to use Fragment instead of Activity & changed request code)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +20,11 @@ package com.google.zxing.integration.android;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v4.app.Fragment;
 
 /**
  * <p>A utility class which helps ease integration with Barcode Scanner via {@link Intent}s. This is a simple
@@ -73,7 +74,7 @@ import android.net.Uri;
  */
 public final class IntentIntegrator {
 
-	public static final int REQUEST_CODE = 0x0ba7c0de; // get it?
+	public static final int REQUEST_CODE = 0xc0de; // get it?
 
 	private static final String DEFAULT_TITLE = "Install Barcode Scanner?";
 	private static final String DEFAULT_MESSAGE =

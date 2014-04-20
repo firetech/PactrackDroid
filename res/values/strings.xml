@@ -26,9 +26,9 @@
 	<string name="menu_about">Om</string>
 	<string name="menu_settings">Inställningar</string>
 	<string name="menu_delete">Ta bort</string>
-	<string name="menu_rename">Redigera kolli</string>
+	<string name="menu_edit">Redigera kolli</string>
 	
-	<string name="menu_auto_include">Uppdatera automatiskt</string>
+	<string name="menu_auto_include">Inkludera i automatiska uppdateringar</string>
 
 	<string name="parcelid">Kolli-ID</string>
 	<string name="empty">Inga kollin inlagda</string>
@@ -63,7 +63,8 @@
 	<string name="parcel_error_not_found">Kolli-ID:t hittades inte\n(Detta kan bero på att det XML-API som PactrackDroid använder tyvärr inte inkluderar alla paket som går att spåra på www.posten.se. Det kan komma en lösning på detta problem i framtiden.)</string>
 	<string name="parcel_error_multi_parcel">Fler än ett kolli matchade kolli-ID:t</string>
 
-	<string name="parcel_error_message">Ett fel uppstod vid senaste	uppdateringen:\n\n%s\n\nVisa tillgänglig information ändå?</string>
+	<string name="parcel_error_message">Ett fel uppstod vid senaste uppdateringen:\n\n%s</string>
+	<string name="parcel_error_message_question">Ett fel uppstod vid senaste uppdateringen:\n\n%s\n\nVisa tillgänglig information ändå?</string>
 
 	<string name="customer">Kund</string>
 	<string name="sent">Skickat</string>

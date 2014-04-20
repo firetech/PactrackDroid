@@ -26,14 +26,15 @@ import nu.firetech.android.pactrack.backend.ParcelDbAdapter;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
-import android.app.LoaderManager;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
-import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.text.InputType;
 import android.text.Selection;
 import android.text.method.NumberKeyListener;
@@ -52,7 +53,7 @@ public class ParcelIdDialog extends DialogFragment implements
 	private static final String KEY_SELECTION_START = "selection_start";
 	private static final String KEY_SELECTION_END = "selection_end";
 	private static final String KEY_FOCUSED_FIELD = "focused_field";
-
+	
 	private EditText mParcelText;
 	private EditText mNameText;
 	private Long mRowId;
@@ -63,12 +64,13 @@ public class ParcelIdDialog extends DialogFragment implements
 	private int mInitialSelectionStart;
 	private int mInitialSelectionEnd;
 
+	private ParentActivity mParent;
 	private AlertDialog mErrorDialog;
 
-	public static void show(final Activity context, Long rowId) {
+	public static void create(final FragmentManager manager, Long rowId) {
 		ParcelIdDialog d = new ParcelIdDialog();
 		d.mRowId = rowId;
-		d.show(context.getFragmentManager(), ParcelIdDialog.class.getName());
+		d.show(manager, ParcelIdDialog.class.getName());
 	}
 
 	@Override
@@ -173,6 +175,18 @@ public class ParcelIdDialog extends DialogFragment implements
 	}
 	
 	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		
+		try {
+            mParent = (ParentActivity) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement ParentActivity");
+        }
+	}
+	
+	@Override
 	public void onDestroy() {
 		super.onDestroy();
 		mDbAdapter.close();
@@ -227,23 +241,11 @@ public class ParcelIdDialog extends DialogFragment implements
 			String name = mNameText.getText().toString();
 			if (mRowId == null) {
 				mRowId = mDbAdapter.addParcel(parcel, name);
-				doShowAndRefresh();
+				mParent.showAndRefreshParcel(mRowId);
 			} else if (mDbAdapter.changeParcelIdName(mRowId, parcel, name)) {
-				doShowAndRefresh();
+				mParent.showAndRefreshParcel(mRowId);
 			}
 			super.onClick(v);
-		}
-	}
-	
-	private void doShowAndRefresh() {
-		if (getActivity() instanceof ParcelView) {
-			((ParcelView) getActivity()).doRefresh();
-		} else {
-			Intent i = new Intent(getActivity(), ParcelView.class)
-					.putExtra(ParcelDbAdapter.KEY_ROWID, mRowId)
-					.putExtra(ParcelView.FORCE_REFRESH, true);
-
-			startActivity(i);
 		}
 	}
 
@@ -291,4 +293,11 @@ public class ParcelIdDialog extends DialogFragment implements
 
 	@Override
 	public void onLoaderReset(Loader<Cursor> loader) {}
+
+
+	////////////////////////////////////////////////////////////////////////////////
+	
+	public interface ParentActivity {
+        public void showAndRefreshParcel(long rowId);
+	}
 }

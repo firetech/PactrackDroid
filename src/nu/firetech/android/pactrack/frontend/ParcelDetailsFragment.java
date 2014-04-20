@@ -26,29 +26,35 @@ import nu.firetech.android.pactrack.backend.ParcelDbAdapter;
 import nu.firetech.android.pactrack.backend.ParcelUpdater;
 import nu.firetech.android.pactrack.backend.Preferences;
 import nu.firetech.android.pactrack.common.Error;
+import nu.firetech.android.pactrack.common.RefreshContext;
+import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.LoaderManager;
 import android.app.NotificationManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
-import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.NavUtils;
+import android.support.v4.app.ListFragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
-public class ParcelView extends RefreshContextListActivity implements
-		ParcelOptionsMenu.UpdateableView, LoaderManager.LoaderCallbacks<Cursor> {
+public class ParcelDetailsFragment extends ListFragment implements
+		RefreshContext, LoaderManager.LoaderCallbacks<Cursor> {
 	private static final int PARCEL_LOADER_ID = 1;
 	private static final int EVENTS_LOADER_ID = 2;
 	private static final int REFRESH_LOADER_ID = 3;
@@ -57,67 +63,47 @@ public class ParcelView extends RefreshContextListActivity implements
 	
 	public static final String FORCE_REFRESH = "force_update";
 
-	private static final String KEY_EXTENDED = "extended_view";
-	private static final String KEY_ERROR_SHOWN = "error_shown";
-
-	private static final int DELETE_ID = Menu.FIRST;
-	private static final int RENAME_ID = Menu.FIRST + 1;
-	private static final int REFRESH_ID = Menu.FIRST + 2;
-
-	private Long mRowId;
+	private Long mRowId = null;
 	private ParcelDbAdapter mDbAdapter;
 	private LinearLayout mExtended;
 	private Button mToggleButton;
-	private boolean mExtendedShowing;
-	private int errorShown;
+	private boolean mExtendedShowing = false;
+	private int errorShown = Error.NONE;
 	private SimpleCursorAdapter mEventsAdapter;
+	
+	private ParentActivity mParent;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.parcel_view);
-		getActionBar().setDisplayHomeAsUpEnabled(true);
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		View view = inflater.inflate(R.layout.parcel_view, container, false);
 
-		mExtended = (LinearLayout)findViewById(R.id.extended);
-		mToggleButton = (Button)findViewById(R.id.extended_toggle);
+		mExtended = (LinearLayout)view.findViewById(R.id.extended);
+		mToggleButton = (Button)view.findViewById(R.id.extended_toggle);
 
 		mToggleButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View view) {
-				LinearLayout extended = (LinearLayout)findViewById(R.id.extended);
 				mExtendedShowing = !mExtendedShowing;
 				if (mExtendedShowing) {
 					mExtended.setVisibility(View.VISIBLE);
 					mToggleButton.setText(R.string.hide_extended);
 				} else {
-					extended.setVisibility(View.GONE);
+					mExtended.setVisibility(View.GONE);
 					mToggleButton.setText(R.string.show_extended);
 				}
 			}
 		});
-
-		mDbAdapter = new ParcelDbAdapter(this);
-		mDbAdapter.open();
-
-		mRowId = savedInstanceState != null ? savedInstanceState.getLong(ParcelDbAdapter.KEY_ROWID) 
-				: null;
-
-		mExtendedShowing = false;
-		if (savedInstanceState != null) {
-			if (savedInstanceState.getBoolean(KEY_EXTENDED)) {
-				mExtended.setVisibility(View.VISIBLE);
-				mToggleButton.setText(R.string.hide_extended);
-				mExtendedShowing = true;
-			}
-			errorShown = savedInstanceState.getInt(KEY_ERROR_SHOWN);
-		} else {
-			errorShown = Error.NONE;
+		
+		if (mExtendedShowing) {
+			mExtended.setVisibility(View.VISIBLE);
+			mToggleButton.setText(R.string.hide_extended);
 		}
 
 
 		String[] from = new String[]{ParcelDbAdapter.KEY_CUSTOM, ParcelDbAdapter.KEY_DESC, ParcelDbAdapter.KEY_ERREV};
 		int[] to = new int[]{android.R.id.title, android.R.id.text1, android.R.id.text2};
 		
-		mEventsAdapter = new SimpleCursorAdapter(this, R.layout.event_row, null, from, to, 0);
+		mEventsAdapter = new SimpleCursorAdapter(view.getContext(), R.layout.event_row, null, from, to, 0);
 		mEventsAdapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
 			@Override
 			public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
@@ -136,21 +122,45 @@ public class ParcelView extends RefreshContextListActivity implements
 		});
 		setListAdapter(mEventsAdapter);
 		
-		Bundle extras = null;
-		if (mRowId == null) {
-			extras = getIntent().getExtras();            
-			mRowId = extras != null ? extras.getLong(ParcelDbAdapter.KEY_ROWID) 
-					: null;
-		}
-		if (extras != null && extras.containsKey(FORCE_REFRESH)) {
-			doRefresh();
+		Bundle extras = getArguments();
+		if (extras != null) {
+			if (mRowId == null && extras.containsKey(ParcelDbAdapter.KEY_ROWID)) {
+				mRowId = extras.getLong(ParcelDbAdapter.KEY_ROWID);
+			}
+			if (extras.containsKey(FORCE_REFRESH)) {
+				doRefresh();
+			}
 		}
 		
-		getLoaderManager(); // Workaround for a bug regarding LoaderManager life cycle when rotating the screen.
+		setRetainInstance(true);
+		setHasOptionsMenu(true);
+		
+		return view;
 	}
 	
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+		mDbAdapter = new ParcelDbAdapter(activity);
+		mDbAdapter.open();
+		
+		try {
+            mParent = (ParentActivity) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement ParentActivity");
+        }
+    }
+	
+    @Override
+    public void onDetach() {
+        super.onDetach();
+		mDbAdapter.close();
+    }
+	
 	@Override
-	protected void onResume() {
+	public void onResume() {
 		super.onResume();
 		refreshDone();
 	}
@@ -164,76 +174,71 @@ public class ParcelView extends RefreshContextListActivity implements
 		}
 	}
 	
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		outState.putLong(ParcelDbAdapter.KEY_ROWID, mRowId);
-		outState.putBoolean(KEY_EXTENDED, mExtendedShowing);
-		outState.putInt(KEY_ERROR_SHOWN, errorShown);
+	public void switchParcel(long newId, boolean forceRefresh) {
+		if (mExtendedShowing && newId != mRowId) {
+			mExtended.setVisibility(View.GONE);
+			mToggleButton.setText(R.string.show_extended);
+			mExtendedShowing = false;
+		}
+		mRowId = newId;
+		
+		refreshDone();
+		
+		if (forceRefresh) {
+			doRefresh();
+		}
 	}
 
 	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		mDbAdapter.close();
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		super.onCreateOptionsMenu(menu, inflater);
+		inflater.inflate(R.menu.parcel_menu, menu);
+	}
+	
+	@Override
+	public void onPrepareOptionsMenu(Menu menu) {
+		super.onPrepareOptionsMenu(menu);
+		
+		boolean enabled = (Preferences.getPreferences(getActivity()).getCheckInterval() > 0);
+		MenuItem autoInclude = menu.findItem(R.id.action_auto_include);
+		autoInclude.setEnabled(enabled);
+		autoInclude.setChecked(enabled && mDbAdapter.getAutoUpdate(mRowId));
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		super.onCreateOptionsMenu(menu);
-		menu.add(0, DELETE_ID, 0, R.string.menu_delete)
-			.setIcon(R.drawable.ic_action_discard)
-			.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-		menu.add(0, RENAME_ID, 0, R.string.menu_rename)
-			.setIcon(R.drawable.ic_action_edit)
-			.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-		new ParcelOptionsMenu(this, menu, mRowId, R.id.status_icon, mDbAdapter, this);
-		menu.add(0, REFRESH_ID, 0, R.string.menu_refresh)
-			.setIcon(R.drawable.ic_action_refresh)
-			.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-		return true;
-	}
-
-	@Override
-	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()) {
-		case DELETE_ID:
-			MainWindow.deleteParcel(mRowId, this, mDbAdapter, new Runnable() {
+		case R.id.action_delete:
+			UICommon.deleteParcel(mRowId, getActivity(), mDbAdapter, new Runnable() {
 				@Override
 				public void run() {
-					finish();					
+					mParent.onCurrentParcelRemoved();
 				}
 			});
 			return true;
-		case RENAME_ID:
-			ParcelIdDialog.show(this, mRowId);
+		case R.id.action_edit:
+			ParcelIdDialog.create(getFragmentManager(), mRowId);
 			return true;
-		case REFRESH_ID:
+		case R.id.action_auto_include:
+			mDbAdapter.setAutoUpdate(mRowId, !item.isChecked());
+			mParent.onAutoUpdateChanged(mRowId, !item.isChecked());
+			return true;
+		case R.id.action_refresh:
 			errorShown = Error.NONE;
 			doRefresh();
 			return true;
 		}
 
-		return super.onMenuItemSelected(featureId, item);
-	}
-	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch(item.getItemId()) {
-		case android.R.id.home:
-	        NavUtils.navigateUpFromSameTask(this);
-	        return true;
-		}
 		return super.onOptionsItemSelected(item);
 	}
 	
 	@Override
 	public Handler startRefreshProgress(int maxValue) {
-		return RefreshDialog.show(this, maxValue);
+		return RefreshDialog.show(getActivity(), maxValue);
 	}
 	
 	@Override
-	public void onRefreshDone() {
+	public void refreshDone() {
 		int[] loaders = { PARCEL_LOADER_ID, EVENTS_LOADER_ID };
 		
 		LoaderManager lm = getLoaderManager();
@@ -252,7 +257,9 @@ public class ParcelView extends RefreshContextListActivity implements
 	}
 
 	private void updateView(Cursor parcel) {
-		((NotificationManager)getSystemService(NOTIFICATION_SERVICE)).cancel(mRowId.hashCode());
+		((NotificationManager)getActivity().getSystemService(Context.NOTIFICATION_SERVICE)).cancel(mRowId.hashCode());
+		
+		boolean isFullscreen = (getFragmentManager().findFragmentById(R.id.details_frag) == null);
 		
 		try {
 			int error = parcel.getInt(parcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_ERROR));
@@ -274,25 +281,38 @@ public class ParcelView extends RefreshContextListActivity implements
 					status = getString(R.string.parcel_error_unknown, error);
 				}
 				
-				new AlertDialog.Builder(this)
+				AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity())
 				.setTitle(R.string.parcel_problem)
-				.setMessage(getString(R.string.parcel_error_message, status))
-				.setIconAttribute(android.R.attr.alertDialogIcon)
-				.setPositiveButton(R.string.yes, new OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						dialog.dismiss();
-					}
-				})
-				.setNegativeButton(R.string.no, new OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						dialog.dismiss();
-						ParcelView.this.finish();
-					}
-				})
-				.create()
-				.show();
+				.setIconAttribute(android.R.attr.alertDialogIcon);
+				
+				if (isFullscreen) {
+					dialog
+					.setMessage(getString(R.string.parcel_error_message_question, status))
+					.setPositiveButton(R.string.yes, new OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.dismiss();
+						}
+					})
+					.setNegativeButton(R.string.no, new OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.dismiss();
+							getFragmentManager().popBackStack();
+						}
+					});
+				} else {
+					dialog
+					.setMessage(getString(R.string.parcel_error_message, status))
+					.setNegativeButton(R.string.ok, new OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							dialog.dismiss();
+						}
+					});
+				}
+				
+				dialog.create().show();
 			}
 			
 			errorShown = error;
@@ -303,7 +323,10 @@ public class ParcelView extends RefreshContextListActivity implements
 				parcelName = getString(R.string.generic_parcel_name, parcelId);
 			}
 
-			setTitle(parcelName);
+			if (isFullscreen) {
+				getActivity().setTitle(parcelName);
+			}
+			
 			String lastUpdate = null, lastOkUpdate = null;
 			int lastUpdateIndex = parcel.getColumnIndex(ParcelDbAdapter.KEY_UPDATE);
 			if (lastUpdateIndex >= 0) {
@@ -317,6 +340,7 @@ public class ParcelView extends RefreshContextListActivity implements
 				lastOkUpdate = getString(R.string.same_time);
 			}
 
+			findTextView(R.id.parcelid).setText(parcelId);
 			findTextView(R.id.customer).setText(parcel.getString(parcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_CUSTOMER)));
 			findTextView(R.id.sent).setText(parcel.getString(parcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_SENT)));
 			findTextView(R.id.status).setText(status);
@@ -327,26 +351,31 @@ public class ParcelView extends RefreshContextListActivity implements
 			findTextView(R.id.postal).setText(parcel.getString(parcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_POSTAL)));
 			findTextView(R.id.service).setText(parcel.getString(parcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_SERVICE)));
 			
-			((ImageView)findViewById(R.id.status_icon)).setImageResource(
-					MainWindow.getStatusImage(parcel, parcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_STATUSCODE)));
-			updateAutoUpdateView(R.id.status_icon, Preferences.getPreferences(this).getCheckInterval() == 0 ||
+			((ImageView)getView().findViewById(R.id.status_icon)).setImageResource(
+					UICommon.getStatusImage(parcel, parcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_STATUSCODE)));
+			updateAutoUpdateView(Preferences.getPreferences(getActivity()).getCheckInterval() == 0 ||
 					parcel.getInt(parcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_AUTO)) == 1);
 		} catch (Exception e) {
 			Log.d(TAG, "Database error", e);
-			MainWindow.dbErrorDialog(this);
+			UICommon.dbErrorDialog(getActivity());
 		}
 	}
 
 	private TextView findTextView(int resId) {
-		return (TextView)findViewById(resId);
+		return (TextView)getView().findViewById(resId);
+	}
+	
+	public Long getCurrentRowId() {
+		return mRowId;
 	}
 
-	@Override
-	public void updateAutoUpdateView(int position, boolean value) {
-		ImageView icon = (ImageView)findViewById(position);
+	public void updateAutoUpdateView(boolean value) {
+		ImageView icon = (ImageView)getView().findViewById(R.id.status_icon);
 		icon.getDrawable().setAlpha((value ? 255 : 70));
 		icon.invalidate();
 	}
+
+	////////////////////////////////////////////////////////////////////////////////
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
@@ -372,10 +401,10 @@ public class ParcelView extends RefreshContextListActivity implements
 		case REFRESH_LOADER_ID:
 			//TODO This can probably be done better...
 			final Cursor fCursor = cursor;
-			new Handler(getMainLooper()){
+			new Handler(getActivity().getMainLooper()){
 				@Override
 				public void handleMessage(Message m) {
-					ParcelUpdater.update(ParcelView.this, fCursor);
+					ParcelUpdater.update(ParcelDetailsFragment.this, fCursor);
 				}
 			}.sendEmptyMessage(0);
 			break;
@@ -390,4 +419,11 @@ public class ParcelView extends RefreshContextListActivity implements
 			break;
 		}
 	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	
+	public interface ParentActivity {
+        public void onCurrentParcelRemoved();
+        public void onAutoUpdateChanged(long rowId, boolean value);
+    }
 }

@@ -58,7 +58,7 @@ public class ParcelService extends Service implements RefreshContext {
 	}
 
 	@Override
-	public Handler startRefreshProgress(int maxValue, ParcelUpdater updater) {
+	public Handler startRefreshProgress(int maxValue) {
 		Log.d(TAG, "Automatic update running");
 		return null;
 	}

@@ -1,4 +1,5 @@
-/*
+<?xml version="1.0" encoding="utf-8"?>
+<!--
  * Copyright (C) 2013 Joakim Andersson
  * Copyright (C) 2013 blunden
  * 
@@ -17,14 +18,25 @@
  * 
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
+-->
+<LinearLayout
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:orientation="vertical">
 
-package nu.firetech.android.pactrack.common;
+	<TextView android:text="@string/empty"
+			android:id="@android:id/empty"
+			android:layout_marginTop="20sp"
+			android:textSize="17sp"
+			android:layout_width="wrap_content"
+			android:layout_weight="1"
+			android:layout_gravity="center_horizontal"
+			android:layout_height="wrap_content"/>
+	<ListView android:id="@android:id/list"
+			android:layout_width="fill_parent"
+			android:layout_weight="1"
+			android:layout_gravity="top"
+			android:layout_height="wrap_content"/>
 
-import android.os.Handler;
-
-public interface RefreshContext {
-	public Handler startRefreshProgress(int maxValue);
-	public void refreshDone();
-	public boolean showsNews();
-}
+</LinearLayout>

@@ -25,8 +25,8 @@ import java.util.ArrayList;
 
 import nu.firetech.android.pactrack.R;
 import nu.firetech.android.pactrack.common.RefreshContext;
-import nu.firetech.android.pactrack.frontend.MainWindow;
-import nu.firetech.android.pactrack.frontend.ParcelView;
+import nu.firetech.android.pactrack.frontend.MainActivity;
+import nu.firetech.android.pactrack.frontend.UICommon;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -40,6 +40,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -56,7 +57,7 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable {
 	public static void updateAll(boolean autoOnly, final RefreshContext ctx, ParcelDbAdapter dbAdapter) {
 		final Cursor parcel = dbAdapter.fetchAllParcels(autoOnly);
 		if (parcel == null) {
-			MainWindow.dbErrorDialog((Context)ctx);
+			UICommon.dbErrorDialog((Context)ctx);
 			return;
 		}
 
@@ -125,15 +126,24 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable {
 	private ArrayList<Bundle> mWorkParcels = null;
 	private ParcelDbAdapter mDbAdapter = null;
 	private RefreshContext mCtx = null;
+	private Context mAndroidCtx = null;
 	private Handler mHandler = null;
 
 	private ParcelUpdater(ArrayList<Bundle> workParcels, RefreshContext ctx) {
 		mWorkParcels = workParcels;
 		mCtx = ctx;
+		
+		if (ctx instanceof Context) {
+			mAndroidCtx = (Context)ctx;
+		} else if (ctx instanceof Fragment) {
+			mAndroidCtx = ((Fragment)ctx).getActivity();
+		} else {
+			throw new IllegalArgumentException("Unknown context type!");
+		}
 
-		mConnectivityManager = (ConnectivityManager)((Context)ctx).getSystemService(Context.CONNECTIVITY_SERVICE);
+		mConnectivityManager = (ConnectivityManager)mAndroidCtx.getSystemService(Context.CONNECTIVITY_SERVICE);
 
-		mHandler = ctx.startRefreshProgress(workParcels.size(), this);
+		mHandler = ctx.startRefreshProgress(workParcels.size());
 	}
 
 	@Override
@@ -147,7 +157,7 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable {
 
 		//wait for a data connection
 		while(!isDataConnected()) {
-			registerConnectionListener((Context)mCtx);
+			registerConnectionListener(mAndroidCtx);
 			synchronized (sLock) {
 				Log.d(TAG, "No data connection, waiting for a data connection");
 				try {
@@ -158,10 +168,10 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable {
 			}
 		}
 		
-		mDbAdapter = new ParcelDbAdapter((Context)mCtx);
+		mDbAdapter = new ParcelDbAdapter(mAndroidCtx);
 		mDbAdapter.open();
 		
-		NotificationManager notMgr = (NotificationManager)((Context)mCtx).getSystemService(Context.NOTIFICATION_SERVICE);
+		NotificationManager notMgr = (NotificationManager)mAndroidCtx.getSystemService(Context.NOTIFICATION_SERVICE);
 
 		for(int i = 0; i < mWorkParcels.size(); i++) {
 			updateParcel(mWorkParcels.get(i), mDbAdapter, notMgr);
@@ -170,7 +180,7 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable {
 			}
 		}
 
-		new Handler(((Context)mCtx).getMainLooper()) {
+		new Handler(mAndroidCtx.getMainLooper()) {
 			@Override
 			public void handleMessage(Message m) {
 				mCtx.refreshDone();
@@ -199,8 +209,6 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable {
 		if (parcelData.getParcel() != null) {
 			parcelId = parcelData.getParcel();
 		}
-		
-		Context realCtx = (Context)mCtx;
 
 		int newEvents = 0;
 		StringBuilder eventList = new StringBuilder();
@@ -215,26 +223,26 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable {
 		}
 
 		if (newEvents > 0 && !mCtx.showsNews()) {
-			Preferences prefs = Preferences.getPreferences(realCtx);
+			Preferences prefs = Preferences.getPreferences(mAndroidCtx);
 
 			//TODO Join existing notifications in some clever way...
 			if (prefs.getNotificationEnabled()) {
 				String parcelName = parcel.getString(ParcelDbAdapter.KEY_NAME);
 				if(parcelName == null) {
-					parcelName = realCtx.getString(R.string.generic_parcel_name, parcelId);
+					parcelName = mAndroidCtx.getString(R.string.generic_parcel_name, parcelId);
 				}
 
-				Intent intent = new Intent(realCtx, ParcelView.class).putExtra(ParcelDbAdapter.KEY_ROWID, rowId);
-				PendingIntent contentIntent = PendingIntent.getActivity(realCtx, rowId.hashCode(), intent, 0);
+				Intent intent = new Intent(mAndroidCtx, MainActivity.class).putExtra(ParcelDbAdapter.KEY_ROWID, rowId);
+				PendingIntent contentIntent = PendingIntent.getActivity(mAndroidCtx, rowId.hashCode(), intent, 0);
 				
 				int stringId = (newEvents > 1 ? R.string.notification_ticker : R.string.notification_ticker_one);
-				NotificationCompat.Builder n = new NotificationCompat.Builder(realCtx)
+				NotificationCompat.Builder n = new NotificationCompat.Builder(mAndroidCtx)
 						.setSmallIcon(R.drawable.notification)
-						.setTicker(realCtx.getString(stringId, parcelName))
+						.setTicker(mAndroidCtx.getString(stringId, parcelName))
 						.setWhen(System.currentTimeMillis())
 						.setContentTitle(parcelName)
 						.setContentText(newEvents == 1 ?
-								eventList.toString() : realCtx.getString(R.string.notification_message, newEvents))
+								eventList.toString() : mAndroidCtx.getString(R.string.notification_message, newEvents))
 						.setContentIntent(contentIntent)
 						.setSound(prefs.getNotificationSound());
 				

@@ -21,9 +21,9 @@
 
 package nu.firetech.android.pactrack.backend;
 
-import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.database.Cursor;
+import android.support.v4.content.AsyncTaskLoader;
 
 /*
  * http://stackoverflow.com/questions/7182485/usage-cursorloader-without-contentprovider/7422343#7422343

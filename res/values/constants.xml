@@ -28,7 +28,7 @@
 	<bool name="auto_updates_default" translatable="false">true</bool>
 	<string name="key_check_interval" translatable="false">checkInterval</string>
 	<string name="check_interval_default" translatable="false">60</string>
-	
+
 	<string name="key_notify_on" translatable="false">notificationEnabled</string>
 	<bool name="notify_on_default" translatable="false">true</bool>
 	<string name="key_notify_sound" translatable="false">notificationSound</string>
@@ -43,4 +43,6 @@
 	<string name="notify_light_ontime_default" translatable="false">1000</string>
 	<string name="key_notify_light_offtime" translatable="false">notificationLightOfftime</string>
 	<string name="notify_light_offtime_default" translatable="false">1000</string>
+
+	<dimen name="titles_size">325dp</dimen>
 </resources>
