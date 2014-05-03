@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ * Copyright (C) 2014 Joakim Andersson
+ * Copyright (C) 2014 blunden
+ * 
+ * This file is part of PactrackDroid, an Android application to keep
+ * track of parcels sent with the Swedish mail service (Posten).
+ * 
+ * PactrackDroid is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * PactrackDroid is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+-->
+<resources>
+
+    <style name="Theme.Postnord" parent="@android:style/Theme.Holo.Light.DarkActionBar">
+        <item name="android:actionBarItemBackground">@drawable/selectable_background_postnord</item>
+        <item name="android:popupMenuStyle">@style/PopupMenu.Postnord</item>
+        <item name="android:dropDownListViewStyle">@style/DropDownListView.Postnord</item>
+        <item name="android:actionBarTabStyle">@style/ActionBarTabStyle.Postnord</item>
+        <item name="android:actionDropDownStyle">@style/DropDownNav.Postnord</item>
+        <item name="android:actionBarStyle">@style/ActionBar.Solid.Postnord</item>
+        <item name="android:actionModeBackground">@drawable/cab_background_top_postnord</item>
+        <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_postnord</item>
+        <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Postnord</item>
+        <item name="android:actionBarWidgetTheme">@style/Theme.Postnord.Widget</item>
+    </style>
+
+    <style name="ActionBar.Solid.Postnord" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
+        <item name="android:icon">@drawable/ic_ab_box</item>
+        <item name="android:background">@drawable/ab_solid_postnord</item>
+        <item name="android:backgroundStacked">@drawable/ab_stacked_solid_postnord</item>
+        <item name="android:backgroundSplit">@drawable/ab_bottom_solid_postnord</item>
+        <item name="android:progressBarStyle">@style/ProgressBar.Postnord</item>
+    </style>  
+
+    <style name="ActionBar.Transparent.Postnord" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">@drawable/ab_transparent_postnord</item>
+        <item name="android:progressBarStyle">@style/ProgressBar.Postnord</item>
+    </style>
+
+    <style name="PopupMenu.Postnord" parent="@android:style/Widget.Holo.Light.ListPopupWindow">
+        <item name="android:popupBackground">@drawable/menu_dropdown_panel_holo_light</item>
+    </style>
+
+    <style name="DropDownListView.Postnord" parent="@android:style/Widget.Holo.Light.ListView.DropDown">
+        <item name="android:listSelector">@drawable/selectable_background_postnord</item>
+        <item name="android:divider">@drawable/list_divider_holo_light</item>
+    </style>
+
+    <style name="ActionBarTabStyle.Postnord" parent="@android:style/Widget.Holo.Light.ActionBar.TabView">
+        <item name="android:background">@drawable/tab_indicator_ab_postnord</item>
+    </style>
+
+    <style name="DropDownNav.Postnord" parent="@android:style/Widget.Holo.Light.Spinner">
+        <item name="android:background">@drawable/spinner_background_ab_postnord</item>
+        <item name="android:popupBackground">@drawable/menu_dropdown_panel_holo_light</item>
+        <item name="android:dropDownSelector">@drawable/selectable_background_postnord</item>
+    </style>
+    
+    <style name="ProgressBar.Postnord" parent="@android:style/Widget.Holo.Light.ProgressBar.Horizontal">
+        <item name="android:progressDrawable">@drawable/progress_horizontal_postnord</item>
+    </style>
+    
+    <style name="ActionButton.CloseMode.Postnord" parent="@android:style/Widget.Holo.Light.ActionButton.CloseMode">
+        <item name="android:background">@drawable/btn_cab_done_postnord</item>
+    </style>
+
+    <!-- Needed because the Light.DarkActionBar theme sets the actionBarWidgetTheme. Otherwise changes won't take effect -->
+    <style name="Theme.Postnord.Widget" parent="@android:style/Theme.Holo">
+        <item name="android:popupMenuStyle">@style/PopupMenu.Postnord</item>
+        <item name="android:dropDownListViewStyle">@style/DropDownListView.Postnord</item>
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+
+</resources>
