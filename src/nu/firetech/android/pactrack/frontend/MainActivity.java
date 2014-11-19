@@ -128,6 +128,12 @@ public class MainActivity extends FragmentActivity implements
 			if (findViewById(viewId) == null) {
 				viewId = R.id.fragment_container;
 				fullscreen = true;
+				
+				// Avoid duplicated parcels in back stack
+				if (manager.findFragmentById(viewId) instanceof ParcelDetailsFragment &&
+						((ParcelDetailsFragment)manager.findFragmentById(viewId)).getCurrentRowId() == rowId) {
+					manager.popBackStackImmediate();
+				}
 			}
 
 			FragmentTransaction transaction = manager.beginTransaction();
