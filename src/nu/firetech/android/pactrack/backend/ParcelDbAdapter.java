@@ -289,6 +289,7 @@ public class ParcelDbAdapter {
 		} else {
 			args.put(KEY_NAME, (String)null);
 		}
+		args.put(KEY_ERROR, Error.NONE); //Reset any error.
 
 		boolean updated = mDb.update(PARCEL_TABLE, args, KEY_ROWID + "=" + rowId, null) > 0;
 
