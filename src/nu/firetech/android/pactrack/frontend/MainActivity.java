@@ -27,6 +27,7 @@ import nu.firetech.android.pactrack.backend.Preferences;
 import nu.firetech.android.pactrack.backend.ServiceStarter;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -184,14 +185,9 @@ public class MainActivity extends FragmentActivity implements
 			value = true;
 		}
 		
-		if (manager.findFragmentById(R.id.list_frag) != null) {
-			ParcelListFragment list = (ParcelListFragment)manager.findFragmentById(R.id.list_frag);
-			list.refreshDone();
-		}
-		if (manager.findFragmentById(R.id.details_frag) != null) {
-			ParcelDetailsFragment details = (ParcelDetailsFragment)manager.findFragmentById(R.id.details_frag);
-			if (details.getCurrentRowId() == rowId) {
-				details.updateAutoUpdateView(value);
+		for (Fragment f : manager.getFragments()) {
+			if (f instanceof AutoUpdateIconContext) {
+				((AutoUpdateIconContext)f).onAutoUpdateChanged(rowId, value);
 			}
 		}
 	}

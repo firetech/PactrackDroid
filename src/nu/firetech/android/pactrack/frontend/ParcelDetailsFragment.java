@@ -54,7 +54,7 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 public class ParcelDetailsFragment extends ListFragment implements
-		RefreshContext, LoaderManager.LoaderCallbacks<Cursor> {
+		RefreshContext, AutoUpdateIconContext, LoaderManager.LoaderCallbacks<Cursor> {
 	private static final int PARCEL_LOADER_ID = 1;
 	private static final int EVENTS_LOADER_ID = 2;
 	private static final int REFRESH_LOADER_ID = 3;
@@ -357,6 +357,15 @@ public class ParcelDetailsFragment extends ListFragment implements
 		ImageView icon = (ImageView)getView().findViewById(R.id.status_icon);
 		icon.getDrawable().setAlpha((value ? 255 : 70));
 		icon.invalidate();
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
+
+	@Override
+	public void onAutoUpdateChanged(long rowId, boolean value) {
+		if (getCurrentRowId() == rowId) {
+			updateAutoUpdateView(value);
+		}
 	}
 
 	////////////////////////////////////////////////////////////////////////////////

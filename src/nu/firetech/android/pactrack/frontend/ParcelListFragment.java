@@ -55,7 +55,7 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 public class ParcelListFragment extends ListFragment implements
-		RefreshContext, LoaderManager.LoaderCallbacks<Cursor> {
+		RefreshContext, AutoUpdateIconContext, LoaderManager.LoaderCallbacks<Cursor> {
 	private static final int PARCELS_LOADER_ID = 0;
 
 	private static String sAboutMessage = null;
@@ -306,6 +306,13 @@ public class ParcelListFragment extends ListFragment implements
 	public void onActivityResult(int requestCode, int resultCode, 
 			Intent intent) {
 		super.onActivityResult(requestCode, resultCode, intent);
+		refreshDone();
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
+
+	@Override
+	public void onAutoUpdateChanged(long rowId, boolean value) {
 		refreshDone();
 	}
 
