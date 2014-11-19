@@ -100,26 +100,10 @@ public class ParcelDetailsFragment extends ListFragment implements
 		}
 
 
-		String[] from = new String[]{ParcelDbAdapter.KEY_CUSTOM, ParcelDbAdapter.KEY_DESC, ParcelDbAdapter.KEY_ERREV};
-		int[] to = new int[]{android.R.id.title, android.R.id.text1, android.R.id.text2};
+		String[] from = new String[]{ParcelDbAdapter.KEY_CUSTOM, ParcelDbAdapter.KEY_DESC};
+		int[] to = new int[]{android.R.id.title, android.R.id.text1};
 		
 		mEventsAdapter = new SimpleCursorAdapter(view.getContext(), R.layout.event_row, null, from, to, 0);
-		mEventsAdapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
-			@Override
-			public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
-				if (view instanceof TextView && view.getId() == android.R.id.text2) {
-					if (cursor.getInt(columnIndex) == 1) {
-						((TextView)view).setVisibility(View.VISIBLE);
-						((TextView)view).setText(getString(R.string.error_event));
-					} else {
-						((TextView)view).setVisibility(View.GONE);
-					}
-					return true;
-				} else {
-					return false;
-				}
-			}
-		});
 		setListAdapter(mEventsAdapter);
 		
 		Bundle extras = getArguments();

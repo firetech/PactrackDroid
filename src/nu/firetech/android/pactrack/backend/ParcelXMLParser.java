@@ -40,7 +40,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 import android.util.Log;
 
-//FIXME Rewrite to parse www.posten.se/tracktrace (using Regex, probably) instead.
+//FIXME Rewrite to parse http://logistics.postennorden.com/wsp/rest-services/ntt-service-rest/api/shipment.json
 public class ParcelXMLParser extends DefaultHandler {
 	private static final String TAG = "<PactrackDroid> ParcelXMLParser";
 	
@@ -86,7 +86,6 @@ public class ParcelXMLParser extends DefaultHandler {
 	private HashMap<String,Object> mData = new HashMap<String,Object>();
 
 	private boolean mInEvent = false;
-	private boolean mInErrorEvent = false;
 	private HashMap<String,Object> mEventData = new HashMap<String,Object>();
 
 
@@ -103,11 +102,8 @@ public class ParcelXMLParser extends DefaultHandler {
 			if (parcel != null) {
 				mData.put("parcel", parcel);
 			}
-	    } else if (localName.equals("event")) {
+	    } else if (localName.equals("event") || localName.equals("errorevent")) {
 			mInEvent = true;
-		} else if (localName.equals("errorevent")) {
-			mEventData.put("errorevent", "true");
-			mInErrorEvent = true;
 		}
 	}
 
@@ -120,14 +116,10 @@ public class ParcelXMLParser extends DefaultHandler {
 			if (mInEvent) {
 				((ArrayList<ParcelEvent>)mData.get("events")).add(new ParcelEvent(mEventData));
 				mEventData.clear();
-			} else if (mInErrorEvent) {
-				((ArrayList<ParcelEvent>)mData.get("events")).add(new ParcelEvent(mEventData));
-				mEventData.clear();
 			} else {
 				throw new SAXException("Unexpected event end tag!");
 			}
 			mInEvent = false;
-			mInErrorEvent = false;
 		}
 
 		mElementPath.pop();
@@ -149,7 +141,7 @@ public class ParcelXMLParser extends DefaultHandler {
 			throw new NoSuchFieldError();
 
 		// Get parcel fields
-		} else if (!(mInEvent || mInErrorEvent) && (lastTag.equals("customername") ||
+		} else if (!mInEvent && (lastTag.equals("customername") ||
 				lastTag.equals("datesent") ||
 				lastTag.equals("actualweight") ||
 				lastTag.equals("receiverzipcode") ||
@@ -160,7 +152,7 @@ public class ParcelXMLParser extends DefaultHandler {
 			destHash = mData;
 		
 		// Get Event fields
-		} else if ((mInEvent || mInErrorEvent) &&
+		} else if (mInEvent &&
 				(lastTag.equals("location") ||
 				lastTag.equals("description") ||
 				lastTag.equals("date") ||
