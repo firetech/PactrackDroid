@@ -35,6 +35,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -244,7 +245,9 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable {
 						.setContentText(newEvents == 1 ?
 								eventList.toString() : mAndroidCtx.getString(R.string.notification_message, newEvents))
 						.setContentIntent(contentIntent)
-						.setSound(prefs.getNotificationSound());
+						.setSound(prefs.getNotificationSound())
+						.extend(new NotificationCompat.WearableExtender().setBackground(
+								BitmapFactory.decodeResource(mAndroidCtx.getResources(), R.drawable.wearable_background)));
 				
 				if (newEvents > 1) {
 					n.setStyle(new NotificationCompat.BigTextStyle().bigText(eventList.toString()));
