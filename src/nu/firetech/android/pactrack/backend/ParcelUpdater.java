@@ -145,6 +145,9 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable {
 		mConnectivityManager = (ConnectivityManager)mAndroidCtx.getSystemService(Context.CONNECTIVITY_SERVICE);
 
 		mHandler = ctx.startRefreshProgress(workParcels.size());
+		if (mHandler != null) {
+			mHandler.sendMessage(Message.obtain(mHandler, 0, workParcels.get(0)));
+		}
 	}
 
 	@Override
@@ -175,10 +178,14 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable {
 		NotificationManager notMgr = (NotificationManager)mAndroidCtx.getSystemService(Context.NOTIFICATION_SERVICE);
 
 		for(int i = 0; i < mWorkParcels.size(); i++) {
-			updateParcel(mWorkParcels.get(i), mDbAdapter, notMgr);
+			Bundle parcel = mWorkParcels.get(i);
 			if (mHandler != null) {
-				mHandler.sendEmptyMessage(i + 1);
+				mHandler.sendMessage(Message.obtain(mHandler, i, parcel));
 			}
+			updateParcel(parcel, mDbAdapter, notMgr);
+		}
+		if (mHandler != null) {
+			mHandler.sendEmptyMessage(mWorkParcels.size());
 		}
 
 		new Handler(mAndroidCtx.getMainLooper()) {

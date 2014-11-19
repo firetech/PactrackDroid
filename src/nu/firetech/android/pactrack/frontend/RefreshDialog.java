@@ -22,6 +22,7 @@
 package nu.firetech.android.pactrack.frontend;
 
 import nu.firetech.android.pactrack.R;
+import nu.firetech.android.pactrack.backend.ParcelDbAdapter;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -37,7 +38,7 @@ public class RefreshDialog extends DialogFragment {
 		RefreshDialog d = new RefreshDialog();
 		d.initValues(maxValue);
 		d.show(context.getFragmentManager(), RefreshDialog.class.getName());
-		return d.getProgressHandler();
+		return d.mHandler;
 	}
 
 	public void initValues(int maxValue) {
@@ -54,12 +55,11 @@ public class RefreshDialog extends DialogFragment {
 		ProgressDialog dialog = new ProgressDialog(getActivity());
 		dialog.setMax(mHandler.getMaxValue());
 		dialog.setTitle(R.string.refreshing);
+		dialog.setMessage(getString(R.string.refreshing));
 		if (dialog.getMax() > 1) {
 			dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-			dialog.setMessage(null);
 		} else {
 			dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-			dialog.setMessage(getString(R.string.refreshing));
 		}
 
 		return dialog;
@@ -77,10 +77,6 @@ public class RefreshDialog extends DialogFragment {
 		if (getDialog() != null && getRetainInstance())
 			getDialog().setDismissMessage(null);
 		super.onDestroyView();
-	}
-
-	public Handler getProgressHandler() {
-		return mHandler;
 	}
 
 	private static class ProgressHandler extends Handler {
@@ -109,7 +105,16 @@ public class RefreshDialog extends DialogFragment {
 				mParent.setRetainInstance(false);
 				mParent.dismiss();
 			} else if (mParent.getDialog() != null) {
-				((ProgressDialog)mParent.getDialog()).setProgress(m.what);
+				ProgressDialog dialog = (ProgressDialog)mParent.getDialog();
+				dialog.setProgress(m.what);
+				if (m.obj instanceof Bundle) {
+					Bundle bundle = (Bundle)m.obj;
+					String parcel = bundle.getString(ParcelDbAdapter.KEY_NAME);
+					if (parcel == null) {
+						parcel = bundle.getString(ParcelDbAdapter.KEY_PARCEL);
+					}
+					dialog.setMessage(parcel);
+				}
 			}
 		}
 	};
