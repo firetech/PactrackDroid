@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2014 Joakim Andersson
- * Copyright (C) 2013 blunden
+ * Copyright (C) 2014 blunden
  * 
  * This file is part of PactrackDroid, an Android application to keep
  * track of parcels sent with the Swedish mail service (Posten).
