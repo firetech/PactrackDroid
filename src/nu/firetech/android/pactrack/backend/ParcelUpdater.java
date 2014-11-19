@@ -141,6 +141,7 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable {
 		} else {
 			throw new IllegalArgumentException("Unknown context type!");
 		}
+		ParcelJsonParser.loadConsumerId(mAndroidCtx);
 
 		mConnectivityManager = (ConnectivityManager)mAndroidCtx.getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -211,7 +212,7 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable {
 		Long rowId = parcel.getLong(ParcelDbAdapter.KEY_ROWID);
 		String parcelId = parcel.getString(ParcelDbAdapter.KEY_PARCEL);
 
-		Parcel parcelData = ParcelXMLParser.fetch(parcelId);
+		Parcel parcelData = ParcelJsonParser.fetch(parcelId);
 
 		mDbAdapter.updateParcelData(rowId, parcelData);
 		if (parcelData.getParcel() != null) {

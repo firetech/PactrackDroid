@@ -23,7 +23,6 @@ package nu.firetech.android.pactrack.frontend;
 
 import nu.firetech.android.pactrack.R;
 import nu.firetech.android.pactrack.backend.ParcelDbAdapter;
-import nu.firetech.android.pactrack.backend.ParcelXMLParser;
 import nu.firetech.android.pactrack.common.Error;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -52,14 +51,17 @@ public class UICommon {
 		int statusCode = parcel.getInt(statusColumnIndex);
 		if (parcel.getInt(parcel.getColumnIndexOrThrow(ParcelDbAdapter.KEY_ERROR)) != Error.NONE) {
 			return R.drawable.ic_parcel_error;
-		} else if (statusCode == ParcelXMLParser.STATUS_PREINFO) {
+		} else if (statusCode == ParcelDbAdapter.STATUS_PREINFO) {
 			return R.drawable.ic_parcel_preinfo;
-		} else if (statusCode == ParcelXMLParser.STATUS_COLLECTABLE) {
+		} else if (statusCode == ParcelDbAdapter.STATUS_ENROUTE) {
+			return R.drawable.ic_parcel_enroute;
+		} else if (statusCode == ParcelDbAdapter.STATUS_COLLECTABLE) {
 			return R.drawable.ic_parcel_collectable;
-		} else if (statusCode == ParcelXMLParser.STATUS_DELIVERED) {
+		} else if (statusCode == ParcelDbAdapter.STATUS_DELIVERED) {
 			return R.drawable.ic_parcel_delivered;
 		} else {
-			return R.drawable.ic_parcel_enroute; //This has multiple codes (3 and 5 are confirmed)
+			// TODO Fix custom icon?
+			return R.drawable.ic_parcel_error;
 		}
 	}
 

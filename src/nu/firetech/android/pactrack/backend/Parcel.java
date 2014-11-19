@@ -36,7 +36,7 @@ class Parcel {
 	private String mPostal;
 	private String mService;
 	private String mStatus;
-	private int mStatusCode = -1;
+	private int mStatusCode = ParcelDbAdapter.STATUS_UNKNOWN;
 	
 	private ArrayList<ParcelEvent> mEvents = new ArrayList<ParcelEvent>();
 	
@@ -46,41 +46,45 @@ class Parcel {
 
 	@SuppressWarnings("unchecked")
 	Parcel(HashMap<String, Object> data) {
-		mParcel = (String)data.get("parcel");
+		mParcel = (String)data.get(ParcelDbAdapter.KEY_PARCEL);
 		
-		mCustomer = (String)data.get("customername");
-		mPostal = new StringBuilder((String)data.get("receiverzipcode"))
-				.append(' ')
-				.append((String)data.get("receivercity"))
-				.toString();
-		mService = (String)data.get("servicename");
-		mStatus = (String)data.get("statusdescription");
+		mCustomer = (String)data.get(ParcelDbAdapter.KEY_CUSTOMER);
+		mPostal = (String)data.get(ParcelDbAdapter.KEY_POSTAL);
+		mService = (String)data.get(ParcelDbAdapter.KEY_SERVICE);
+		mStatus = (String)data.get(ParcelDbAdapter.KEY_STATUS);
 		
 		try {
-			mWeight = Double.parseDouble((String)data.get("actualweight"));
+			mWeight = Double.parseDouble((String)data.get(ParcelDbAdapter.KEY_WEIGHT));
+			if ("g".equals((String)data.get(ParcelJsonParser.KEY_WEIGHT_UNIT))) {
+				mWeight /= 1000;
+			}
 		} catch (Exception e) {
 			mWeight = 0;
 		}
 		
-		try {
-			mStatusCode = Integer.parseInt((String)data.get("statuscode"));
-		} catch (Exception e) {
-			mStatusCode = -1;
+		String statusCode = (String)data.get(ParcelDbAdapter.KEY_STATUSCODE);
+		if (statusCode != null) {
+			if ("INFORMED".equals(statusCode)) {
+				mStatusCode = ParcelDbAdapter.STATUS_PREINFO;
+			} else if ("EN_ROUTE".equals(statusCode)) {
+				mStatusCode = ParcelDbAdapter.STATUS_ENROUTE;
+			} else if ("AVAILABLE_FOR_DELIVERY".equals(statusCode)) {
+				mStatusCode = ParcelDbAdapter.STATUS_COLLECTABLE;
+			} else if ("DELIVERED".equals(statusCode)) {
+				mStatusCode = ParcelDbAdapter.STATUS_DELIVERED;
+			}
 		}
 		
-		String sent = (String)data.get("datesent");
+		String sent = (String)data.get(ParcelDbAdapter.KEY_SENT);
 		if (sent != null) {
-			mSent = new StringBuilder(sent.substring(0, 4))
-				.append('-')
-				.append(sent.substring(4, 6))
-				.append('-')
-				.append(sent.substring(6, 8))
-				.toString();
+			mSent = sent.replace('T', ' ');
 		} else {
 			mSent = "";
 		}
 		
-		mEvents.addAll((ArrayList<ParcelEvent>)data.get("events"));
+		for (HashMap<String,Object> eventData : (ArrayList<HashMap<String,Object>>)data.get(ParcelJsonParser.KEY_EVENTS)) {
+			mEvents.add(new ParcelEvent(eventData));
+		}
 		
 		mErrorCode = Error.NONE;
 	}

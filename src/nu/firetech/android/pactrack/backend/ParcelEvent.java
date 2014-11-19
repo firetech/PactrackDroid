@@ -29,21 +29,9 @@ public class ParcelEvent {
 	private String mTime;
 	
 	ParcelEvent(HashMap<String,Object> eventData) {
-		mLocation = (String)eventData.get("location");
-		mDescription = (String)eventData.get("description");
-		
-		String date = (String)eventData.get("date");
-		String time = (String)eventData.get("time");
-		mTime = new StringBuilder(date.substring(0, 4))
-			.append('-')
-			.append(date.substring(4, 6))
-			.append('-')
-			.append(date.substring(6, 8))
-    		.append(' ')
-    		.append(time.substring(0, 2))
-    		.append(':')
-    		.append(time.substring(2, 4))
-			.toString();
+		mLocation = (String)eventData.get(ParcelDbAdapter.KEY_LOC);
+		mDescription = (String)eventData.get(ParcelDbAdapter.KEY_DESC);
+		mTime = ((String)eventData.get(ParcelDbAdapter.KEY_TIME)).replace('T', ' ');
 	}
 	
 ////////////////////////////////////////////////////////////////////////////////

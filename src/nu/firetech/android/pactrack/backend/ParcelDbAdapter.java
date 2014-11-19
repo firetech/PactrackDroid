@@ -52,6 +52,12 @@ public class ParcelDbAdapter {
 	public static final String KEY_OK_UPDATE = "last_successful_update";
 	public static final String KEY_ERROR = "error_code";
 	public static final String KEY_AUTO = "auto_included";
+	
+	public static final int STATUS_DELIVERED = 3;
+	public static final int STATUS_COLLECTABLE = 2;
+	public static final int STATUS_ENROUTE = 1;
+	public static final int STATUS_PREINFO = 0;
+	public static final int STATUS_UNKNOWN = -1;
 
 	//Events table
 	public static final String KEY_FOREIGN = "parcel_id";
@@ -68,7 +74,7 @@ public class ParcelDbAdapter {
 	private static final String DATABASE_NAME = "parcels.db";
 	private static final String PARCEL_TABLE = "parcels";
 	private static final String EVENT_TABLE= "events";
-	private static final int DATABASE_VERSION = 7;
+	private static final int DATABASE_VERSION = 8;
 
 
 	private final Context mCtx;
@@ -78,9 +84,15 @@ public class ParcelDbAdapter {
 		DatabaseHelper(Context context) {
 			super(context, DATABASE_NAME, null, DATABASE_VERSION);
 		}
-
+		
 		@Override
 		public void onCreate(SQLiteDatabase db) {
+			createParcelsTable(db);
+			createEventsTable(db);
+		}
+		
+		private void createParcelsTable(SQLiteDatabase db) {
+			db.execSQL("DROP TABLE IF EXISTS "+PARCEL_TABLE);
 			db.execSQL("create table "+PARCEL_TABLE
 					+ " ("+KEY_ROWID+" integer primary key autoincrement, "
 					+KEY_PARCEL+" varchar(20) not null, "
@@ -96,6 +108,10 @@ public class ParcelDbAdapter {
 					+KEY_OK_UPDATE+" varchar(19), "
 					+KEY_ERROR+" integer default "+Error.NONE+", "
 					+KEY_AUTO+" integer(1) default 1);");
+		}
+		
+		private void createEventsTable(SQLiteDatabase db) {
+			db.execSQL("DROP TABLE IF EXISTS "+EVENT_TABLE);
 			db.execSQL("create table "+EVENT_TABLE
 					+ " ("+KEY_ROWID+" integer primary key autoincrement, "
 					+KEY_FOREIGN+" integer not null,"
@@ -113,38 +129,29 @@ public class ParcelDbAdapter {
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 			Log.d(TAG, "Trying to upgrade database from version " + oldVersion + " to " + newVersion);
-			if (oldVersion < 2) {
-				db.execSQL("ALTER TABLE "+PARCEL_TABLE+" ADD "+KEY_UPDATE+" varchar(19)");
-				db.execSQL("ALTER TABLE "+PARCEL_TABLE+" ADD "+KEY_OK_UPDATE+" varchar(19)");
-				oldVersion = 2;
-			}
-			if (oldVersion < 3) {
-				db.execSQL("ALTER TABLE "+PARCEL_TABLE+" ADD "+KEY_STATUSCODE+" integer");
-				oldVersion = 3;
-			}
-			if (oldVersion < 4) {
-				db.execSQL("ALTER TABLE "+PARCEL_TABLE+" ADD "+KEY_AUTO+" integer(1) default 1");
-				oldVersion = 4;
-			}
-			if (oldVersion < 5) {
-				//db.execSQL("ALTER TABLE "+EVENT_TABLE+" ADD error_event integer(1) default 0");
-				oldVersion = 5;
-			}
-			if (oldVersion < 6) {
-				db.execSQL("ALTER TABLE "+PARCEL_TABLE+" ADD "+KEY_NAME+" text");
-				oldVersion = 6;
-			}
-			if (oldVersion < 7) {
-				// Ignore, sqlite can't remove columns. :/
-				oldVersion = 7;
+			try {
+				if (oldVersion == 5) {
+					db.execSQL("ALTER TABLE "+PARCEL_TABLE+" ADD "+KEY_NAME+" text");
+					oldVersion = 6;
+				}
+				if (oldVersion == 6) {
+					// Ignore removal of events.error_event, sqlite can't remove columns. :/
+					oldVersion = 7;
+				}
+				if (oldVersion == 7) {
+					// Wipe events table due to mismatches with new API.
+					// While we're at it, recreate the table to remove the redundant field from version 7.
+					createEventsTable(db);
+					oldVersion = 8;
+				}
+			} catch (SQLException e) {
+				Log.d(TAG, "Database failed to upgrade", e);
 			}
 			
 			if (oldVersion == newVersion) {
 				Log.d(TAG, "Database upgrade successful");
 			} else {
-				Log.w(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion + " unsuccessful, creating a new database and destroying all old data");
-				db.execSQL("DROP TABLE IF EXISTS "+PARCEL_TABLE);
-				db.execSQL("DROP TABLE IF EXISTS "+EVENT_TABLE);
+				Log.w(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion + " impossible, creating a new database and destroying all old data");
 				onCreate(db);
 			}
 		}
