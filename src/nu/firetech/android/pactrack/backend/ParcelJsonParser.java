@@ -113,15 +113,19 @@ public class ParcelJsonParser extends DefaultHandler {
 		data.put(ParcelDbAdapter.KEY_STATUS, shipment.getJSONObject("statusText").getString("header"));
 		data.put(ParcelDbAdapter.KEY_STATUSCODE, shipment.getString("status"));
 		
-		JSONObject weight = shipment.getJSONObject("totalWeight");
-		data.put(ParcelDbAdapter.KEY_WEIGHT, weight.getString("value"));
-		data.put(ParcelJsonParser.KEY_WEIGHT_UNIT, weight.getString("unit"));
+		if (shipment.has("totalWeight")) {
+			JSONObject weight = shipment.getJSONObject("totalWeight");
+			data.put(ParcelDbAdapter.KEY_WEIGHT, weight.getString("value"));
+			data.put(ParcelJsonParser.KEY_WEIGHT_UNIT, weight.getString("unit"));
+		}
 		
 		JSONObject address = shipment.getJSONObject("consignee").getJSONObject("address");
 		data.put(ParcelDbAdapter.KEY_POSTAL, address.getString("postCode") + " " + address.getString("city"));
 
 		JSONObject item = shipment.getJSONArray("items").getJSONObject(0);
-		data.put(ParcelDbAdapter.KEY_SENT, item.getString("dropOffDate"));
+		if (item.has("dropOffDate")) {
+			data.put(ParcelDbAdapter.KEY_SENT, item.getString("dropOffDate"));
+		}
 
 		data.put(KEY_EVENTS, parseEvents(item.getJSONArray("events")));
 
