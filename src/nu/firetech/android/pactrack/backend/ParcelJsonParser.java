@@ -108,7 +108,9 @@ public class ParcelJsonParser extends DefaultHandler {
 		JSONObject shipment = json.getJSONArray("shipments").getJSONObject(0);
 		
 		data.put(ParcelDbAdapter.KEY_PARCEL, shipment.getString("shipmentId"));
-		data.put(ParcelDbAdapter.KEY_CUSTOMER, shipment.getJSONObject("consignor").getString("name"));
+		if (shipment.has("consignor")) {
+			data.put(ParcelDbAdapter.KEY_CUSTOMER, shipment.getJSONObject("consignor").getString("name"));
+		}
 		data.put(ParcelDbAdapter.KEY_SERVICE, shipment.getJSONObject("service").getString("name"));
 		data.put(ParcelDbAdapter.KEY_STATUS, shipment.getJSONObject("statusText").getString("header"));
 		data.put(ParcelDbAdapter.KEY_STATUSCODE, shipment.getString("status"));
@@ -119,8 +121,18 @@ public class ParcelJsonParser extends DefaultHandler {
 			data.put(ParcelJsonParser.KEY_WEIGHT_UNIT, weight.getString("unit"));
 		}
 		
-		JSONObject address = shipment.getJSONObject("consignee").getJSONObject("address");
-		data.put(ParcelDbAdapter.KEY_POSTAL, address.getString("postCode") + " " + address.getString("city"));
+		if (shipment.has("consignee")) {
+			JSONObject address = shipment.getJSONObject("consignee").getJSONObject("address");
+			StringBuilder postal = new StringBuilder();
+			if (address.has("postCode")) {
+				postal.append(address.getString("postCode"));
+			}
+			if (address.has("city")) {
+				postal.append(" ");
+				postal.append(address.getString("city"));
+			}
+			data.put(ParcelDbAdapter.KEY_POSTAL, postal.toString().trim());
+		}
 
 		JSONObject item = shipment.getJSONArray("items").getJSONObject(0);
 		if (item.has("dropOffDate")) {
