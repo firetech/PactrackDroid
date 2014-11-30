@@ -21,64 +21,19 @@
 -->
 <resources>
 
-    <style name="Theme.Postnord" parent="@android:style/Theme.Holo.Light.DarkActionBar">
-        <item name="android:actionBarItemBackground">@drawable/selectable_background_postnord</item>
-        <item name="android:popupMenuStyle">@style/PopupMenu.Postnord</item>
-        <item name="android:dropDownListViewStyle">@style/DropDownListView.Postnord</item>
-        <item name="android:actionBarTabStyle">@style/ActionBarTabStyle.Postnord</item>
-        <item name="android:actionDropDownStyle">@style/DropDownNav.Postnord</item>
-        <item name="android:actionBarStyle">@style/ActionBar.Solid.Postnord</item>
-        <item name="android:actionModeBackground">@drawable/cab_background_top_postnord</item>
-        <item name="android:actionModeSplitBackground">@drawable/cab_background_bottom_postnord</item>
-        <item name="android:actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Postnord</item>
-        <item name="android:actionBarWidgetTheme">@style/Theme.Postnord.Widget</item>
-    </style>
-
-    <style name="ActionBar.Solid.Postnord" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
-        <item name="android:icon">@drawable/ic_ab_box</item>
-        <item name="android:background">@drawable/ab_solid_postnord</item>
-        <item name="android:backgroundStacked">@drawable/ab_stacked_solid_postnord</item>
-        <item name="android:backgroundSplit">@drawable/ab_bottom_solid_postnord</item>
-        <item name="android:progressBarStyle">@style/ProgressBar.Postnord</item>
-    </style>  
-
-    <style name="ActionBar.Transparent.Postnord" parent="@android:style/Widget.Holo.Light.ActionBar">
-        <item name="android:background">@drawable/ab_transparent_postnord</item>
-        <item name="android:progressBarStyle">@style/ProgressBar.Postnord</item>
-    </style>
-
-    <style name="PopupMenu.Postnord" parent="@android:style/Widget.Holo.Light.ListPopupWindow">
-        <item name="android:popupBackground">@drawable/menu_dropdown_panel_holo_light</item>
-    </style>
-
-    <style name="DropDownListView.Postnord" parent="@android:style/Widget.Holo.Light.ListView.DropDown">
-        <item name="android:listSelector">@drawable/selectable_background_postnord</item>
-        <item name="android:divider">@drawable/list_divider_holo_light</item>
-    </style>
-
-    <style name="ActionBarTabStyle.Postnord" parent="@android:style/Widget.Holo.Light.ActionBar.TabView">
-        <item name="android:background">@drawable/tab_indicator_ab_postnord</item>
-    </style>
-
-    <style name="DropDownNav.Postnord" parent="@android:style/Widget.Holo.Light.Spinner">
-        <item name="android:background">@drawable/spinner_background_ab_postnord</item>
-        <item name="android:popupBackground">@drawable/menu_dropdown_panel_holo_light</item>
-        <item name="android:dropDownSelector">@drawable/selectable_background_postnord</item>
+    <style name="Theme.Postnord" parent="Theme.AppCompat.Light.DarkActionBar" >
+        <item name="colorPrimary">@color/postnord_primary</item>
+    	<item name="colorPrimaryDark">@color/postnord_primary_dark</item>
+    	<item name="colorAccent">@color/postnord_accent</item>
+    	<item name="android:textColorLink">@color/postnord_accent</item>
     </style>
     
-    <style name="ProgressBar.Postnord" parent="@android:style/Widget.Holo.Light.ProgressBar.Horizontal">
-        <item name="android:progressDrawable">@drawable/progress_horizontal_postnord</item>
-    </style>
-    
-    <style name="ActionButton.CloseMode.Postnord" parent="@android:style/Widget.Holo.Light.ActionButton.CloseMode">
-        <item name="android:background">@drawable/btn_cab_done_postnord</item>
-    </style>
-
-    <!-- Needed because the Light.DarkActionBar theme sets the actionBarWidgetTheme. Otherwise changes won't take effect -->
-    <style name="Theme.Postnord.Widget" parent="@android:style/Theme.Holo">
-        <item name="android:popupMenuStyle">@style/PopupMenu.Postnord</item>
-        <item name="android:dropDownListViewStyle">@style/DropDownListView.Postnord</item>
-        <item name="android:textColor">@android:color/black</item>
+    <!-- This theme is used by the Toolbar used in the settings activity -->
+    <style name="Theme.Postnord.NoActionBar" parent="Theme.AppCompat.NoActionBar" >
+        <item name="colorPrimary">@color/postnord_primary</item>
+    	<item name="colorPrimaryDark">@color/postnord_primary_dark</item>
+    	<item name="colorAccent">@color/postnord_accent</item>
+    	<item name="android:textColorLink">@color/postnord_accent</item>
     </style>
 
 </resources>

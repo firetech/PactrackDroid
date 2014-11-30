@@ -28,12 +28,12 @@ import nu.firetech.android.pactrack.backend.ServiceStarter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBarActivity;
 import android.view.MenuItem;
 
-public class MainActivity extends FragmentActivity implements
+public class MainActivity extends ActionBarActivity implements
 		ParcelListFragment.ParentActivity, ParcelDetailsFragment.ParentActivity,
 		ParcelIdDialog.ParentActivity {
 	private final static String KEY_DISPLAY_OPT = "display_options";
@@ -81,7 +81,7 @@ public class MainActivity extends FragmentActivity implements
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putInt(KEY_DISPLAY_OPT, getActionBar().getDisplayOptions());
+		outState.putInt(KEY_DISPLAY_OPT, getSupportActionBar().getDisplayOptions());
 	}
 
 
@@ -90,7 +90,7 @@ public class MainActivity extends FragmentActivity implements
 		super.onRestoreInstanceState(savedInstanceState);
 		int savedDisplayOpt = savedInstanceState.getInt(KEY_DISPLAY_OPT);
 		if(savedDisplayOpt != 0){
-			getActionBar().setDisplayOptions(savedDisplayOpt);
+			getSupportActionBar().setDisplayOptions(savedDisplayOpt);
 		}
 	}
 
@@ -140,7 +140,7 @@ public class MainActivity extends FragmentActivity implements
 			transaction.replace(viewId, newFragment);
 			if (fullscreen) {
 				transaction.addToBackStack(null);
-				getActionBar().setDisplayHomeAsUpEnabled(true);
+				getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 			}
 			transaction.commit();
 			
@@ -160,7 +160,7 @@ public class MainActivity extends FragmentActivity implements
 
 	@Override
 	public void onListResume() {
-		getActionBar().setDisplayHomeAsUpEnabled(false);
+		getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 		setTitle(R.string.app_name);
 	}
 
