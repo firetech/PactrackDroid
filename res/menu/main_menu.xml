@@ -19,24 +19,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 -->
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:compat="http://schemas.android.com/apk/res-auto" >
     <item android:id="@+id/action_add_parcel"
         android:title="@string/menu_add_parcel"
         android:icon="@drawable/ic_action_new"
-        android:showAsAction="always|withText"
+        compat:showAsAction="always|withText"
         android:menuCategory="alternative" />
     <item android:id="@+id/action_refresh_all"
         android:title="@string/menu_refresh_all"
         android:icon="@drawable/ic_action_refresh"
-        android:showAsAction="ifRoom"
+        compat:showAsAction="ifRoom"
         android:menuCategory="container" />
     <item android:id="@+id/action_settings"
         android:title="@string/menu_settings"
         android:icon="@drawable/ic_action_settings"
-        android:showAsAction="ifRoom"
+        compat:showAsAction="ifRoom"
         android:menuCategory="container" />
     <item android:id="@+id/action_about"
         android:title="@string/menu_about"
-        android:showAsAction="never"
+        compat:showAsAction="never"
         android:menuCategory="container" />
 </menu>

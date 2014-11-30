@@ -19,26 +19,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 -->
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:compat="http://schemas.android.com/apk/res-auto" >
     <item android:id="@+id/action_delete"
         android:title="@string/menu_delete"
         android:icon="@drawable/ic_action_discard"
-        android:showAsAction="ifRoom"
+        compat:showAsAction="ifRoom"
         android:menuCategory="secondary" />
     <item android:id="@+id/action_edit"
         android:title="@string/menu_edit"
         android:icon="@drawable/ic_action_edit"
-        android:showAsAction="ifRoom"
+        compat:showAsAction="ifRoom"
         android:menuCategory="secondary" />
     <item android:id="@+id/action_auto_include"
         android:title="@string/menu_auto_include"
-        android:showAsAction="never"
+        compat:showAsAction="never"
         android:menuCategory="secondary"
         android:checked="true"
         android:checkable="true"/>
     <item android:id="@+id/action_refresh"
         android:title="@string/menu_refresh"
         android:icon="@drawable/ic_action_refresh"
-        android:showAsAction="always"
+        compat:showAsAction="always"
         android:menuCategory="secondary" />
 </menu>
