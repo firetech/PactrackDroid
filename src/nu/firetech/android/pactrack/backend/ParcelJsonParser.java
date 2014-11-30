@@ -22,12 +22,12 @@
 package nu.firetech.android.pactrack.backend;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import nu.firetech.android.pactrack.R;
 import nu.firetech.android.pactrack.common.Error;
 
 import org.json.JSONArray;
@@ -46,8 +46,6 @@ import android.util.Log;
 public class ParcelJsonParser extends DefaultHandler {
 	private static final String TAG = "<PactrackDroid> ParcelXMLParser";
 	
-	private static final String CONSUMERID_ASSET = "postnord_consumerid.txt";
-	
 	//TODO support more languages
 	private static final String BASE_URL = 
 			"http://logistics.postennorden.com/wsp/rest-services/ntt-service-rest/api/shipment.json?locale=sv&id=%s&consumerId=%s";
@@ -59,14 +57,7 @@ public class ParcelJsonParser extends DefaultHandler {
 	
 	public static void loadConsumerId(Context ctx) {
 		if (consumerId == null) {
-			try {
-				BufferedReader in = new BufferedReader(new InputStreamReader(ctx.getAssets().open(CONSUMERID_ASSET)));
-				consumerId = in.readLine().trim();
-		        in.close();
-			} catch (IOException e) {
-				throw new IllegalStateException(
-						"Failed to read consumerId. Make sure a valid consumerId is set in assets/"+CONSUMERID_ASSET);
-	        }
+			consumerId = ctx.getString(R.string.postnord_consumerid);
 		}
 	}
 

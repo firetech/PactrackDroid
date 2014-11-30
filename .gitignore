@@ -2,4 +2,4 @@
 /gen
 .DS_Store
 market-stuff
-assets/postnord_consumerid.txt
+res/values/postnord_consumerid.xml

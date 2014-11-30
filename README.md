@@ -18,8 +18,16 @@ used by the official version is not open sourced.
 
 If you fork the project, you will need to create your own consumer ID at
 http://www.postnordlogistics.se/sv/online-services/widgetsochwebservices/
-and save it, without any quotes or anything else, into the file
-``postnord_consumerid.txt`` in the ``assets`` directory.
+and save it, into (for example) res/values/postnord_consumerid.xml, using the
+following syntax:
+
+    <?xml version="1.0" encoding="utf-8"?>
+    <resources xmlns:tools="http://schemas.android.com/tools"
+               tools:ignore="TypographyDashes">
+      <string name="postnord_consumerid">
+        xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+      </string>
+    </resources>
 
 
 Authors
