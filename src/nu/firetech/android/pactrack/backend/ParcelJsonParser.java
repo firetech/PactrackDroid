@@ -33,7 +33,6 @@ import nu.firetech.android.pactrack.common.Error;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.xml.sax.helpers.DefaultHandler;
 
 import android.content.Context;
 import android.util.Log;
@@ -43,7 +42,7 @@ import android.util.Log;
  * http://www.postnordlogistics.se/sv/online-services/widgetsochwebservices/
  */
 
-public class ParcelJsonParser extends DefaultHandler {
+public class ParcelJsonParser {
 	private static final String TAG = "<PactrackDroid> ParcelXMLParser";
 	
 	//TODO support more languages
