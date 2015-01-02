@@ -33,7 +33,6 @@ import nu.firetech.android.pactrack.common.Error;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.xml.sax.helpers.DefaultHandler;
 
 import android.content.Context;
 import android.util.Log;
@@ -43,7 +42,7 @@ import android.util.Log;
  * http://www.postnordlogistics.se/sv/online-services/widgetsochwebservices/
  */
 
-public class ParcelJsonParser extends DefaultHandler {
+public class ParcelJsonParser {
 	private static final String TAG = "<PactrackDroid> ParcelXMLParser";
 	
 	//TODO support more languages
@@ -69,7 +68,7 @@ public class ParcelJsonParser extends DefaultHandler {
 
 			ParcelJsonParser parser = new ParcelJsonParser();
 			
-			return parser.parse(new URL(String.format(BASE_URL, parcelId, consumerId)));
+			return parser.parse(parcelId);
 		} catch (Exception e) {
 			Log.d(TAG, "SERVER error", e);
 			return new Parcel(Error.SERVER);
@@ -80,10 +79,12 @@ public class ParcelJsonParser extends DefaultHandler {
 
 	private ParcelJsonParser() {}
 	
-	private Parcel parse(URL parcelUrl) throws Exception {
+	private Parcel parse(String parcelId) throws Exception {
 		HashMap<String,Object> data = new HashMap<String,Object>();
 		
 		StringBuilder jsonText = new StringBuilder();
+		
+		URL parcelUrl = new URL(String.format(BASE_URL, parcelId, consumerId));
 		
 		BufferedReader in = new BufferedReader(new InputStreamReader(parcelUrl.openStream(), "UTF-8"));
 		for (String line = in.readLine(); line != null; line = in.readLine()) {
@@ -96,9 +97,16 @@ public class ParcelJsonParser extends DefaultHandler {
 		if (error != Error.NONE) {
 			return new Parcel(error);
 		}
-		JSONObject shipment = json.getJSONArray("shipments").getJSONObject(0);
+		JSONObject shipment = json.getJSONArray("shipments").getJSONObject(0), item;
+		try {
+			item = findItem(shipment, parcelId);
+		} catch (IllegalArgumentException e) {
+			return new Parcel(Error.MULTI_PARCEL);
+		}
+		if (item == null) {
+			return new Parcel(Error.NOT_FOUND);
+		}
 		
-		data.put(ParcelDbAdapter.KEY_PARCEL, shipment.getString("shipmentId"));
 		if (shipment.has("consignor")) {
 			data.put(ParcelDbAdapter.KEY_CUSTOMER, shipment.getJSONObject("consignor").getString("name"));
 		}
@@ -125,7 +133,7 @@ public class ParcelJsonParser extends DefaultHandler {
 			data.put(ParcelDbAdapter.KEY_POSTAL, postal.toString().trim());
 		}
 
-		JSONObject item = shipment.getJSONArray("items").getJSONObject(0);
+		data.put(ParcelDbAdapter.KEY_PARCEL, item.getString("itemId"));
 		if (item.has("dropOffDate")) {
 			data.put(ParcelDbAdapter.KEY_SENT, item.getString("dropOffDate"));
 		}
@@ -134,16 +142,28 @@ public class ParcelJsonParser extends DefaultHandler {
 
 		return new Parcel(data);
 	}
+
+	private JSONObject findItem(JSONObject shipment, String parcelId) throws JSONException, IllegalArgumentException {
+		JSONArray items = shipment.getJSONArray("items");
+		JSONObject item = null;
+		for (int i = 0; i < items.length(); i++) {
+			JSONObject thisItem = items.getJSONObject(i);
+			if (thisItem.getString("itemId").equals(parcelId)) {
+				if (item == null) {
+					item = thisItem;
+				} else {
+					throw new IllegalArgumentException("Multiple items matched");
+				}
+			}
+		}
+		return item;
+	}
 	
 	private int checkError(JSONObject json) throws JSONException {
 		JSONArray shipments = json.getJSONArray("shipments");
 		if (shipments.length() == 0) {
 			return Error.NOT_FOUND;
 		} else if (shipments.length() > 1) {
-			return Error.MULTI_PARCEL;
-		}
-		if (shipments.getJSONObject(0).getInt("assessedNumberOfItems") > 1 ||
-				shipments.getJSONObject(0).getJSONArray("items").length() > 1) {
 			return Error.MULTI_PARCEL;
 		}
 		return Error.NONE;
