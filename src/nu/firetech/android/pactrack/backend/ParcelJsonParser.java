@@ -176,9 +176,13 @@ public class ParcelJsonParser {
 			HashMap<String,Object> eventData = new HashMap<String,Object>();
 			JSONObject event = events.getJSONObject(i);
 
+			String description = "";
+			if (event.has("eventDescription")) {
+				description = event.getString("eventDescription");
+			}
 			eventData.put(ParcelDbAdapter.KEY_TIME, event.getString("eventTime"));
 			eventData.put(ParcelDbAdapter.KEY_LOC, event.getJSONObject("location").getString("displayName"));
-			eventData.put(ParcelDbAdapter.KEY_DESC, event.getString("eventDescription"));
+			eventData.put(ParcelDbAdapter.KEY_DESC, description);
 
 			eventList.add(eventData);
 		}
