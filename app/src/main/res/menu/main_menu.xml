@@ -28,8 +28,7 @@
         android:menuCategory="container" />
     <item android:id="@+id/action_settings"
         android:title="@string/menu_settings"
-        android:icon="@drawable/ic_action_settings"
-        compat:showAsAction="ifRoom"
+        compat:showAsAction="never"
         android:menuCategory="container" />
     <item android:id="@+id/action_about"
         android:title="@string/menu_about"
