@@ -38,6 +38,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -72,6 +73,14 @@ public class ParcelListFragment extends ListFragment implements
 		View view = inflater.inflate(R.layout.parcel_list, container, false);
 		
 		Context context = view.getContext();
+
+		FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
+		fab.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				ParcelIdDialog.create(getFragmentManager(), null);
+			}
+		});
 
 		if (sAboutMessage == null) {
 			String spacer = "\n\n";
@@ -233,9 +242,6 @@ public class ParcelListFragment extends ListFragment implements
 		switch(item.getItemId()) {
 		case R.id.action_about:
 			mAboutDialog.show();
-			return true;
-		case R.id.action_add_parcel:
-			ParcelIdDialog.create(getFragmentManager(), null);
 			return true;
 		case R.id.action_refresh_all:
 			//Defer automatic update at least another half interval
