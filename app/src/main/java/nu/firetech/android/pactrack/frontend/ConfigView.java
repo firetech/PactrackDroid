@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Joakim Andersson
+ * Copyright (C) 2015 Joakim Tufvegren
  * Copyright (C) 2014 blunden
  * 
  * This file is part of PactrackDroid, an Android application to keep

@@ -1,6 +1,6 @@
 /*
  * Copyright 2009 ZXing authors
- * Copyright 2014 Joakim Andersson
+ * Copyright 2015 Joakim Tufvegren
  * 		(modified to use Fragment instead of Activity & changed request code)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");

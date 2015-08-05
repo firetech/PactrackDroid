@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Joakim Andersson
+ * Copyright (C) 2015 Joakim Tufvegren
  * Copyright (C) 2014 blunden
  * 
  * This file is part of PactrackDroid, an Android application to keep
@@ -94,7 +94,7 @@ public class ParcelListFragment extends ListFragment implements
 			.append(" - ")
 			.append(versionName)
 			.append(spacer)
-			.append("Copyright (C) 2014 Joakim Andersson")
+			.append("Copyright (C) 2015 Joakim Tufvegren")
 			.append("\n")
 			.append("Copyright (C) 2014 blunden")
 			.append(spacer)
