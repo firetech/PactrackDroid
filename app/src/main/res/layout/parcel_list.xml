@@ -43,9 +43,7 @@
 			android:layout_width="fill_parent"
 			android:layout_weight="1"
 			android:layout_gravity="top"
-			android:layout_height="wrap_content"
-			android:paddingBottom="90dp"
-			android:clipToPadding="false"/>
+			android:layout_height="wrap_content"/>
 
 	</LinearLayout>
 

@@ -82,6 +82,9 @@ public class ParcelListFragment extends ListFragment implements
 			}
 		});
 
+		ListView list = (ListView) view.findViewById(android.R.id.list);
+		list.addFooterView(inflater.inflate(R.layout.parcel_footer, list, false), null, false);
+
 		if (sAboutMessage == null) {
 			String spacer = "\n\n";
 
@@ -130,12 +133,12 @@ public class ParcelListFragment extends ListFragment implements
 			@Override
 			public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
 				if (view instanceof ImageView && view.getId() == android.R.id.icon) {
-					((ImageView)view).setImageResource(UICommon.getStatusImage(cursor, columnIndex));
+					((ImageView) view).setImageResource(UICommon.getStatusImage(cursor, columnIndex));
 					if (prefs.getCheckInterval() == 0 ||
 							cursor.getInt(cursor.getColumnIndexOrThrow(ParcelDbAdapter.KEY_AUTO)) == 1) {
-						((ImageView)view).getDrawable().mutate().setAlpha(255);
+						((ImageView) view).getDrawable().mutate().setAlpha(255);
 					} else {
-						((ImageView)view).getDrawable().mutate().setAlpha(70);
+						((ImageView) view).getDrawable().mutate().setAlpha(70);
 					}
 					return true;
 				} else {
