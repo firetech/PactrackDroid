@@ -23,7 +23,7 @@
     xmlns:compat="http://schemas.android.com/apk/res-auto" >
     <item android:id="@+id/action_refresh_all"
         android:title="@string/menu_refresh_all"
-        android:icon="@drawable/ic_action_refresh"
+        android:icon="@drawable/ic_action_refresh_all"
         compat:showAsAction="ifRoom"
         android:menuCategory="container" />
     <item android:id="@+id/action_settings"
