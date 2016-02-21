@@ -1,14 +1,8 @@
 .gradle
-.idea/misc.xml
-.idea/modules.xml
-.idea/vcs.xml
-.idea/workspace.xml
-.idea/libraries
+.idea
 local.properties
-PactrackDroid.iml
 PactrackDroid.iws
 build
-app/build
 .DS_Store
 Thumbs.db
 captures
