@@ -59,7 +59,8 @@
 	<string name="remove_confirm_message">Kollit och dess händelser kommer att tas bort från programmet.</string>
 
 	<string name="parcel_error_unknown">Okänt fel (%d)</string>
-	<string name="parcel_error_server">Lyckades inte hämta/läsa data från Postens server</string>
+	<string name="parcel_error_server">Lyckades inte hämta/läsa data från PostNords server</string>
+	<string name="parcel_error_server_apikey">\n(Är din API-nyckel korrekt?)</string>
 	<string name="parcel_error_not_found">Kolli-ID:t hittades inte</string>
 	<string name="parcel_error_multi_parcel">Fler än ett kolli matchade kolli-ID:t</string>
 
@@ -95,6 +96,8 @@
 	<string name="check_interval_title">Uppdateringsintervall</string>
 	<string name="check_interval_summary">Välj hur ofta automatiska uppdateringar ska göras</string>
 	<string name="check_interval_summary_disabled">Denna funktion är inte tillgänglig då data i bakgrunden inte är tillåtet!</string>
+	<string name="private_apikey_needed_title">Egen PostNord API-nyckel behövs</string>
+	<string name="private_apikey_needed_text">På grund av begränsningar från PostNord behöver du ange en egen API-nyckel för att kunna väljare en kortare uppdateringsintervall än 1 timme.\n\nDu kan skaffa en nyckel på PostNords utvecklarsida (http://developer.postnord.com).</string>
 
 	<string name="notify_on_title">Aviseringar</string>
 	<string name="notify_on_head_summary">Konfigurera meddelanden om nya händelser</string>
@@ -102,11 +105,20 @@
 	<string name="notify_vibrate_title">Vibrera</string>
 	<string name="notify_vibrate_summary">Vibrera vid nya händelser</string>
 	<string name="notify_light_title">Använd lysdioden</string>
-	<string name="notify_light_summary">Blinka med lysdioden vid nya händelser (Kräver en för detta avsedd lysdiod)</string>
-	<string name="notify_light_advanced_title">Lysdiodinställningar</string>
-	<string name="notify_light_advanced_summary">Konfigurera beteende för lysdioden (Avancerat)</string>
+	<string name="notify_light_summary">Blinka med lysdioden vid nya händelser (kräver en för detta avsedd lysdiod på din enhet)</string>
 	<string name="notify_sound_title">Välj ringsignal</string>
 
+	<string name="settings_advanced_title">Avancerat</string>
+
+	<string name="private_apikey_title">Egen PostNord API-nyckel</string>
+	<string name="private_apikey_summary">Möjliggör tätare automatiska uppdateringar</string>
+	<string name="private_apikey_message">Du kan skaffa en API-nyckel på http://developer.postnord.com\nLämna fältet tomt för att använda appens standardnyckel</string>
+	<string name="private_apikey_error_title">Felaktig API-nyckel</string>
+	<string name="private_apikey_error_text">Nyckeln du angav har ogiltig syntax.\n\nEn korrekt API-nyckel ska bestå av exakt 32 tecken, endast siffror och bokstäverna a till f (gemener).</string>
+	<string name="go_get_apikey">Gå till PostNords utvecklarsida</string>
+
+	<string name="notify_light_advanced_title">Lysdiodinställningar för aviseringar</string>
+	<string name="notify_light_advanced_summary">Konfigurera beteende för lysdioden</string>
 	<string name="notify_light_color_title">Färg</string>
 	<string name="notify_light_color_summary">Färg för lysdioden (Hex-format, rrggbb, 00-ff)</string>
 	<string name="notify_light_ontime_title">Lysande tid</string>

@@ -272,6 +272,9 @@ public class ParcelDetailsFragment extends ListFragment implements
 					break;
 				case Error.SERVER:
 					status = getString(R.string.parcel_error_server);
+					if (!Preferences.getPreferences(getActivity()).getPrivateApikey().equals("")) {
+						status = status.concat(getString(R.string.parcel_error_server_apikey));
+					}
 					break;
 				default:
 					status = getString(R.string.parcel_error_unknown, error);

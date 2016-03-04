@@ -51,18 +51,26 @@ public class ParcelJsonParser {
 	public static final String KEY_EVENTS = "events";
 	public static final String KEY_WEIGHT_UNIT = "weight_unit";
 	
-	private static String apiKey = null;
-	
+	private static String sApikey = null;
+
+	public static void resetApiKey() {
+		sApikey = null;
+	}
+
 	public static void loadApiKey(Context ctx) {
-		if (apiKey == null) {
-			apiKey = ctx.getString(R.string.postnord_apikey);
+		if (sApikey == null) {
+			Preferences prefs = Preferences.getPreferences(ctx);
+			sApikey = prefs.getPrivateApikey();
+			if (sApikey.equals("")) {
+				sApikey = ctx.getString(R.string.postnord_apikey);
+			}
 		}
 	}
 
 	public static Parcel fetch(String parcelId) {
 		try {
-			if (apiKey == null) {
-				throw new IllegalStateException("No apiKey loaded.");
+			if (sApikey == null || !sApikey.matches("^[0-9a-f]{32}$")) {
+				throw new IllegalStateException("No valid API key loaded.");
 			}
 
 			ParcelJsonParser parser = new ParcelJsonParser();
@@ -83,7 +91,7 @@ public class ParcelJsonParser {
 		
 		StringBuilder jsonText = new StringBuilder();
 		
-		URL parcelUrl = new URL(String.format(BASE_URL, parcelId, apiKey));
+		URL parcelUrl = new URL(String.format(BASE_URL, parcelId, sApikey));
 		
 		BufferedReader in = new BufferedReader(new InputStreamReader(parcelUrl.openStream(), "UTF-8"));
 		for (String line = in.readLine(); line != null; line = in.readLine()) {

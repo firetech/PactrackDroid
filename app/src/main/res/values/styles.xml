@@ -27,13 +27,5 @@
     	<item name="colorAccent">@color/postnord_accent</item>
     	<item name="android:textColorLink">@color/postnord_accent</item>
     </style>
-    
-    <!-- This theme is used by the Toolbar used in the settings activity -->
-    <style name="Theme.Postnord.NoActionBar" parent="Theme.AppCompat.NoActionBar" >
-        <item name="colorPrimary">@color/postnord_primary</item>
-    	<item name="colorPrimaryDark">@color/postnord_primary_dark</item>
-    	<item name="colorAccent">@color/postnord_accent</item>
-    	<item name="android:textColorLink">@color/postnord_accent</item>
-    </style>
 
 </resources>

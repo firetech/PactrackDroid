@@ -28,6 +28,7 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.text.format.DateUtils;
 
 public class Preferences {
 	private static Preferences instance;
@@ -61,21 +62,16 @@ public class Preferences {
 			interval = Integer.parseInt(mPrefs.getString(mRes.getString(R.string.key_check_interval),
 					mRes.getString(R.string.check_interval_default)));
 		} catch (Exception e) {}
-		
-		switch(interval) {
-		case 15:
-			return AlarmManager.INTERVAL_FIFTEEN_MINUTES;
-		case 30:
-			return AlarmManager.INTERVAL_HALF_HOUR;
-		case 60:
-			return AlarmManager.INTERVAL_HOUR;
-		case 720:
-			return AlarmManager.INTERVAL_HALF_DAY;
-		case 1440:
-			return AlarmManager.INTERVAL_DAY;
-		default:
-			return 0;
+
+		if (interval < 60 && getPrivateApikey().equals("")) {
+			interval = 60;
 		}
+
+		return interval * DateUtils.MINUTE_IN_MILLIS;
+	}
+
+	public String getPrivateApikey() {
+		return mPrefs.getString(mRes.getString(R.string.key_private_apikey), "");
 	}
 	
 	public boolean getNotificationEnabled() {

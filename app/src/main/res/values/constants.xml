@@ -29,6 +29,9 @@
 	<string name="key_check_interval" translatable="false">checkInterval</string>
 	<string name="check_interval_default" translatable="false">60</string>
 
+	<string name="key_private_apikey" translatable="false">privateApikey</string>
+	<string name="postnord_developer_page" translatable="false">http://developer.postnord.com</string>
+
 	<string name="key_notify_on" translatable="false">notificationEnabled</string>
 	<bool name="notify_on_default" translatable="false">true</bool>
 	<string name="key_notify_sound" translatable="false">notificationSound</string>
@@ -37,6 +40,7 @@
 	<bool name="notify_vibrate_default" translatable="false">true</bool>
 	<string name="key_notify_light" translatable="false">notificationLight</string>
 	<bool name="notify_light_default" translatable="false">true</bool>
+	<string name="key_notify_light_advanced" translatable="false">notificationLightAdvanced</string>
 	<string name="key_notify_light_color" translatable="false">notificationLightColor</string>
 	<string name="notify_light_color_default" translatable="false">00ffff</string>
 	<string name="key_notify_light_ontime" translatable="false">notificationLightOntime</string>
