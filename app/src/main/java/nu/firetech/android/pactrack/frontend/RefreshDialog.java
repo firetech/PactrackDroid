@@ -48,18 +48,17 @@ public class RefreshDialog extends DialogFragment {
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		if (mHandler == null) {
-			throw new IllegalStateException("RefreshDialog.initValues() has not been called.");
-		}
-
 		ProgressDialog dialog = new ProgressDialog(getActivity());
-		dialog.setMax(mHandler.getMaxValue());
-		dialog.setTitle(R.string.refreshing);
-		dialog.setMessage(getString(R.string.refreshing));
-		if (dialog.getMax() > 1) {
-			dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-		} else {
-			dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+
+		if (mHandler != null) {
+			dialog.setMax(mHandler.getMaxValue());
+			dialog.setTitle(R.string.refreshing);
+			dialog.setMessage(getString(R.string.refreshing));
+			if (dialog.getMax() > 1) {
+				dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+			} else {
+				dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+			}
 		}
 
 		return dialog;
@@ -68,8 +67,13 @@ public class RefreshDialog extends DialogFragment {
 	@Override
 	public void onStart() {
 		super.onStart();
-		// If we set the progress before the dialog is showing, it won't apply.
-		((ProgressDialog)getDialog()).setProgress(mHandler.getValue());
+		if (mHandler != null) {
+			// If we set the progress before the dialog is showing, it won't apply.
+			((ProgressDialog) getDialog()).setProgress(mHandler.getValue());
+		} else {
+			// Recreated without handler, we can't do much else than hide.
+			getDialog().dismiss();
+		}
 	}
 	
 	@Override
@@ -101,19 +105,21 @@ public class RefreshDialog extends DialogFragment {
 		@Override
 		public void handleMessage(Message m) {
 			mValue = m.what;
-			if (m.what == mMaxValue) {
-				mParent.setRetainInstance(false);
-				mParent.dismiss();
-			} else if (mParent.getDialog() != null) {
-				ProgressDialog dialog = (ProgressDialog)mParent.getDialog();
-				dialog.setProgress(m.what);
-				if (m.obj instanceof Bundle) {
-					Bundle bundle = (Bundle)m.obj;
-					String parcel = bundle.getString(ParcelDbAdapter.KEY_NAME);
-					if (parcel == null) {
-						parcel = bundle.getString(ParcelDbAdapter.KEY_PARCEL);
+			if (mParent.getDialog() != null) {
+				if (m.what == mMaxValue) {
+					mParent.setRetainInstance(false);
+					mParent.dismiss();
+				} else {
+					ProgressDialog dialog = (ProgressDialog) mParent.getDialog();
+					dialog.setProgress(m.what);
+					if (m.obj instanceof Bundle) {
+						Bundle bundle = (Bundle) m.obj;
+						String parcel = bundle.getString(ParcelDbAdapter.KEY_NAME);
+						if (parcel == null) {
+							parcel = bundle.getString(ParcelDbAdapter.KEY_PARCEL);
+						}
+						dialog.setMessage(parcel);
 					}
-					dialog.setMessage(parcel);
 				}
 			}
 		}
