@@ -42,7 +42,7 @@ import android.util.Log;
  */
 
 public class ParcelJsonParser {
-	private static final String TAG = "<PactrackDroid> ParcelXMLParser";
+	private static final String TAG = "<PactrackDroid> ParcelJsonParser";
 	
 	//TODO support more languages
 	private static final String BASE_URL = 
