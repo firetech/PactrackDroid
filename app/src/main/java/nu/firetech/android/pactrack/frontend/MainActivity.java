@@ -130,9 +130,11 @@ public class MainActivity extends ActionBarActivity implements
 				fullscreen = true;
 				
 				// Avoid duplicated parcels in back stack
-				if (manager.findFragmentById(viewId) instanceof ParcelDetailsFragment &&
-						((ParcelDetailsFragment)manager.findFragmentById(viewId)).getCurrentRowId() == rowId) {
-					manager.popBackStackImmediate();
+				if (manager.findFragmentById(viewId) instanceof ParcelDetailsFragment) {
+					Long currRowId = ((ParcelDetailsFragment)manager.findFragmentById(viewId)).getCurrentRowId();
+					if (currRowId != null && currRowId == rowId) {
+						manager.popBackStackImmediate();
+					}
 				}
 			}
 

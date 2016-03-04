@@ -159,7 +159,7 @@ public class ParcelDetailsFragment extends ListFragment implements
 	}
 	
 	public void switchParcel(long newId, boolean forceRefresh) {
-		if (mExtendedShowing && newId != mRowId) {
+		if (mExtendedShowing && (mRowId == null || newId != mRowId)) {
 			mExtended.setVisibility(View.GONE);
 			mToggleButton.setText(R.string.show_extended);
 			mExtendedShowing = false;
@@ -186,11 +186,15 @@ public class ParcelDetailsFragment extends ListFragment implements
 		boolean enabled = (Preferences.getPreferences(getActivity()).getCheckInterval() > 0);
 		MenuItem autoInclude = menu.findItem(R.id.action_auto_include);
 		autoInclude.setEnabled(enabled);
-		autoInclude.setChecked(enabled && mDbAdapter.getAutoUpdate(mRowId));
+		autoInclude.setChecked(enabled && mRowId != null && mDbAdapter.getAutoUpdate(mRowId));
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		if (mRowId == null) {
+			return false;
+		}
+
 		switch(item.getItemId()) {
 		case R.id.action_delete:
 			UICommon.deleteParcel(mRowId, getActivity(), mDbAdapter, new Runnable() {
@@ -241,7 +245,9 @@ public class ParcelDetailsFragment extends ListFragment implements
 	}
 
 	private void updateView(Cursor parcel) {
-		((NotificationManager)getActivity().getSystemService(Context.NOTIFICATION_SERVICE)).cancel(mRowId.hashCode());
+		if (mRowId != null) {
+			((NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE)).cancel(mRowId.hashCode());
+		}
 		
 		boolean isFullscreen = (getFragmentManager().findFragmentById(R.id.details_frag) == null);
 		
@@ -363,7 +369,7 @@ public class ParcelDetailsFragment extends ListFragment implements
 
 	@Override
 	public void onAutoUpdateChanged(long rowId, boolean value) {
-		if (getCurrentRowId() == rowId) {
+		if (mRowId != null && mRowId == rowId) {
 			updateAutoUpdateView(value);
 		}
 	}
@@ -372,6 +378,10 @@ public class ParcelDetailsFragment extends ListFragment implements
 
 	@Override
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+		if (mRowId == null) {
+			return null;
+		}
+
 	    switch (id) {
 		case PARCEL_LOADER_ID:
 	    case REFRESH_LOADER_ID:
