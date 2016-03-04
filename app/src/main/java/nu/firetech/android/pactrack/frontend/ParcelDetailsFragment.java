@@ -227,14 +227,16 @@ public class ParcelDetailsFragment extends ListFragment implements
 	
 	@Override
 	public void refreshDone() {
-		int[] loaders = { PARCEL_LOADER_ID, EVENTS_LOADER_ID };
-		
-		LoaderManager lm = getLoaderManager();
-		for (int loader_id : loaders) {
-			if (lm.getLoader(loader_id) == null) {
-				lm.initLoader(loader_id, null, this);
-			} else {
-				lm.restartLoader(loader_id, null, this);
+		if (isAdded()) {
+			int[] loaders = {PARCEL_LOADER_ID, EVENTS_LOADER_ID};
+
+			LoaderManager lm = getLoaderManager();
+			for (int loader_id : loaders) {
+				if (lm.getLoader(loader_id) == null) {
+					lm.initLoader(loader_id, null, this);
+				} else {
+					lm.restartLoader(loader_id, null, this);
+				}
 			}
 		}
 	}
