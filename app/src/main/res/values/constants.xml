@@ -22,7 +22,7 @@
 <resources>
 	<string name="app_name" translatable="false">PactrackDroid</string>
 	<string name="home_page" translatable="false">http://firetech.nu/pactrackdroid</string>
-	<string name="app_description" translatable="false">Keep track of parcels sent with the Swedish mail service (Posten).</string>
+	<string name="app_description" translatable="false">Keep track of parcels sent with the Swedish mail service (PostNord).</string>
 
 	<string name="key_auto_updates" translatable="false">autoUpdatesEnabled</string>
 	<bool name="auto_updates_default" translatable="false">true</bool>

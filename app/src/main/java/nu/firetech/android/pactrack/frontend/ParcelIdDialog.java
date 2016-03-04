@@ -298,6 +298,6 @@ public class ParcelIdDialog extends DialogFragment implements
 	////////////////////////////////////////////////////////////////////////////////
 	
 	public interface ParentActivity {
-        public void showAndRefreshParcel(long rowId);
+        void showAndRefreshParcel(long rowId);
 	}
 }
