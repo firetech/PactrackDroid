@@ -141,7 +141,7 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable {
 		} else {
 			throw new IllegalArgumentException("Unknown context type!");
 		}
-		ParcelJsonParser.loadConsumerId(mAndroidCtx);
+		ParcelJsonParser.loadApiKey(mAndroidCtx);
 
 		mConnectivityManager = (ConnectivityManager)mAndroidCtx.getSystemService(Context.CONNECTIVITY_SERVICE);
 

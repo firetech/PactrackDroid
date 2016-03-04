@@ -7,4 +7,4 @@ build
 Thumbs.db
 captures
 market-stuff
-app/src/main/res/values/postnord_consumerid.xml
+app/src/main/res/values/postnord_apikey.xml

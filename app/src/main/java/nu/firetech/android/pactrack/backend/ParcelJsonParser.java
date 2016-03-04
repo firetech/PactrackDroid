@@ -38,8 +38,7 @@ import android.content.Context;
 import android.util.Log;
 
 /* 
- * You can get your own consumerId at 
- * http://www.postnordlogistics.se/sv/online-services/widgetsochwebservices/
+ * You can get your own apiKey at http://developer.postnord.com
  */
 
 public class ParcelJsonParser {
@@ -47,23 +46,23 @@ public class ParcelJsonParser {
 	
 	//TODO support more languages
 	private static final String BASE_URL = 
-			"http://logistics.postennorden.com/wsp/rest-services/ntt-service-rest/api/shipment.json?locale=sv&id=%s&consumerId=%s";
+			"https://api2.postnord.com/rest/shipment/v1/trackandtrace/findByIdentifier.json?id=%s&locale=sv&apikey=%s";
 
 	public static final String KEY_EVENTS = "events";
 	public static final String KEY_WEIGHT_UNIT = "weight_unit";
 	
-	private static String consumerId = null;
+	private static String apiKey = null;
 	
-	public static void loadConsumerId(Context ctx) {
-		if (consumerId == null) {
-			consumerId = ctx.getString(R.string.postnord_consumerid);
+	public static void loadApiKey(Context ctx) {
+		if (apiKey == null) {
+			apiKey = ctx.getString(R.string.postnord_apikey);
 		}
 	}
 
 	public static Parcel fetch(String parcelId) {
 		try {
-			if (consumerId == null) {
-				throw new IllegalStateException("No consumerId loaded.");
+			if (apiKey == null) {
+				throw new IllegalStateException("No apiKey loaded.");
 			}
 
 			ParcelJsonParser parser = new ParcelJsonParser();
@@ -84,7 +83,7 @@ public class ParcelJsonParser {
 		
 		StringBuilder jsonText = new StringBuilder();
 		
-		URL parcelUrl = new URL(String.format(BASE_URL, parcelId, consumerId));
+		URL parcelUrl = new URL(String.format(BASE_URL, parcelId, apiKey));
 		
 		BufferedReader in = new BufferedReader(new InputStreamReader(parcelUrl.openStream(), "UTF-8"));
 		for (String line = in.readLine(); line != null; line = in.readLine()) {
