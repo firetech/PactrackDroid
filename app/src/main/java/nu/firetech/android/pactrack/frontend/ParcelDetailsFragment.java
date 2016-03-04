@@ -81,22 +81,24 @@ public class ParcelDetailsFragment extends ListFragment implements
 		mExtended = (LinearLayout)view.findViewById(R.id.extended);
 		mToggleButton = (Button)view.findViewById(R.id.extended_toggle);
 
-		mToggleButton.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View view) {
-				mExtendedShowing = !mExtendedShowing;
-				if (mExtendedShowing) {
-					mExtended.setVisibility(View.VISIBLE);
-					mToggleButton.setText(R.string.hide_extended);
-				} else {
-					mExtended.setVisibility(View.GONE);
-					mToggleButton.setText(R.string.show_extended);
+		if (mExtended != null && mToggleButton != null) {
+			mToggleButton.setOnClickListener(new View.OnClickListener() {
+				public void onClick(View view) {
+					mExtendedShowing = !mExtendedShowing;
+					if (mExtendedShowing) {
+						mExtended.setVisibility(View.VISIBLE);
+						mToggleButton.setText(R.string.hide_extended);
+					} else {
+						mExtended.setVisibility(View.GONE);
+						mToggleButton.setText(R.string.show_extended);
+					}
 				}
+			});
+
+			if (mExtendedShowing) {
+				mExtended.setVisibility(View.VISIBLE);
+				mToggleButton.setText(R.string.hide_extended);
 			}
-		});
-		
-		if (mExtendedShowing) {
-			mExtended.setVisibility(View.VISIBLE);
-			mToggleButton.setText(R.string.hide_extended);
 		}
 
 
@@ -160,8 +162,10 @@ public class ParcelDetailsFragment extends ListFragment implements
 	
 	public void switchParcel(long newId, boolean forceRefresh) {
 		if (mExtendedShowing && (mRowId == null || newId != mRowId)) {
-			mExtended.setVisibility(View.GONE);
-			mToggleButton.setText(R.string.show_extended);
+			if (mExtended != null && mToggleButton != null) {
+				mExtended.setVisibility(View.GONE);
+				mToggleButton.setText(R.string.show_extended);
+			}
 			mExtendedShowing = false;
 		}
 		mRowId = newId;
