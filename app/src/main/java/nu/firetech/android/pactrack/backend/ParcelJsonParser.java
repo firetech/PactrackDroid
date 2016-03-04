@@ -148,7 +148,26 @@ public class ParcelJsonParser {
 		JSONObject item = null;
 		for (int i = 0; i < items.length(); i++) {
 			JSONObject thisItem = items.getJSONObject(i);
-			if (thisItem.getString("itemId").equals(parcelId)) {
+			boolean match = false;
+
+			if (items.length() == 1) {
+				//Can be a "shipment" with only one parcel, ignore the ID.
+				match = true;
+			} else {
+				String itemId = thisItem.getString("itemId");
+				if (itemId.equals(parcelId)) {
+					match = true;
+				} else if (itemId.endsWith(parcelId) && itemId.length() > parcelId.length()) {
+					try {
+						// Handles missing leading zeroes
+						match = (Integer.parseInt(itemId) == Integer.parseInt(parcelId));
+					} catch (Exception e) {
+						// Ignore conversion errors
+					}
+				}
+			}
+
+			if (match){
 				if (item == null) {
 					item = thisItem;
 				} else {
