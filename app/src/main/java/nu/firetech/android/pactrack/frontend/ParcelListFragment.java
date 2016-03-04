@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2015 Joakim Tufvegren
- * Copyright (C) 2014 blunden
+ * Copyright (C) 2016 Joakim Tufvegren
+ * Copyright (C) 2016 blunden
  * 
  * This file is part of PactrackDroid, an Android application to keep
  * track of parcels sent with the Swedish mail service (Posten).
@@ -97,9 +97,9 @@ public class ParcelListFragment extends ListFragment implements
 			.append(" - ")
 			.append(versionName)
 			.append(spacer)
-			.append("Copyright (C) 2015 Joakim Tufvegren")
+			.append("Copyright (C) 2016 Joakim Tufvegren")
 			.append("\n")
-			.append("Copyright (C) 2014 blunden")
+			.append("Copyright (C) 2016 blunden")
 			.append(spacer)
 			.append("This program comes with ABSOLUTELY NO WARRANTY.\nThis is free software, licensed under the GNU General Public License; version 2.")
 			.toString();
