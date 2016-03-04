@@ -42,14 +42,14 @@
 				android:orientation="horizontal">
 			<TextView android:text="@string/parcelid"
 				android:layout_marginRight="8dp"
-			        android:textStyle="bold"
 				    android:layout_width="wrap_content"
 				    android:layout_height="wrap_content"/>	
 			<TextView android:id="@+id/parcelid"
 			        android:text="@string/loading"
 					android:layout_marginRight="8dp"
 				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"/>
+				    android:layout_height="wrap_content"
+				    android:textAppearance="?android:attr/textAppearance"/>
 		</LinearLayout>
 		
 		<LinearLayout
@@ -63,14 +63,14 @@
 				android:orientation="horizontal">
 			<TextView android:text="@string/sent"
 				    android:layout_marginRight="8dp"
-			        android:textStyle="bold"
 				    android:layout_width="wrap_content"
 				    android:layout_height="wrap_content"/>	
 			<TextView android:id="@+id/sent"
 			        android:text="@string/loading"
 				    android:layout_marginRight="8dp"
 				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"/>
+				    android:layout_height="wrap_content"
+				    android:textAppearance="?android:attr/textAppearance"/>
 		</LinearLayout>
 				
 		<LinearLayout
@@ -84,14 +84,14 @@
 				android:orientation="horizontal">
 			<TextView android:text="@string/customer"
 				    android:layout_marginRight="8dp"
-			        android:textStyle="bold"
 				    android:layout_width="wrap_content"
 				    android:layout_height="wrap_content"/>	
 			<TextView android:id="@+id/customer"
 			        android:text="@string/loading"
 				    android:layout_marginRight="8dp"
 				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"/>
+				    android:layout_height="wrap_content"
+				    android:textAppearance="?android:attr/textAppearance"/>
 		</LinearLayout>
 	</LinearLayout>
 				
@@ -104,7 +104,6 @@
 			android:orientation="horizontal">
 		<TextView android:text="@string/status"
 			    android:layout_marginRight="8dp"
-		        android:textStyle="bold"
 			    android:layout_width="wrap_content"
 			    android:layout_height="wrap_content"/>
 		<ImageView android:id="@+id/status_icon"
@@ -118,7 +117,8 @@
 			    android:layout_marginBottom="8dp"
 			    android:layout_marginLeft="2dp"
 			    android:layout_width="wrap_content"
-			    android:layout_height="wrap_content"/>
+			    android:layout_height="wrap_content"
+			    android:textAppearance="?android:attr/textAppearance"/>
 	</LinearLayout>
 	
 	<LinearLayout android:id="@+id/extended"
@@ -142,14 +142,14 @@
 					android:orientation="horizontal">
 				<TextView android:text="@string/update_info"
 					    android:layout_marginRight="8dp"
-				        android:textStyle="bold"
 					    android:layout_width="wrap_content"
 					    android:layout_height="wrap_content"/>	
 				<TextView android:id="@+id/update_info"
 				        android:text="@string/loading"
 					    android:layout_marginRight="8dp"
 					    android:layout_width="wrap_content"
-					    android:layout_height="wrap_content"/>
+					    android:layout_height="wrap_content"
+					    android:textAppearance="?android:attr/textAppearance"/>
 			</LinearLayout>
 
 			<LinearLayout
@@ -163,14 +163,14 @@
 					android:orientation="horizontal">
 				<TextView android:text="@string/weight"
 					    android:layout_marginRight="8dp"
-				        android:textStyle="bold"
 					    android:layout_width="wrap_content"
 					    android:layout_height="wrap_content"/>	
 				<TextView android:id="@+id/weight"
 				        android:text="@string/loading"
 					    android:layout_marginRight="8dp"
 					    android:layout_width="wrap_content"
-					    android:layout_height="wrap_content"/>
+					    android:layout_height="wrap_content"
+					    android:textAppearance="?android:attr/textAppearance"/>
 			</LinearLayout>
 		</LinearLayout>
 		
@@ -191,14 +191,14 @@
 					android:orientation="horizontal">
 				<TextView android:text="@string/service"
 					    android:layout_marginRight="8dp"
-				        android:textStyle="bold"
 					    android:layout_width="wrap_content"
 					    android:layout_height="wrap_content"/>	
 				<TextView android:id="@+id/service"
 				        android:text="@string/loading"
 					    android:layout_marginRight="8dp"
 					    android:layout_width="wrap_content"
-					    android:layout_height="wrap_content"/>
+					    android:layout_height="wrap_content"
+					    android:textAppearance="?android:attr/textAppearance"/>
 			</LinearLayout>
 		
 			<LinearLayout
@@ -212,14 +212,14 @@
 					android:orientation="horizontal">
 				<TextView android:text="@string/postal"
 					    android:layout_marginRight="8dp"
-				        android:textStyle="bold"
 					    android:layout_width="wrap_content"
 					    android:layout_height="wrap_content"/>	
 				<TextView android:id="@+id/postal"
 				        android:text="@string/loading"
 					    android:layout_marginRight="8dp"
 					    android:layout_width="wrap_content"
-					    android:layout_height="wrap_content"/>
+					    android:layout_height="wrap_content"
+					    android:textAppearance="?android:attr/textAppearance"/>
 			</LinearLayout>
 		</LinearLayout>
 	</LinearLayout>
@@ -233,18 +233,11 @@
 			android:layout_height="wrap_content"/>
 	
 	<TextView android:text="@string/events"
-	        android:textStyle="bold"
-	        android:textSize="17.5sp"
 			android:layout_marginTop="8dp"
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
-	        android:layout_gravity="center_horizontal"/>
-	
-	<ImageView android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
 	        android:layout_gravity="center_horizontal"
-	        android:background="@android:drawable/divider_horizontal_dark"/>
-
+		    android:textAppearance="?android:attr/textAppearanceMedium"/>
 	
 	<ListView android:id="@android:id/list"
 			android:layout_width="fill_parent"
