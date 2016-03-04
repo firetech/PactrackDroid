@@ -38,7 +38,7 @@ class Parcel {
 	private String mStatus;
 	private int mStatusCode = ParcelDbAdapter.STATUS_UNKNOWN;
 	
-	private ArrayList<ParcelEvent> mEvents = new ArrayList<ParcelEvent>();
+	private ArrayList<ParcelEvent> mEvents = new ArrayList<>();
 	
 	Parcel(int errorCode) {
 		mErrorCode = errorCode;
@@ -55,7 +55,7 @@ class Parcel {
 		
 		try {
 			mWeight = Double.parseDouble((String)data.get(ParcelDbAdapter.KEY_WEIGHT));
-			if ("g".equals((String)data.get(ParcelJsonParser.KEY_WEIGHT_UNIT))) {
+			if ("g".equals(data.get(ParcelJsonParser.KEY_WEIGHT_UNIT))) {
 				mWeight /= 1000;
 			}
 		} catch (Exception e) {
@@ -128,7 +128,7 @@ class Parcel {
 	}
 	
 	public ParcelEvent[] getEvents() {
-		return mEvents.toArray(new ParcelEvent[0]);
+		return mEvents.toArray(new ParcelEvent[mEvents.size()]);
 	}
 }
 

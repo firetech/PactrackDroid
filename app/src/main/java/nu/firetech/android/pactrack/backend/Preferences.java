@@ -22,7 +22,6 @@
 package nu.firetech.android.pactrack.backend;
 
 import nu.firetech.android.pactrack.R;
-import android.app.AlarmManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -57,11 +56,13 @@ public class Preferences {
 			return 0;
 		}
 		
-		int interval = 0;
+		int interval;
 		try {
 			interval = Integer.parseInt(mPrefs.getString(mRes.getString(R.string.key_check_interval),
 					mRes.getString(R.string.check_interval_default)));
-		} catch (Exception e) {}
+		} catch (Exception e) {
+			interval = Integer.parseInt(mRes.getString(R.string.check_interval_default));
+		}
 
 		if (interval < 60 && getPrivateApikey().equals("")) {
 			interval = 60;
@@ -103,6 +104,6 @@ public class Preferences {
 	
 	public Uri getNotificationSound() {
 		String uri = mPrefs.getString(mRes.getString(R.string.key_notify_sound), mRes.getString(R.string.notify_sound_default));
-		return (uri == null || uri.length() == 0 ? null : Uri.parse(uri));
+		return (uri.length() == 0 ? null : Uri.parse(uri));
 	}
 }

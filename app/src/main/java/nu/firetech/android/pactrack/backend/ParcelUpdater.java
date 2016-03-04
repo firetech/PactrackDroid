@@ -51,7 +51,7 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable {
 	private static final String TAG = "<PactrackDroid> ParcelUpdater";
 
 	public static void update(final RefreshContext ctx, Cursor parcel) {
-		ArrayList<Bundle> workParcels = new ArrayList<Bundle>();
+		ArrayList<Bundle> workParcels = new ArrayList<>();
 		workParcels.add(cursorToBundle(parcel));
 
 		new Thread(new ParcelUpdater(workParcels, ctx)).start();
@@ -64,7 +64,7 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable {
 			return;
 		}
 
-		ArrayList<Bundle> workParcels = new ArrayList<Bundle>();
+		ArrayList<Bundle> workParcels = new ArrayList<>();
 		parcel.moveToFirst();
 		while (!parcel.isAfterLast()) {
 			workParcels.add(cursorToBundle(parcel));
@@ -220,7 +220,7 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable {
 		return (info != null && info.isConnected());
 	}
 
-	private void updateParcel(Bundle parcel, ParcelDbAdapter dbAdapter, NotificationManager notMgr) {
+	private void updateParcel(Bundle parcel, @SuppressWarnings("unused") ParcelDbAdapter dbAdapter, NotificationManager notMgr) {
 		Long rowId = parcel.getLong(ParcelDbAdapter.KEY_ROWID);
 		String parcelId = parcel.getString(ParcelDbAdapter.KEY_PARCEL);
 
