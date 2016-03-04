@@ -24,5 +24,7 @@
     <color name="postnord_primary">#ff0099bb</color>
     <color name="postnord_primary_dark">#ff0087a5</color>
     <color name="postnord_accent">#ff0095ba</color>
+
+    <color name="postnord_selected">#400099bb</color>
     
 </resources>

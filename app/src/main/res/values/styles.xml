@@ -26,6 +26,7 @@
     	<item name="colorPrimaryDark">@color/postnord_primary_dark</item>
     	<item name="colorAccent">@color/postnord_accent</item>
     	<item name="android:textColorLink">@color/postnord_accent</item>
+        <item name="android:activatedBackgroundIndicator">@drawable/activated_background_indicator</item>
     </style>
 
 </resources>
