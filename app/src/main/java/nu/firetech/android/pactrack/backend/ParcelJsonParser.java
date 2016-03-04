@@ -23,6 +23,7 @@ package nu.firetech.android.pactrack.backend;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -92,12 +93,19 @@ public class ParcelJsonParser {
 		StringBuilder jsonText = new StringBuilder();
 		
 		URL parcelUrl = new URL(String.format(BASE_URL, parcelId, sApikey));
+
+		HttpURLConnection parcelConn = (HttpURLConnection)parcelUrl.openConnection();
+
+		if (parcelConn.getResponseCode() != HttpURLConnection.HTTP_OK) {
+			return new Parcel(Error.SERVER);
+		}
 		
-		BufferedReader in = new BufferedReader(new InputStreamReader(parcelUrl.openStream(), "UTF-8"));
+		BufferedReader in = new BufferedReader(new InputStreamReader(parcelConn.getInputStream(), "UTF-8"));
 		for (String line = in.readLine(); line != null; line = in.readLine()) {
 			jsonText.append(line);
 		}
 		in.close();
+		parcelConn.disconnect();
 		
 		JSONObject json = new JSONObject(jsonText.toString()).getJSONObject("TrackingInformationResponse");
 		int error = checkError(json);
