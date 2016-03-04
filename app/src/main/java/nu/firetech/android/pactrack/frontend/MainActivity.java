@@ -180,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements
 		}
 
 		if (manager.findFragmentById(R.id.list_frag) != null) {
-			ParcelListFragment list = (ParcelListFragment)getSupportFragmentManager().findFragmentById(R.id.list_frag);
+			ParcelListFragment list = (ParcelListFragment)manager.findFragmentById(R.id.list_frag);
 			list.selectRowItem(null);
 			list.refreshDone();
 		}
@@ -198,6 +198,14 @@ public class MainActivity extends AppCompatActivity implements
 			if (f instanceof AutoUpdateIconContext) {
 				((AutoUpdateIconContext)f).onAutoUpdateChanged(rowId, value);
 			}
+		}
+	}
+
+	@Override
+	public void onSingleRefreshDone() {
+		if (getSupportFragmentManager().findFragmentById(R.id.list_frag) != null) {
+			ParcelListFragment list = (ParcelListFragment)getSupportFragmentManager().findFragmentById(R.id.list_frag);
+			list.refreshDone();
 		}
 	}
 }

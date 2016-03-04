@@ -171,6 +171,7 @@ public class ParcelDetailsFragment extends ListFragment implements
 			mExtendedShowing = false;
 		}
 		mRowId = newId;
+		errorShown = Error.NONE;
 		
 		refreshDone();
 		
@@ -245,6 +246,7 @@ public class ParcelDetailsFragment extends ListFragment implements
 				}
 			}
 		}
+		mParent.onSingleRefreshDone();
 	}
 
 	@Override
@@ -450,5 +452,6 @@ public class ParcelDetailsFragment extends ListFragment implements
 	public interface ParentActivity {
         void onCurrentParcelRemoved();
         void onAutoUpdateChanged(long rowId, boolean value);
-    }
+		void onSingleRefreshDone();
+	}
 }
