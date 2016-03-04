@@ -27,13 +27,14 @@ import nu.firetech.android.pactrack.backend.Preferences;
 import nu.firetech.android.pactrack.backend.ServiceStarter;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
-public class MainActivity extends ActionBarActivity implements
+public class MainActivity extends AppCompatActivity implements
 		ParcelListFragment.ParentActivity, ParcelDetailsFragment.ParentActivity,
 		ParcelIdDialog.ParentActivity {
 	private final static String KEY_DISPLAY_OPT = "display_options";
@@ -86,7 +87,7 @@ public class MainActivity extends ActionBarActivity implements
 
 
 	@Override
-	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+	protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
 		int savedDisplayOpt = savedInstanceState.getInt(KEY_DISPLAY_OPT);
 		if(savedDisplayOpt != 0){

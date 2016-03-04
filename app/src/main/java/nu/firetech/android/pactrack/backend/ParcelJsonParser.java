@@ -88,7 +88,7 @@ public class ParcelJsonParser {
 	private ParcelJsonParser() {}
 	
 	private Parcel parse(String parcelId) throws Exception {
-		HashMap<String,Object> data = new HashMap<String,Object>();
+		HashMap<String,Object> data = new HashMap<>();
 		
 		StringBuilder jsonText = new StringBuilder();
 		
@@ -204,10 +204,10 @@ public class ParcelJsonParser {
 	}
 	
 	private ArrayList<HashMap<String,Object>> parseEvents(JSONArray events) throws JSONException {
-		ArrayList<HashMap<String,Object>> eventList = new ArrayList<HashMap<String,Object>>();
+		ArrayList<HashMap<String,Object>> eventList = new ArrayList<>();
 		
 		for (int i = 0; i < events.length(); i++) {
-			HashMap<String,Object> eventData = new HashMap<String,Object>();
+			HashMap<String,Object> eventData = new HashMap<>();
 			JSONObject event = events.getJSONObject(i);
 
 			String description = "";

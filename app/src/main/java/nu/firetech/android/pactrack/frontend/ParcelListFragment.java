@@ -27,7 +27,6 @@ import nu.firetech.android.pactrack.backend.ParcelUpdater;
 import nu.firetech.android.pactrack.backend.Preferences;
 import nu.firetech.android.pactrack.backend.ServiceStarter;
 import nu.firetech.android.pactrack.common.RefreshContext;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -86,23 +85,17 @@ public class ParcelListFragment extends ListFragment implements
 		list.addFooterView(inflater.inflate(R.layout.parcel_footer, list, false), null, false);
 
 		if (sAboutMessage == null) {
-			String spacer = "\n\n";
-
 			String versionName = "Huh?";
 			try {
 				versionName = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
-			} catch (NameNotFoundException e) {}
+			} catch (NameNotFoundException e) {
+				// Ignore error
+			}
 
-			sAboutMessage = new StringBuilder(getString(R.string.app_name))
-			.append(" - ")
-			.append(versionName)
-			.append(spacer)
-			.append("Copyright (C) 2016 Joakim Tufvegren")
-			.append("\n")
-			.append("Copyright (C) 2016 blunden")
-			.append(spacer)
-			.append("This program comes with ABSOLUTELY NO WARRANTY.\nThis is free software, licensed under the GNU General Public License; version 2.")
-			.toString();
+			sAboutMessage = getString(R.string.app_name) + " - " + versionName + "\n\n" +
+					"Copyright (C) 2016 Joakim Tufvegren\n" +
+			        "Copyright (C) 2016 blunden\n\n" +
+					"This program comes with ABSOLUTELY NO WARRANTY.\nThis is free software, licensed under the GNU General Public License; version 2.";
 		}
 		
 		mAboutDialog = new AlertDialog.Builder(context)
@@ -161,16 +154,16 @@ public class ParcelListFragment extends ListFragment implements
 	}
 	
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
 
-		mDbAdapter = new ParcelDbAdapter(activity);
+		mDbAdapter = new ParcelDbAdapter(context);
 		mDbAdapter.open();
 
         try {
-            mParent = (ParentActivity) activity;
+            mParent = (ParentActivity) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
+            throw new ClassCastException(context.toString()
                     + " must implement ParentActivity");
         }
     }
@@ -358,9 +351,9 @@ public class ParcelListFragment extends ListFragment implements
 	////////////////////////////////////////////////////////////////////////////////
 	
 	public interface ParentActivity {
-        public void showParcel(long rowId, boolean forceRefresh);
-        public void onListResume();
-        public void onAutoUpdateChanged(long rowId, boolean value);
+        void showParcel(long rowId, boolean forceRefresh);
+        void onListResume();
+        void onAutoUpdateChanged(long rowId, boolean value);
     }
 	
 }

@@ -27,7 +27,6 @@ import nu.firetech.android.pactrack.backend.ParcelUpdater;
 import nu.firetech.android.pactrack.backend.Preferences;
 import nu.firetech.android.pactrack.common.Error;
 import nu.firetech.android.pactrack.common.RefreshContext;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -36,6 +35,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
@@ -52,6 +52,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+
+import java.lang.ref.WeakReference;
 
 public class ParcelDetailsFragment extends ListFragment implements
 		RefreshContext, AutoUpdateIconContext, LoaderManager.LoaderCallbacks<Cursor> {
@@ -125,16 +127,16 @@ public class ParcelDetailsFragment extends ListFragment implements
 	}
 	
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
 
-		mDbAdapter = new ParcelDbAdapter(activity);
+		mDbAdapter = new ParcelDbAdapter(context);
 		mDbAdapter.open();
 		
 		try {
-            mParent = (ParentActivity) activity;
+            mParent = (ParentActivity) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
+            throw new ClassCastException(context.toString()
                     + " must implement ParentActivity");
         }
     }
@@ -412,15 +414,26 @@ public class ParcelDetailsFragment extends ListFragment implements
 			break;
 		case REFRESH_LOADER_ID:
 			//TODO This can probably be done better...
-			final Cursor fCursor = cursor;
-			new Handler(getActivity().getMainLooper()){
-				@Override
-				public void handleMessage(Message m) {
-					ParcelUpdater.update(ParcelDetailsFragment.this, fCursor);
-				}
-			}.sendEmptyMessage(0);
+			new RefreshHandler(new WeakReference<>(this), cursor,
+					getActivity().getMainLooper()).sendEmptyMessage(0);
 			break;
 	    }
+	}
+
+	private static class RefreshHandler extends Handler {
+		WeakReference<ParcelDetailsFragment> mParent;
+		Cursor mCursor;
+
+		RefreshHandler(WeakReference<ParcelDetailsFragment> parent, Cursor cursor, Looper looper) {
+			super(looper);
+			mParent = parent;
+			mCursor = cursor;
+		}
+
+		@Override
+		public void handleMessage(Message m) {
+			ParcelUpdater.update(mParent.get(), mCursor);
+		}
 	}
 
 	@Override
@@ -435,7 +448,7 @@ public class ParcelDetailsFragment extends ListFragment implements
 	////////////////////////////////////////////////////////////////////////////////
 	
 	public interface ParentActivity {
-        public void onCurrentParcelRemoved();
-        public void onAutoUpdateChanged(long rowId, boolean value);
+        void onCurrentParcelRemoved();
+        void onAutoUpdateChanged(long rowId, boolean value);
     }
 }

@@ -21,6 +21,7 @@
 
 package nu.firetech.android.pactrack.backend;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import nu.firetech.android.pactrack.R;
@@ -40,6 +41,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
@@ -189,14 +191,24 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable {
 			mHandler.sendEmptyMessage(mWorkParcels.size());
 		}
 
-		new Handler(mAndroidCtx.getMainLooper()) {
-			@Override
-			public void handleMessage(Message m) {
-				mCtx.refreshDone();
-			}
-		}.sendEmptyMessage(0);
+		new RefreshDoneHandler(new WeakReference<>(this),
+				mAndroidCtx.getMainLooper()).sendEmptyMessage(0);
 		
 		mDbAdapter.close();
+	}
+
+	private static class RefreshDoneHandler extends Handler {
+		WeakReference<ParcelUpdater> mParent;
+
+		RefreshDoneHandler(WeakReference<ParcelUpdater> parent, Looper looper) {
+			super(looper);
+			mParent = parent;
+		}
+
+		@Override
+		public void handleMessage(Message m) {
+			mParent.get().mCtx.refreshDone();
+		}
 	}
 	
 	public void setContext(RefreshContext newContext) {
