@@ -58,8 +58,6 @@ public class ParcelIdDialog extends DialogFragment implements
 	private EditText mNameText;
 	private Long mRowId;
 	private ParcelDbAdapter mDbAdapter;
-	private String mParcelInitialText;
-	private String mNameInitialText;
 	private View mFocusedView;
 	private int mInitialSelectionStart;
 	private int mInitialSelectionEnd;
@@ -131,25 +129,25 @@ public class ParcelIdDialog extends DialogFragment implements
 
 		boolean loadParcel = false;
 
-		mParcelInitialText = "";
+		String parcelInitialText = "";
 		if (savedInstanceState != null && savedInstanceState.containsKey(ParcelDbAdapter.KEY_PARCEL)) {
-			mParcelInitialText = savedInstanceState.getString(ParcelDbAdapter.KEY_PARCEL);
+			parcelInitialText = savedInstanceState.getString(ParcelDbAdapter.KEY_PARCEL);
 		} else if (mRowId != null) {
 			loadParcel = true;
-			mParcelInitialText = getString(R.string.loading);
+			parcelInitialText = getString(R.string.loading);
 			mParcelText.setEnabled(false);
 		}
-		mParcelText.setText(mParcelInitialText);
+		mParcelText.setText(parcelInitialText);
 
-		mNameInitialText = "";
+		String nameInitialText = "";
 		if (savedInstanceState != null && savedInstanceState.containsKey(ParcelDbAdapter.KEY_NAME)) {
-			mNameInitialText = savedInstanceState.getString(ParcelDbAdapter.KEY_NAME);
+			nameInitialText = savedInstanceState.getString(ParcelDbAdapter.KEY_NAME);
 		} else if (mRowId != null) {
 			loadParcel = true;
-			mNameInitialText = getString(R.string.loading);
+			nameInitialText = getString(R.string.loading);
 			mNameText.setEnabled(false);
 		}
-		mNameText.setText(mNameInitialText);
+		mNameText.setText(nameInitialText);
 		
 		mFocusedView = null;
 		if (savedInstanceState != null && savedInstanceState.containsKey(KEY_FOCUSED_FIELD)) {
