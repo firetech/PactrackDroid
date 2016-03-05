@@ -12,9 +12,9 @@ Home page with more info and changelog: http://firetech.nu/pactrackdroid/
 Consumer ID
 -----------
 
-The API used by PactrackDroid requires a "consumer ID", which, according to the
-terms and conditions, must be kept secret. To comply with this, the consumer ID
-used by the official version is not open sourced.
+The API used by PactrackDroid requires an "API key", and the API has a hard
+limit on number of requests per day and key. Due to this, to avoid abuse, the
+API key used by the release version of PactrackDroid is _not_ open source.
 
 If you fork the project, you will need to create your own API key at
 https://developer.postnord.com and save it, into (for example)
