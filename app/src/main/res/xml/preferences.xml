@@ -89,6 +89,7 @@
             android:negativeButtonText="@string/cancel"
             android:positiveButtonText="@string/ok"
             android:dialogMessage="@string/private_apikey_message"
+            android:hint="@string/private_apikey_hint"
             android:summary="@string/private_apikey_summary"
             android:title="@string/private_apikey_title"
             android:digits="0123456789abcdef"

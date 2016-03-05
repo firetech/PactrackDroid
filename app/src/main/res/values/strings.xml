@@ -111,8 +111,9 @@
 	<string name="settings_advanced_title">Avancerat</string>
 
 	<string name="private_apikey_title">Egen PostNord API-nyckel</string>
-	<string name="private_apikey_summary">Möjliggör tätare automatiska uppdateringar</string>
-	<string name="private_apikey_message">Du kan skaffa en API-nyckel på http://developer.postnord.com\nLämna fältet tomt för att använda appens standardnyckel</string>
+	<string name="private_apikey_summary">Tillåter tätare automatiska uppdateringar</string>
+	<string name="private_apikey_message">Du kan skaffa en API-nyckel på http://developer.postnord.com</string>
+	<string name="private_apikey_hint">(Använder inbyggd API-nyckel)</string>
 	<string name="private_apikey_error_title">Felaktig API-nyckel</string>
 	<string name="private_apikey_error_text">Nyckeln du angav har ogiltig syntax.\n\nEn korrekt API-nyckel ska bestå av exakt 32 tecken, endast siffror och bokstäverna a till f (gemener).</string>
 	<string name="go_get_apikey">Gå till PostNords utvecklarsida</string>
