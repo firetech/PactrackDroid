@@ -125,8 +125,18 @@ public class ParcelJsonParser {
 		if (shipment.has("consignor")) {
 			data.put(ParcelDbAdapter.KEY_CUSTOMER, shipment.getJSONObject("consignor").getString("name"));
 		}
-		data.put(ParcelDbAdapter.KEY_SERVICE, shipment.getJSONObject("service").getString("name"));
-		data.put(ParcelDbAdapter.KEY_STATUS, shipment.getJSONObject("statusText").getString("header"));
+		if (shipment.has("service")) {
+			JSONObject service = shipment.getJSONObject("service");
+			if (service.has("name")) {
+				data.put(ParcelDbAdapter.KEY_SERVICE, service.getString("name"));
+			}
+		}
+		if (shipment.has("statusText")) {
+			JSONObject statusText = shipment.getJSONObject("statusText");
+			if (statusText.has("header")) {
+				data.put(ParcelDbAdapter.KEY_STATUS, statusText.getString("header"));
+			}
+		}
 		data.put(ParcelDbAdapter.KEY_STATUSCODE, shipment.getString("status"));
 		
 		if (shipment.has("totalWeight")) {
