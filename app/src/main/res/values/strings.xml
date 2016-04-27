@@ -95,7 +95,6 @@
 	<string name="auto_updates_summary">Aktivera automatiska uppdateringar av status</string>
 	<string name="check_interval_title">Uppdateringsintervall</string>
 	<string name="check_interval_summary">Välj hur ofta automatiska uppdateringar ska göras</string>
-	<string name="check_interval_summary_disabled">Denna funktion är inte tillgänglig då data i bakgrunden inte är tillåtet!</string>
 	<string name="private_apikey_needed_title">Egen PostNord API-nyckel behövs</string>
 	<string name="private_apikey_needed_text">På grund av begränsningar från PostNord behöver du ange en egen API-nyckel för att kunna väljare en kortare uppdateringsintervall än 1 timme.\n\nDu kan skaffa en nyckel på PostNords utvecklarsida (http://developer.postnord.com).</string>
 

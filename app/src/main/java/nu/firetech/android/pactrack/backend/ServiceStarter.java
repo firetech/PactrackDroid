@@ -26,7 +26,6 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
 import android.util.Log;
 
 public class ServiceStarter extends BroadcastReceiver {
@@ -56,16 +55,6 @@ public class ServiceStarter extends BroadcastReceiver {
 		
 		if (dbAdapter != null && dbAdapter.getNumAutoParcels() < 1) {
 			interval = 0;
-		} else {
-			ConnectivityManager cm = (ConnectivityManager)ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
-			
-			//We still have to do this for pre-ICS Android, and the "new" way has always been handled in ParcelUpdater.
-			@SuppressWarnings("deprecation")
-			boolean backgroundDataAllowed = cm.getBackgroundDataSetting();
-			
-			if (!backgroundDataAllowed) {
-				interval = 0;
-			}
 		}
 		
 		if (interval > 0) {

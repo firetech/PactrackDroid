@@ -23,14 +23,11 @@ package nu.firetech.android.pactrack.frontend;
 
 import android.app.AlertDialog;
 import android.app.FragmentManager;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
-import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcel;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
@@ -99,19 +96,6 @@ public class ConfigView extends AppCompatActivity {
 
 			if (privateApikeyPref.getText().equals("") && Long.parseLong(checkIntervalPref.getValue()) < 60) {
 				checkIntervalPref.setValue("60");
-			}
-
-			ConnectivityManager cm = (ConnectivityManager)getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-
-			//We still have to do this for pre-ICS Android, and the "new" way has always been handled in ParcelUpdater.
-			@SuppressWarnings("deprecation")
-			boolean backgroundDataAllowed = cm.getBackgroundDataSetting();
-
-			checkIntervalPref.setEnabled(backgroundDataAllowed);
-			if (backgroundDataAllowed) {
-				checkIntervalPref.setSummary(R.string.check_interval_summary);
-			} else {
-				checkIntervalPref.setSummary(R.string.check_interval_summary_disabled);
 			}
 
 			checkIntervalPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
