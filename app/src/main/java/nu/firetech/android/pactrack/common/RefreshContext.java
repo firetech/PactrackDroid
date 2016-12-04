@@ -24,7 +24,7 @@ package nu.firetech.android.pactrack.common;
 import android.os.Handler;
 
 public interface RefreshContext {
-	public Handler startRefreshProgress(int maxValue);
-	public void refreshDone();
-	public boolean showsNews();
+	Handler startRefreshProgress(int maxValue);
+	void refreshDone();
+	boolean showsNews();
 }
