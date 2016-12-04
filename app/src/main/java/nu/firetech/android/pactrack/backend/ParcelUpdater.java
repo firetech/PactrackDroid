@@ -28,13 +28,15 @@ import nu.firetech.android.pactrack.R;
 import nu.firetech.android.pactrack.common.RefreshContext;
 import nu.firetech.android.pactrack.frontend.MainActivity;
 import nu.firetech.android.pactrack.frontend.UICommon;
+
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
@@ -47,7 +49,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-public class ParcelUpdater extends BroadcastReceiver implements Runnable {
+public class ParcelUpdater implements Runnable {
 	private static final String TAG = "<Pactrack> Updater";
 
 	public static void update(final RefreshContext ctx, Cursor parcel) {
@@ -97,35 +99,6 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable {
 	////////////////////////////////////////////////////////////////////////////////
 
 	private ConnectivityManager mConnectivityManager;
-	private static boolean sWaitingForDataConnection = false;
-	private static final Object sLock = new Object();
-
-	@Override
-	public void onReceive(final Context ctx, Intent intent) {
-		if (!isDataConnected()) {
-			return;
-		}
-		
-		Log.d(TAG, "We are back online!");
-		synchronized (sLock) {
-			sLock.notifyAll();
-			ctx.unregisterReceiver(ParcelUpdater.this);
-			sWaitingForDataConnection = false;
-		}
-	}
-	
-	private void registerConnectionListener(Context ctx) {
-		synchronized (sLock) {
-	        IntentFilter intentFilter = new IntentFilter();
-	        intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-	        ctx.registerReceiver(this, intentFilter);
-			
-			sWaitingForDataConnection = true;
-		}
-	}
-
-	////////////////////////////////////////////////////////////////////////////////
-
 	private ArrayList<Bundle> mWorkParcels = null;
 	private ParcelDbAdapter mDbAdapter = null;
 	private RefreshContext mCtx = null;
@@ -155,29 +128,35 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable {
 
 	@Override
 	public void run() {
-		synchronized (sLock) {
-			if(sWaitingForDataConnection) {
-				Log.i(TAG, "Another update is waiting for data connection. Skipping");
-				return;
+		// If not connected, bail out.
+		if (!isDataConnected()) {
+			Log.d(TAG, "No data connection.");
+			if (mAndroidCtx instanceof Activity) {
+				((Activity) mAndroidCtx).runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+					AlertDialog.Builder errorDialog = new AlertDialog.Builder(mAndroidCtx)
+						.setTitle(R.string.no_data_title)
+						.setMessage(R.string.no_data_message)
+						.setNegativeButton(R.string.ok, new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								if (mHandler != null) {
+									mHandler.sendEmptyMessage(mWorkParcels.size());
+								}
+								dialog.dismiss();
+							}
+						});
+					errorDialog.create().show();
+					}
+				});
 			}
+			return;
 		}
 
-		//wait for a data connection
-		while(!isDataConnected()) {
-			registerConnectionListener(mAndroidCtx);
-			synchronized (sLock) {
-				Log.d(TAG, "No data connection, waiting for a data connection");
-				try {
-					sLock.wait();
-				} catch (InterruptedException e) {
-					Log.e(TAG, "Error while waiting for connection", e);
-				}
-			}
-		}
-		
 		mDbAdapter = new ParcelDbAdapter(mAndroidCtx);
 		mDbAdapter.open();
-		
+
 		NotificationManager notMgr = (NotificationManager)mAndroidCtx.getSystemService(Context.NOTIFICATION_SERVICE);
 
 		for(int i = 0; i < mWorkParcels.size(); i++) {
@@ -209,10 +188,6 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable {
 		public void handleMessage(Message m) {
 			mParent.get().mCtx.refreshDone();
 		}
-	}
-	
-	public void setContext(RefreshContext newContext) {
-		mCtx = newContext;
 	}
 
 	private boolean isDataConnected() {

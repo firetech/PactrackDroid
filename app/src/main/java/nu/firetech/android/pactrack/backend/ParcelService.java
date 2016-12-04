@@ -22,6 +22,7 @@
 package nu.firetech.android.pactrack.backend;
 
 import nu.firetech.android.pactrack.common.RefreshContext;
+
 import android.app.Service;
 import android.content.Intent;
 import android.os.Handler;

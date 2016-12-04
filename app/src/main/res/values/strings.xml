@@ -67,6 +67,9 @@
 	<string name="parcel_error_message">Ett fel uppstod vid senaste uppdateringen:\n\n%s</string>
 	<string name="parcel_error_message_question">Ett fel uppstod vid senaste uppdateringen:\n\n%s\n\nVisa tillgänglig information ändå?</string>
 
+	<string name="no_data_title">Inte uppkopplad</string>
+	<string name="no_data_message">Ingen uppkoppling till Internet hittades. Uppdateringen kan inte fortsätta.</string>
+
 	<string name="customer">Kund</string>
 	<string name="sent">Skickat</string>
 	<string name="update_info">Senaste uppd.\n(Lyckad)</string>
