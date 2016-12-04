@@ -185,7 +185,7 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable {
 			if (mHandler != null) {
 				mHandler.sendMessage(Message.obtain(mHandler, i, parcel));
 			}
-			updateParcel(parcel, mDbAdapter, notMgr);
+			updateParcel(parcel, notMgr);
 		}
 		if (mHandler != null) {
 			mHandler.sendEmptyMessage(mWorkParcels.size());
@@ -220,7 +220,7 @@ public class ParcelUpdater extends BroadcastReceiver implements Runnable {
 		return (info != null && info.isConnected());
 	}
 
-	private void updateParcel(Bundle parcel, @SuppressWarnings("unused") ParcelDbAdapter dbAdapter, NotificationManager notMgr) {
+	private void updateParcel(Bundle parcel, NotificationManager notMgr) {
 		Long rowId = parcel.getLong(ParcelDbAdapter.KEY_ROWID);
 		String parcelId = parcel.getString(ParcelDbAdapter.KEY_PARCEL);
 
