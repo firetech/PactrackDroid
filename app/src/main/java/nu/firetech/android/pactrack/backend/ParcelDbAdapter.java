@@ -34,7 +34,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 public class ParcelDbAdapter {
-	private static final String TAG = "<PactrackDroid> ParcelDbAdapter";
+	private static final String TAG = "<Pactrack> DbAdapter";
 	
 	public static final String KEY_ROWID = "_id";
 

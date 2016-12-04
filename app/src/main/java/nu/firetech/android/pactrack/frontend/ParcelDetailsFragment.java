@@ -61,7 +61,7 @@ public class ParcelDetailsFragment extends ListFragment implements
 	private static final int EVENTS_LOADER_ID = 2;
 	private static final int REFRESH_LOADER_ID = 3;
 
-	private static final String TAG = "<PactrackDroid> ParcelView";
+	private static final String TAG = "<Pactrack> DetailsFrag";
 	
 	public static final String FORCE_REFRESH = "force_update";
 

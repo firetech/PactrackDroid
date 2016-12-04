@@ -29,7 +29,7 @@ import android.content.Intent;
 import android.util.Log;
 
 public class ServiceStarter extends BroadcastReceiver {
-	private static final String TAG = "<PactrackDroid> ServiceStarter";
+	private static final String TAG = "<Pactrack> SvcStarter";
 	
 	private static long sCurrentInterval = -1;
 

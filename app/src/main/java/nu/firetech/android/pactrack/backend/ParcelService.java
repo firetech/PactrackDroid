@@ -29,7 +29,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 public class ParcelService extends Service implements RefreshContext {
-	private static final String TAG = "<PactrackDroid> ParcelService";
+	private static final String TAG = "<Pactrack> ParcelSvc";
 
 	private ParcelDbAdapter mDbAdapter;
 

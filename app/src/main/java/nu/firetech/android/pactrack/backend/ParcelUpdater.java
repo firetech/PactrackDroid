@@ -48,7 +48,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 public class ParcelUpdater extends BroadcastReceiver implements Runnable {
-	private static final String TAG = "<PactrackDroid> ParcelUpdater";
+	private static final String TAG = "<Pactrack> Updater";
 
 	public static void update(final RefreshContext ctx, Cursor parcel) {
 		ArrayList<Bundle> workParcels = new ArrayList<>();
