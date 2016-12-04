@@ -231,22 +231,19 @@ public class ParcelUpdater implements Runnable {
 				Intent intent = new Intent(mAndroidCtx, MainActivity.class).putExtra(ParcelDbAdapter.KEY_ROWID, rowId);
 				PendingIntent contentIntent = PendingIntent.getActivity(mAndroidCtx, rowId.hashCode(), intent, 0);
 				
-				int stringId = (newEvents > 1 ? R.string.notification_ticker : R.string.notification_ticker_one);
+				int tickerId = (newEvents > 1 ? R.string.notification_ticker : R.string.notification_ticker_one);
 				NotificationCompat.Builder n = new NotificationCompat.Builder(mAndroidCtx)
 						.setSmallIcon(R.drawable.notification)
-						.setTicker(mAndroidCtx.getString(stringId, parcelName))
+						.setTicker(mAndroidCtx.getString(tickerId, parcelName))
 						.setWhen(System.currentTimeMillis())
 						.setContentTitle(parcelName)
 						.setContentText(newEvents == 1 ?
 								eventList.toString() : mAndroidCtx.getString(R.string.notification_message, newEvents))
+						.setStyle(new NotificationCompat.BigTextStyle().bigText(eventList.toString()))
 						.setContentIntent(contentIntent)
 						.setSound(prefs.getNotificationSound())
 						.extend(new NotificationCompat.WearableExtender().setBackground(
 								BitmapFactory.decodeResource(mAndroidCtx.getResources(), R.drawable.wearable_background)));
-				
-				if (newEvents > 1) {
-					n.setStyle(new NotificationCompat.BigTextStyle().bigText(eventList.toString()));
-				}
 				
 				if (prefs.getNotificationLight()) {
 					n.setLights(prefs.getNotificationColor(), 
