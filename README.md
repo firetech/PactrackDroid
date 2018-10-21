@@ -7,7 +7,13 @@ Originally developed by Joakim "firetech" Tufvegren, but abandoned in 2011.
 "blunden" made updates to the design of the app to fit Android 4.0+ in 2013,
 after which the project was un-abandoned and received a major overhaul.
 
-Home page with more info and changelog: http://firetech.nu/pactrackdroid/
+Due to changes in free usage limits of the PostNord API, the project was again
+abandoned in March of 2018, and is now to be considered dead. The
+[official PostNord Android app](https://play.google.com/store/apps/details?id=se.postnord.private)
+does what PactrackDroid did, but better, and also includes some other features.
+
+Home page with more info and changelog (in Swedish):
+http://firetech.nu/pactrackdroid/
 
 Consumer ID
 -----------
@@ -33,4 +39,4 @@ Authors
 -------
 
 PactrackDroid was created by Joakim "firetech" Tufvegren in September 2009.
-Since December 2013, the project is maintained by "firetech" and "blunden".
+After December 2013, the project was maintained by "firetech" and "blunden".
